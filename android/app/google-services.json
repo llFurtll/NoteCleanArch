@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "962527190708",
+    "project_id": "note-b9528",
+    "storage_bucket": "note-b9528.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:962527190708:android:bfe6528319b37c6191c1e1",
+        "android_client_info": {
+          "package_name": "com.daniel.note"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "962527190708-nvpi35vhengc49b5f67j4rqh8ev4vcdk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.daniel.note",
+            "certificate_hash": "e9230177e215c32e2a0d1ce6a0925c159d648c3a"
+          }
+        },
+        {
+          "client_id": "962527190708-3g06upqbod5keug1rka9sq7ephq9j3l3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBqOQ8jV2kxqkufwBnA5OFFloWibINjVA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "962527190708-3g06upqbod5keug1rka9sq7ephq9j3l3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
