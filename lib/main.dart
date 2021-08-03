@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:note/data/datasources/sqlite.dart';
-import 'package:sqflite/sqflite.dart';
 
 void main() => runApp(
   MaterialApp(

@@ -7,9 +7,9 @@ abstract class DatasourceBase<T> {
 
   Future<Anotacao> getById({required int id});
 
-  Future<T> create({required Anotacao anotacaoModel});
+  Future<T?> insert({required Anotacao anotacao});
 
-  Future<T> update({required int id});
+  Future<T?> update({required Anotacao anotacao});
 
-  Future<T> delete({required int id});
+  Future<T?> delete({required int id});
 }

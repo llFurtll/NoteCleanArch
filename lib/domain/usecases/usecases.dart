@@ -6,23 +6,23 @@ class UseCases {
 
   UseCases({required this.repository});
 
-  Future<int>? insertUseCase<int>({required Anotacao anotacao}) {
-    return repository.insert(anotacao: anotacao);
+  Future<int?> insertUseCase({required Anotacao anotacao}) async {
+    return await repository.insert(anotacao: anotacao);
   }
 
-  Future<int>? updateUseCase<int>({required int id}) {
-    return repository.update(id: id);
+  Future<int?> updateUseCase({required Anotacao anotacao}) async {
+    return await repository.update(anotacao: anotacao);
   }
   
-  Future<int>? deleteUseCase<int>({required int id}) {
-    return repository.delete(id: id);
+  Future<int?> deleteUseCase({required int id}) async {
+    return await repository.delete(id: id);
   }
 
-  Future<List<Anotacao>>? findAlluseCase<T>({required int id}) {
-    return repository.findAll();
+  Future<List<Anotacao>> findAlluseCase({required int id}) async {
+    return await repository.findAll();
   }
 
-  Future<Anotacao>? getByIdUseCase<T>({required int id}) {
-    return repository.getById(id: id);
+  Future<Anotacao> getByIdUseCase({required int id}) async {
+    return await repository.getById(id: id);
   }
 }
