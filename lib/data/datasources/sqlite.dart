@@ -19,6 +19,8 @@ class SqliteDatasource implements DatasourceBase<dynamic> {
       listAnotacao.add(Anotacao.fromJson(elemento));
     });
 
+    await db.close();
+
     return listAnotacao;
   }
 
