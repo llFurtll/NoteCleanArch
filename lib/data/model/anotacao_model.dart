@@ -2,12 +2,11 @@ import 'package:note/domain/entities/anotacao.dart';
 
 class AnotacaoModel extends Anotacao {
   AnotacaoModel({
-    id, titulo, data, situacao, imagemFundo, observacao
+    titulo, data, situacao, imagemFundo, observacao
   }) : super(
-    id: 0,
     titulo: "",
-    data: DateTime.now(),
-    situacao: false,
+    data: DateTime.now().toIso8601String(),
+    situacao: 1,
     imagemFundo: "",
     observacao: ""
   );

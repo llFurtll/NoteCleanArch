@@ -1,19 +1,21 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
 import 'package:note/data/datasources/sqlite.dart';
 import 'package:note/domain/entities/anotacao.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:mockito/mockito.dart';
 
-class DatasourceTest extends SqliteDatasource {}
+class DatasourceTest extends SqliteDatasource {
+  Database db;
+  DatasourceTest({required this.db}) : super(db: db);
+}
 
 void main() {
   Anotacao gerarAnotacao(
-    int id, String titulo, DateTime data, bool situacao, String imagemFundo, String observacao
+    String titulo, String data, int situacao, String imagemFundo, String observacao
   ) {
     Anotacao anotacao = new Anotacao(
-      id: id,
       titulo: titulo,
       data: data,
       situacao: situacao,
@@ -24,35 +26,66 @@ void main() {
     return anotacao;
   }
 
-  late DatasourceTest datasourceTest;
+  Map<String, Object?> inserirAnotacao() {
+    Map<String, Object?> insert = Map();
 
-  setUp(() {
-    datasourceTest = DatasourceTest();
+    insert["titulo"] = "teste";
+    insert["data"] = DateTime.now().toIso8601String();
+    insert["situacao"] = 1;
+    insert["imagem_fundo"] = "http";
+    insert["observacao"] = "gostei";
+
+    return insert;
+  }
+
+  late DatasourceTest datasourceTest;
+  late Database db;
+  
+  sqfliteFfiInit();
+  setUp(() async {
+
+    db = await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
+
+    await db.execute(
+      """
+      CREATE TABLE IF NOT EXISTS NOTE(
+        id INTEGER PRIMARY KEY,
+        titulo TEXT NOT NULL,
+        data DATETIME NOT NULL,
+        situacao INTEGER NOT NULL,
+        imagem_fundo TEXT,
+        observacao TEXT
+      )
+      """
+    );
+
+    await db.insert("NOTE", inserirAnotacao());
+    await db.insert("NOTE", inserirAnotacao());
+
+    datasourceTest = DatasourceTest(db: db);
   });
 
   group(
     "Testando o datasource",
     () {
-      sqfliteFfiInit();
       test('Testando o findAll', () async {
-        List<Anotacao> lista = [];
-        var db = await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
+        List<Anotacao> lista = await datasourceTest.findAll();
+        expect(lista.length, 2);
+      });
 
-        lista.add(
-          gerarAnotacao(1, "teste", DateTime.now(), true, "teste", "legal")
+      test('Testando o insert', () async {
+        int? insert = await datasourceTest.insert(
+          anotacao: gerarAnotacao(
+            "Teste do insert do caralho", DateTime.now().toIso8601String(), 1, "http", "Teste insert"
+          )
         );
 
-        lista.add(
-          gerarAnotacao(2, "teste", DateTime.now(), true, "teste", "legal")
-        );
-
-        when(await datasourceTest.getConnection()).thenReturn(db);
-        when(await datasourceTest.findAll()).thenReturn(lista);
-
-        List<Anotacao> novaLista = await datasourceTest.findAll();
-
-        expect(lista.length, novaLista.length);
+        assert(!insert!.isNaN);
       });
     }
   );
+
+  tearDown(() async {
+    await db.close();
+  });
 }

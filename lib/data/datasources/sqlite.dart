@@ -1,16 +1,16 @@
 import 'package:note/data/datasources/datasource.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
 
 import '../../domain/entities/anotacao.dart';
 
 class SqliteDatasource implements DatasourceBase<dynamic> {
 
-  SqliteDatasource();
+  Database db;
+
+  SqliteDatasource({required this.db});
 
   @override
   Future<List<Anotacao>> findAll() async {
-    Database db = await getConnection();
     List<Anotacao> listAnotacao = [];
     
     List<Map> listNote = await db.rawQuery("SELECT * FROM NOTE");
@@ -19,23 +19,17 @@ class SqliteDatasource implements DatasourceBase<dynamic> {
       listAnotacao.add(Anotacao.fromJson(elemento));
     });
 
-    await db.close();
-
     return listAnotacao;
   }
 
   @override
   Future<Anotacao> getById({required int id}) async {
-    Database db = await getConnection();
-
     List<Map> note = await db.rawQuery(
       """
       SELECT * FROM NOTE WHERE ID = ?
       """,
       [id]
     );
-
-    await db.close();
 
     Anotacao anotacao = Anotacao.fromJson(note[0]);
 
@@ -44,43 +38,34 @@ class SqliteDatasource implements DatasourceBase<dynamic> {
 
   @override
   Future<int?> insert({required Anotacao anotacao}) async {
-    Database db = await getConnection();
-    int? inserted;
+    int? insert;
 
-    db.transaction((txn) async {
-      inserted = await txn.rawInsert(
-        """INSERT INTO NOTE(titulo, data, situacao, imagem_fundo, observacao)
-           VALUES(?, ?, ?, ?, ?)
-        """,
-        [anotacao.titulo, anotacao.data, anotacao.imagemFundo, anotacao.observacao]
-      );
-    });
+    insert = await db.rawInsert(
+      """INSERT INTO NOTE(titulo, data, situacao, imagem_fundo, observacao)
+          VALUES(?, ?, ?, ?, ?)
+      """,
+      [anotacao.titulo, anotacao.data, anotacao.situacao, anotacao.imagemFundo, anotacao.observacao]
+    );
 
-    await db.close();
-
-    return inserted;
+    return insert;
   }
 
   @override
   Future<int?> delete({required int id}) async {
-    Database db = await getConnection();
-    int? deleted;
+    int? delete;
 
-    deleted = await db.rawDelete(
+    delete = await db.rawDelete(
       "DELETE FROM NOTE WHERE ID = ?", [id]
     );
 
-    await db.close();
-
-    return deleted;
+    return delete;
   }
 
   @override
   Future<int?> update({required Anotacao anotacao}) async {
-    Database db = await getConnection();
-    int? updated;
+    int update;
 
-    updated = await db.rawUpdate(
+    update = await db.rawUpdate(
       """
       UPDATE NOTE SET TITULO = ?, DATA = ?, SITUACAO = ?, IMAGEM_FUNDO = ?, OBSERVACAO = ? WHERE ID = ?
       """,
@@ -90,27 +75,6 @@ class SqliteDatasource implements DatasourceBase<dynamic> {
       ]
     );
 
-    await db.close();
-
-    return updated;
-  }
-
-  @override
-  Future<Database> getConnection() async {
-    return await openDatabase(
-      join(await getDatabasesPath(), "note.db"),
-      version: 1,
-      onCreate: (db, version) => db.execute("""
-          CREATE TABLE NOTE(
-            id INTEGER PRIMARY KEY,
-            titulo TEXT NOT NULL,
-            data DATETIME NOT NULL,
-            situacao BOOLEAN NOT NULL,
-            imagem_fundo TEXT,
-            observacao TEXT
-          )
-        """
-      )
-    );
+    return update;
   }
 }

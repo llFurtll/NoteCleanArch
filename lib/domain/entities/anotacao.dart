@@ -1,13 +1,13 @@
 class Anotacao {
   int? id;
-  String? titulo;
-  DateTime? data;
-  bool? situacao;
-  String? imagemFundo;
-  String? observacao;
+  String titulo;
+  String data;
+  int situacao;
+  String imagemFundo;
+  String observacao;
 
   Anotacao({
-    required this.id,
+    this.id,
     required this.titulo,
     required this.data,
     required this.situacao,
