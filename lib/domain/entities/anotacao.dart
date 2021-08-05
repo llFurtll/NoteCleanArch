@@ -1,18 +1,18 @@
 class Anotacao {
   int? id;
-  String titulo;
-  String data;
-  int situacao;
-  String imagemFundo;
-  String observacao;
+  String? titulo;
+  String? data;
+  int? situacao;
+  String? imagemFundo;
+  String? observacao;
 
   Anotacao({
     this.id,
-    required this.titulo,
-    required this.data,
-    required this.situacao,
-    required this.imagemFundo,
-    required this.observacao,
+    this.titulo,
+    this.data,
+    this.situacao,
+    this.imagemFundo,
+    this.observacao,
   });
 
   factory Anotacao.fromJson(Map json) {

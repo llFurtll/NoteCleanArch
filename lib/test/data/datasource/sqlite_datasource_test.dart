@@ -13,9 +13,11 @@ class DatasourceTest extends SqliteDatasource {
 
 void main() {
   Anotacao gerarAnotacao(
-    String titulo, String data, int situacao, String imagemFundo, String observacao
+    {int id = 0, String titulo = "", String data = "",
+    int situacao = 1, String imagemFundo = "", String observacao = ""}
   ) {
     Anotacao anotacao = new Anotacao(
+      id: id,
       titulo: titulo,
       data: data,
       situacao: situacao,
@@ -73,19 +75,48 @@ void main() {
         expect(lista.length, 2);
       });
 
+      test("Testando o getById", () async {
+        Anotacao anotacao = await datasourceTest.getById(id: 2);
+        assert(!anotacao.id!.isNaN);
+      });
+
       test('Testando o insert', () async {
         int? insert = await datasourceTest.insert(
           anotacao: gerarAnotacao(
-            "Teste do insert do caralho", DateTime.now().toIso8601String(), 1, "http", "Teste insert"
+            titulo: "Teste do insert do caralho",
+            data: DateTime.now().toIso8601String(),
+            situacao: 1,
+            imagemFundo: "http",
+            observacao: "Teste insert"
           )
         );
 
         assert(!insert!.isNaN);
       });
+
+      test("Testando o update", () async {
+        int? update = await datasourceTest.update(
+          anotacao: gerarAnotacao(
+            id: 3,
+            titulo: "Daniel",
+            data: DateTime.now().toIso8601String(),
+            situacao: 0,
+            imagemFundo: "https",
+            observacao: "Daniel e lindo!"
+          )
+        );
+
+        assert(update == 1);
+      });
+
+      test("Testando o delete", () async {
+        int? delete = await datasourceTest.delete(id: 1);
+        assert(delete == 1);
+      });
+
+      tearDownAll(() async {
+        await db.close();
+      });
     }
   );
-
-  tearDown(() async {
-    await db.close();
-  });
 }
