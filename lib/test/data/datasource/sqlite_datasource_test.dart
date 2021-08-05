@@ -77,13 +77,13 @@ void main() {
 
       test("Testando o getById", () async {
         Anotacao anotacao = await datasourceTest.getById(id: 2);
-        assert(!anotacao.id!.isNaN);
+        assert(anotacao.id == 2);
       });
 
       test('Testando o insert', () async {
         int? insert = await datasourceTest.insert(
           anotacao: gerarAnotacao(
-            titulo: "Teste do insert do caralho",
+            titulo: "Teste do insert",
             data: DateTime.now().toIso8601String(),
             situacao: 1,
             imagemFundo: "http",
@@ -91,7 +91,7 @@ void main() {
           )
         );
 
-        assert(!insert!.isNaN);
+        assert(insert != 0);
       });
 
       test("Testando o update", () async {
