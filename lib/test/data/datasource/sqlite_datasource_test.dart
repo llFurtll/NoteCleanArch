@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:note/data/datasources/sqlite.dart';
-import 'package:note/domain/entities/anotacao.dart';
+import 'package:note/data/model/anotacao_model.dart';
+import 'package:note/test/utils/utils.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common/sqlite_api.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:mockito/mockito.dart';
 
 class DatasourceTest extends SqliteDatasource {
   Database db;
@@ -12,34 +12,6 @@ class DatasourceTest extends SqliteDatasource {
 }
 
 void main() {
-  Anotacao gerarAnotacao(
-    {int id = 0, String titulo = "", String data = "",
-    int situacao = 1, String imagemFundo = "", String observacao = ""}
-  ) {
-    Anotacao anotacao = new Anotacao(
-      id: id,
-      titulo: titulo,
-      data: data,
-      situacao: situacao,
-      imagemFundo: imagemFundo,
-      observacao: observacao
-    );
-
-    return anotacao;
-  }
-
-  Map<String, Object?> inserirAnotacao() {
-    Map<String, Object?> insert = Map();
-
-    insert["titulo"] = "teste";
-    insert["data"] = DateTime.now().toIso8601String();
-    insert["situacao"] = 1;
-    insert["imagem_fundo"] = "http";
-    insert["observacao"] = "gostei";
-
-    return insert;
-  }
-
   late DatasourceTest datasourceTest;
   late Database db;
   
@@ -71,12 +43,12 @@ void main() {
     "Testando o datasource",
     () {
       test('Testando o findAll', () async {
-        List<Anotacao> lista = await datasourceTest.findAll();
+        List<AnotacaoModel> lista = await datasourceTest.findAll();
         expect(lista.length, 2);
       });
 
       test("Testando o getById", () async {
-        Anotacao anotacao = await datasourceTest.getById(id: 2);
+        AnotacaoModel anotacao = await datasourceTest.getById(id: 2);
         assert(anotacao.id == 2);
       });
 
@@ -88,7 +60,7 @@ void main() {
             situacao: 1,
             imagemFundo: "http",
             observacao: "Teste insert"
-          )
+          ) as AnotacaoModel
         );
 
         assert(insert != 0);
@@ -103,7 +75,7 @@ void main() {
             situacao: 0,
             imagemFundo: "https",
             observacao: "Daniel e lindo!"
-          )
+          ) as AnotacaoModel
         );
 
         assert(update == 1);
@@ -117,6 +89,7 @@ void main() {
       tearDownAll(() async {
         await db.close();
       });
+      
     }
   );
 }

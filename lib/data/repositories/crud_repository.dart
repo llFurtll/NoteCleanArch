@@ -1,10 +1,10 @@
 import 'package:note/data/datasources/datasource.dart';
-import 'package:note/domain/entities/anotacao.dart';
+import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/domain/repositories/irepository.dart';
 
-class CrudRepository implements IRepository<dynamic> {
+class CrudRepository implements IRepository<AnotacaoModel> {
 
-  DatasourceBase datasourceBase;
+  DatasourceBase<AnotacaoModel> datasourceBase;
 
   CrudRepository({required this.datasourceBase});
 
@@ -14,22 +14,22 @@ class CrudRepository implements IRepository<dynamic> {
   }
   
   @override
-  Future<int?> insert({required Anotacao anotacao}) async {
+  Future<int?> insert({required AnotacaoModel anotacao}) async {
     return await datasourceBase.insert(anotacao: anotacao);
   }
   
   @override
-  Future<int?> update({required Anotacao anotacao}) async {
+  Future<int?> update({required AnotacaoModel anotacao}) async {
     return await datasourceBase.update(anotacao: anotacao);
   }
 
   @override
-  Future<List<Anotacao>> findAll() async {
+  Future<List<AnotacaoModel?>> findAll() async {
     return await datasourceBase.findAll();
   }
 
   @override
-  Future<Anotacao> getById({required int id}) async {
+  Future<AnotacaoModel?> getById({required int id}) async {
     return await datasourceBase.getById(id: id);
   }
 }

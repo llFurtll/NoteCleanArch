@@ -1,29 +1,28 @@
 import 'package:note/data/datasources/datasource.dart';
+import 'package:note/data/model/anotacao_model.dart';
 import 'package:sqflite/sqflite.dart';
 
-import '../../domain/entities/anotacao.dart';
-
-class SqliteDatasource implements DatasourceBase<dynamic> {
+class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
 
   Database db;
 
   SqliteDatasource({required this.db});
 
   @override
-  Future<List<Anotacao>> findAll() async {
-    List<Anotacao> listAnotacao = [];
+  Future<List<AnotacaoModel>> findAll() async {
+    List<AnotacaoModel> listAnotacao = [];
     
     List<Map> listNote = await db.rawQuery("SELECT * FROM NOTE");
 
     listNote.forEach((elemento) {
-      listAnotacao.add(Anotacao.fromJson(elemento));
+      listAnotacao.add(AnotacaoModel.fromJson(elemento));
     });
 
     return listAnotacao;
   }
 
   @override
-  Future<Anotacao> getById({required int id}) async {
+  Future<AnotacaoModel> getById({required int id}) async {
     List<Map> note = await db.rawQuery(
       """
       SELECT * FROM NOTE WHERE ID = ?
@@ -31,13 +30,13 @@ class SqliteDatasource implements DatasourceBase<dynamic> {
       [id]
     );
 
-    Anotacao anotacao = Anotacao.fromJson(note[0]);
+    AnotacaoModel anotacao = AnotacaoModel.fromJson(note[0]);
 
     return anotacao;
   }
 
   @override
-  Future<int?> insert({required Anotacao anotacao}) async {
+  Future<int?> insert({required AnotacaoModel anotacao}) async {
     int? insert;
 
     insert = await db.rawInsert(
@@ -62,7 +61,7 @@ class SqliteDatasource implements DatasourceBase<dynamic> {
   }
 
   @override
-  Future<int?> update({required Anotacao anotacao}) async {
+  Future<int?> update({required AnotacaoModel anotacao}) async {
     int update;
 
     update = await db.rawUpdate(

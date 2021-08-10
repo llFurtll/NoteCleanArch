@@ -1,16 +1,16 @@
-import '../entities/anotacao.dart';
+import 'package:note/data/model/anotacao_model.dart';
 import '../repositories/irepository.dart';
 
 class UseCases {
-  IRepository repository;
+  IRepository<AnotacaoModel> repository;
 
   UseCases({required this.repository});
 
-  Future<int?> insertUseCase({required Anotacao anotacao}) async {
+  Future<int?> insertUseCase({required AnotacaoModel anotacao}) async {
     return await repository.insert(anotacao: anotacao);
   }
 
-  Future<int?> updateUseCase({required Anotacao anotacao}) async {
+  Future<int?> updateUseCase({required AnotacaoModel anotacao}) async {
     return await repository.update(anotacao: anotacao);
   }
   
@@ -18,11 +18,11 @@ class UseCases {
     return await repository.delete(id: id);
   }
 
-  Future<List<Anotacao>> findAlluseCase({required int id}) async {
+  Future<List<AnotacaoModel?>> findAlluseCase({required int id}) async {
     return await repository.findAll();
   }
 
-  Future<Anotacao> getByIdUseCase({required int id}) async {
+  Future<AnotacaoModel?> getByIdUseCase({required int id}) async {
     return await repository.getById(id: id);
   }
 }
