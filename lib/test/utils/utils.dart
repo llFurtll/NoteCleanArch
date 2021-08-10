@@ -8,8 +8,6 @@ Future<Database> inicializeDatabase() async {
   
   Database db = await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
 
-  db = await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
-
     await db.execute(
       """
       CREATE TABLE IF NOT EXISTS NOTE(
