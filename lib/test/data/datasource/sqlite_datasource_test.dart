@@ -4,7 +4,6 @@ import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/test/utils/utils.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common/sqlite_api.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class DatasourceTest extends SqliteDatasource {
   Database db;
@@ -13,29 +12,10 @@ class DatasourceTest extends SqliteDatasource {
 
 void main() {
   late DatasourceTest datasourceTest;
-  late Database db;
+  late Database db;  
   
-  sqfliteFfiInit();
   setUp(() async {
-
-    db = await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
-
-    await db.execute(
-      """
-      CREATE TABLE IF NOT EXISTS NOTE(
-        id INTEGER PRIMARY KEY,
-        titulo TEXT NOT NULL,
-        data DATETIME NOT NULL,
-        situacao INTEGER NOT NULL,
-        imagem_fundo TEXT,
-        observacao TEXT
-      )
-      """
-    );
-
-    await db.insert("NOTE", inserirAnotacao());
-    await db.insert("NOTE", inserirAnotacao());
-
+    db = await inicializeDatabase();
     datasourceTest = DatasourceTest(db: db);
   });
 

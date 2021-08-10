@@ -1,5 +1,33 @@
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/domain/entities/anotacao.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+Future<Database> inicializeDatabase() async {
+  sqfliteFfiInit();
+  
+  Database db = await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
+
+  db = await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
+
+    await db.execute(
+      """
+      CREATE TABLE IF NOT EXISTS NOTE(
+        id INTEGER PRIMARY KEY,
+        titulo TEXT NOT NULL,
+        data DATETIME NOT NULL,
+        situacao INTEGER NOT NULL,
+        imagem_fundo TEXT,
+        observacao TEXT
+      )
+      """
+    );
+
+    await db.insert("NOTE", inserirAnotacao());
+    await db.insert("NOTE", inserirAnotacao());
+
+    return db;
+}
 
 Anotacao gerarAnotacao(
   {int id = 0, String titulo = "", String data = "",

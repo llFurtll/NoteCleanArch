@@ -18,7 +18,7 @@ class UseCases {
     return await repository.delete(id: id);
   }
 
-  Future<List<AnotacaoModel?>> findAlluseCase({required int id}) async {
+  Future<List<AnotacaoModel?>> findAlluseCase() async {
     return await repository.findAll();
   }
 

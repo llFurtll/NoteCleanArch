@@ -1,46 +1,43 @@
-
-import 'package:note/data/datasources/datasource.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:note/data/datasources/sqlite.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/data/repositories/crud_repository.dart';
+import 'package:note/domain/usecases/usecases.dart';
 import 'package:note/test/utils/utils.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common/sqlite_api.dart';
-
-class RepositoryTest extends CrudRepository {
-  RepositoryTest(DatasourceBase<AnotacaoModel> datasourceBase) : super(datasourceBase: datasourceBase);
-}
 
 void main() {
+  late UseCases useCases;
+  late CrudRepository crudRepository;
   late SqliteDatasource sqliteDatasource;
-  late RepositoryTest repositoryTest;
   late Database db;
 
   setUp(() async {
     db = await inicializeDatabase();
     sqliteDatasource = SqliteDatasource(db: db);
-    repositoryTest = RepositoryTest(sqliteDatasource);
+    crudRepository = CrudRepository(datasourceBase: sqliteDatasource);
+    useCases = UseCases(repository: crudRepository);
   });
 
   group(
-    "Testando os metodos do repository",
+    "Testando os casos de uso",
     () {
-      test("Testando o findAll", () async {
-        List<AnotacaoModel?> lista = await repositoryTest.findAll();
-        expect(lista.length, 2);
-        expect(lista[0]!.id, 1);
-        expect(lista[1]!.id, 2);
+
+      test("Testando o findAlluseCase", () async {
+        List<AnotacaoModel?> lista = await useCases.findAlluseCase();
+          expect(lista.length, 2);
+          expect(lista[0]!.id, 1);
+          expect(lista[1]!.id, 2);
       });
 
-      test("Testando o getById", () async {
-        AnotacaoModel? anotacaoModel = await repositoryTest.getById(id: 1);
-        assert(anotacaoModel != null);
-        expect(anotacaoModel!.id, 1);
+      test("Testando o getByIdUseCase", () async {
+        AnotacaoModel? anotacao = await useCases.getByIdUseCase(id: 1);
+        assert(anotacao != null);
+        expect(anotacao!.id, 1);
       });
 
-      test("Testando o update", () async {
-        int? update = await repositoryTest.update(anotacao: gerarAnotacao(
+      test("Testando o updateUseCase", () async {
+        int? update = await useCases.updateUseCase(anotacao: gerarAnotacao(
           id: 1,
           data: DateTime.now().toIso8601String(),
           imagemFundo: "Legal",
@@ -52,13 +49,13 @@ void main() {
         assert(update == 1);
       });
 
-      test("Testando o delete", () async {
-        int? delete = await repositoryTest.delete(id: 1);
+       test("Testando o deleteUseCase", () async {
+        int? delete = await useCases.deleteUseCase(id: 1);
          assert(delete == 1);
       });
 
       test("Testando o insert", () async {
-        int? insert = await repositoryTest.insert(
+        int? insert = await useCases.insertUseCase(
           anotacao: gerarAnotacao(
             titulo: "Teste do insert",
             data: DateTime.now().toIso8601String(),
@@ -70,10 +67,11 @@ void main() {
 
         assert(insert != 0);
       });
-
+      
       tearDownAll(() async {
         await db.close();
       });
 
-    });
+    }
+  );
 }
