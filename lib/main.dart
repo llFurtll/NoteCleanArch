@@ -6,7 +6,18 @@ void main() => runApp(
     debugShowCheckedModeBanner: false,
     home: Application(),
     theme: ThemeData(
-      splashColor: Color(0xFFA50044)
+      splashColor: Color(0xFFA50044),
+      appBarTheme: AppBarTheme(
+        backgroundColor: Color(0xFFE6E6E6),
+        titleTextStyle: TextStyle(
+          color: Color(0xFF004D98)
+        )
+      ),
+      scaffoldBackgroundColor: Color(0xFFE6E6E6),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: Color(0XFFA50044)
+      ),
+      cardColor: Color(0XFFFFFFFF),
     ),
   )
 );
