@@ -11,13 +11,19 @@ void main() => runApp(
         backgroundColor: Color(0xFFE6E6E6),
         titleTextStyle: TextStyle(
           color: Color(0xFF004D98)
-        )
+        ),
       ),
       scaffoldBackgroundColor: Color(0xFFE6E6E6),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         backgroundColor: Color(0XFFA50044)
       ),
       cardColor: Color(0XFFFFFFFF),
+      popupMenuTheme: PopupMenuThemeData(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+      ),
+      
     ),
   )
 );

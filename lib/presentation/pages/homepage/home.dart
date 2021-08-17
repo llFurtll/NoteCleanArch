@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:note/presentation/components/appbar.dart';
 import 'package:note/presentation/components/card.dart';
 
 class Home extends StatefulWidget {
@@ -7,37 +8,6 @@ class Home extends StatefulWidget {
 }
 
 class HomeState extends State<Home> {
-
-  String _title = "Note";
-  double _height = 56.0;
-
-  List<Widget> _actions() {
-    return [
-      IconButton(
-        onPressed: null,
-        icon: Icon(
-          Icons.more_vert,
-          color: Theme.of(context).appBarTheme.titleTextStyle!.color,
-        ),
-      )
-    ];
-  }
-
-  PreferredSize? _appBar() {
-    return PreferredSize(
-      preferredSize: Size.fromHeight(_height),
-      child: AppBar(
-        title: Text(
-          _title,
-          style: TextStyle(
-            color: Theme.of(context).appBarTheme.titleTextStyle!.color
-          ),
-        ),
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-        actions: _actions(),
-      ),
-    );
-  }
 
   Widget _home() {
     return Container(
@@ -58,7 +28,10 @@ class HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: _appBar(),
+      appBar: PreferredSize(
+        child: AppBarComponent(titulo: "Note"),
+        preferredSize: Size.fromHeight(56.0),
+      ),
       body: _home(),
       floatingActionButton: _button(),
     );

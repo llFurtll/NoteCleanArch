@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class CardNote extends StatefulWidget {
-  String titulo;
-  String conteudo;
-  DateTime data;
+  final String titulo;
+  final String conteudo;
+  final DateTime data;
 
   CardNote({
     required this.titulo,
@@ -73,9 +73,6 @@ class CardNoteState extends State<CardNote> {
   Widget build(BuildContext context) {
     return Card(
       color: Theme.of(context).cardColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0),
-      ),
       elevation: 0.0,
       shadowColor: Theme.of(context).scaffoldBackgroundColor,
       child: Padding(
