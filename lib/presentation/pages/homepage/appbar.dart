@@ -1,25 +1,32 @@
 import 'package:flutter/material.dart';
 
-class AppBarComponent extends StatefulWidget {
+class AppBarHome extends StatefulWidget {
 
   final String? titulo;
 
-  AppBarComponent({required this.titulo});
+  AppBarHome({required this.titulo});
 
   @override
-  AppBarComponentState createState() => AppBarComponentState();
+  AppBarHomeState createState() => AppBarHomeState();
 }
 
-class AppBarComponentState extends State<AppBarComponent> {
+class AppBarHomeState extends State<AppBarHome> {
+
+  final GlobalKey<PopupMenuButtonState<int>> _menuPopup = GlobalKey();
 
   final String menuItemGrade = "Visualização em grade";
   final String menuItemLista = "Visualização em Lista";
   int opcao = 0;
 
-  PopupMenuButton createMenuItens() {
+  PopupMenuButton _createMenuItens() {
     return PopupMenuButton<int>(
-      icon: Icon(Icons.more_vert, color:  Theme.of(context).appBarTheme.titleTextStyle!.color),
-      tooltip: "Alterar exibição",
+      child: IconButton(
+        icon: Icon(Icons.more_vert, color: Theme.of(context).appBarTheme.titleTextStyle!.color,),
+        tooltip: "Alterar exibição",
+        onPressed: () => _menuPopup.currentState!.showButtonMenu(),
+        splashColor: Color(0xFF004D98),
+      ),
+      key: _menuPopup,
       onSelected: (int result) {
         setState(() {
           opcao = opcao == 0 ? opcao = 1 : opcao = 0;
@@ -36,7 +43,7 @@ class AppBarComponentState extends State<AppBarComponent> {
 
   List<Widget> _actions() {
     return [
-      createMenuItens()
+      _createMenuItens()
     ];
   }
 

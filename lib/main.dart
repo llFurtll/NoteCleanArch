@@ -23,7 +23,9 @@ void main() => runApp(
           borderRadius: BorderRadius.circular(20.0),
         ),
       ),
-      
+      textSelectionTheme: TextSelectionThemeData(
+        cursorColor: Color(0XFFA50044)
+      ),
     ),
   )
 );

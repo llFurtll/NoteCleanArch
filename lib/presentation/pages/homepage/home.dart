@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:note/presentation/components/appbar.dart';
-import 'package:note/presentation/components/card.dart';
+import 'package:note/presentation/pages/createpage/create.dart';
+import 'package:note/presentation/pages/homepage/appbar.dart';
+import 'package:note/presentation/pages/homepage/card.dart';
+import 'package:note/utils/route_animation.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -19,7 +21,7 @@ class HomeState extends State<Home> {
   FloatingActionButton _button() {
     return FloatingActionButton(
       backgroundColor: Theme.of(context).floatingActionButtonTheme.backgroundColor,
-      onPressed: null,
+      onPressed: () => Navigator.of(context).push(createRoute(CreateNote())),
       child: Icon(Icons.add),
     );
   }
@@ -27,9 +29,8 @@ class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: PreferredSize(
-        child: AppBarComponent(titulo: "Note"),
+        child: AppBarHome(titulo: "Note"),
         preferredSize: Size.fromHeight(56.0),
       ),
       body: _home(),
