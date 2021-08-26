@@ -32,12 +32,16 @@ class AppBarHomeState extends State<AppBarHome> {
           opcao = opcao == 0 ? opcao = 1 : opcao = 0;
         });
       },
-      itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-        PopupMenuItem(
-          value: opcao,
-          child: Text(opcao == 0 ? menuItemGrade : menuItemLista),
-        ),
-      ],
+      itemBuilder: (context) {
+        return List.generate(1, (index) {
+          return PopupMenuItem(
+            value: opcao,
+            child: Container(
+              child: Text(opcao == 0 ? menuItemGrade : menuItemLista),
+            ),
+          );
+        });
+      },
     );
   }
 
