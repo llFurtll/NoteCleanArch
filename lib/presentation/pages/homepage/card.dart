@@ -73,24 +73,35 @@ class CardNoteState extends State<CardNote> {
     );
   }
 
-  Expanded _card() {
-    return Expanded(
+  Container _card() {
+    return Container(
+      width: MediaQuery.of(context).size.width,
       child: GestureDetector(
         onHorizontalDragUpdate: (details) {
-          if (details.delta.direction > 0) {
+          if (details.delta.dx < 0) {
             setState(() {
               if (_offset > -60.0) {
-                _offset--;
-                _opacity = _offset.abs() / 60.0;
+                _offset -= -details.delta.dx;
                 _visibilityButtons = true;
+                _opacity = _offset.abs() / 60.0;
+                if (_opacity > 1.0) {
+                  _opacity = 1.0;
+                }
+                if (_offset < -60.0) {
+                  _offset = -60.0;
+                }
               }
             });
           } else {
             setState(() {
               if (_offset < 0.0) {
-                _offset++;
-                _opacity = _offset.abs() / 60;
-                if (_offset == 0.0) {
+                _offset += details.delta.dx;
+                _opacity = _offset.abs() / 60.0;
+                if (_opacity > 1.0) {
+                  _opacity = 1.0;
+                }
+                if (_offset > 0.0) {
+                  _offset = 0.0;
                   _visibilityButtons = false;
                 }
               }
@@ -113,43 +124,51 @@ class CardNoteState extends State<CardNote> {
     );
   }
 
-  Opacity _buttonsActions() {
-    return Opacity(
-      opacity: _opacity,
-      child: Visibility(
-      visible: _visibilityButtons,
-      child:  Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.red,
-                shape: CircleBorder()
+  Positioned _buttonsActions() {
+    return Positioned(
+      right: 0.0,
+      top: 0.0,
+      child: Opacity(
+        opacity: _opacity,
+        child: Visibility(
+        visible: _visibilityButtons,
+        child:  Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Transform.scale(
+                scale: _opacity,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    shape: CircleBorder()
+                  ),
+                  child: Icon(Icons.delete, color: Colors.white),
+                  onPressed: () {},
+                ),
               ),
-              child: Icon(Icons.delete, color: Colors.white),
-              onPressed: () {},
-            ),
-            TextButton(
-              style: TextButton.styleFrom(
-                backgroundColor: Colors.green,
-                shape: CircleBorder()
+              Transform.scale(
+                scale: _opacity,
+                child: TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    shape: CircleBorder()
+                  ),
+                  child: Icon(Icons.check, color: Colors.white),
+                  onPressed: () {},
+                ),
               ),
-              child: Icon(Icons.check, color: Colors.white),
-              onPressed: () {},
-            )
-          ]
+            ]
+          ),
         ),
       ),
     );
   }
 
-  Row _cardWithButtons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      mainAxisSize: MainAxisSize.min,
+  Stack _cardWithButtons() {
+    return Stack(
       children: [
-        _card(),
-        _buttonsActions()
+        _buttonsActions(),
+        _card()
       ],
     );
   }
