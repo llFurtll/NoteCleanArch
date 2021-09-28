@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:note/presentation/pages/homepage/home.dart';
 import 'package:note/utils/route_animation.dart';
+import 'package:note/utils/init_database.dart';
+import 'package:sqflite/sqflite.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -14,10 +16,15 @@ class SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(
-      Duration(seconds: 3),
-      () => Navigator.of(context).pushReplacement(createRoute(Home()))
-    );
+    Future.sync(() async {
+      Database db = await initDatabase();
+
+      Timer(
+        Duration(seconds: 3),
+        () => Navigator.of(context).pushReplacement(createRoute(Home(db: db)))
+      );
+      
+    });
   }
 
   @override

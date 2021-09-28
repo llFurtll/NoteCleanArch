@@ -1,15 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:note/data/datasources/sqlite.dart';
+import 'package:note/data/model/anotacao_model.dart';
+import 'package:note/data/repositories/crud_repository.dart';
+import 'package:note/domain/usecases/usecases.dart';
 import 'package:note/presentation/pages/createpage/appbar.dart';
+import 'package:sqflite/sqflite.dart';
 
 class CreateNote extends StatefulWidget {
+  Database db;
+  GlobalKey key;
+
+  CreateNote({required this.db, required this.key});
+
   @override
   CreateNoteState createState() => CreateNoteState();
 }
 
 class CreateNoteState extends State<CreateNote> {
 
+  GlobalKey<ScaffoldState> _createState = GlobalKey();
+
+  late SqliteDatasource _datasource;
+  late CrudRepository _repository;
+  late UseCases _useCases;
+
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController _title = TextEditingController();
+  TextEditingController _obs = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _datasource = SqliteDatasource(db: widget.db);
+    _repository = CrudRepository(datasourceBase: _datasource);
+    _useCases = UseCases(repository: _repository);
+  }
+
   TextFormField _titulo() {
     return TextFormField(
+      controller: _title,
       decoration: InputDecoration(
         hintText: "Título",
         hintStyle: TextStyle(
@@ -32,6 +62,7 @@ class CreateNoteState extends State<CreateNote> {
 
   TextFormField _descricao() {
     return TextFormField(
+      controller: _obs,
       decoration: InputDecoration(
         border: InputBorder.none,
       ),
@@ -52,6 +83,7 @@ class CreateNoteState extends State<CreateNote> {
         child: Builder(
           builder: (BuildContext context) {
             return Form(
+              key: _formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
@@ -70,7 +102,33 @@ class CreateNoteState extends State<CreateNote> {
   FloatingActionButton _button() {
     return FloatingActionButton(
       backgroundColor: Theme.of(context).floatingActionButtonTheme.backgroundColor,
-      onPressed: null,
+      onPressed: () async {
+        AnotacaoModel anotacaoModel = AnotacaoModel(
+          titulo: _title.text,
+          observacao: _obs.text,
+          data: DateTime.now().toIso8601String(),
+          imagemFundo: "",
+          situacao: 1
+        );
+        
+        int? insert = await _useCases.insertUseCase(anotacao: anotacaoModel);
+
+        if (insert != 0) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: Theme.of(context).primaryColor,
+              content: Text("Anotacão cadastrada com sucesso!"),
+              action: SnackBarAction(
+                label: "Fechar",
+                textColor: Colors.white,
+                onPressed: () {},
+              ),
+            )
+          );
+
+          widget.key.currentState!.setState(() {});
+        }
+      },
       child: Icon(Icons.save),
     );
   }
@@ -78,6 +136,7 @@ class CreateNoteState extends State<CreateNote> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _createState,
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         child: AppBarCreate(),

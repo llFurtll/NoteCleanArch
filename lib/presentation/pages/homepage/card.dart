@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:note/data/model/anotacao_model.dart';
 
 class CardNote extends StatefulWidget {
-  final String titulo;
-  final String conteudo;
-  final DateTime data;
+  final AnotacaoModel anotacaoModel;
 
   CardNote({
-    required this.titulo,
-    required this.conteudo,
-    required this.data
+    required this.anotacaoModel
   });
   
   @override
@@ -48,7 +45,7 @@ class CardNoteState extends State<CardNote> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          widget.titulo,
+          widget.anotacaoModel.titulo!,
           style: TextStyle(
             color: Colors.black,
             fontSize: 18.0,
@@ -56,14 +53,14 @@ class CardNoteState extends State<CardNote> {
           ),
         ),
         Text(
-          widget.conteudo,
+          widget.anotacaoModel.observacao!,
           style: TextStyle(
             color: Color(0XFF808080),
             fontSize: 15.0
           ),
         ),
         Text(
-          _formatDate(widget.data.toIso8601String()),
+          _formatDate(widget.anotacaoModel.data!),
           style: TextStyle(
             color: Color(0XFF808080),
             fontSize: 14.0
