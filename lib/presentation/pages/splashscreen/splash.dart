@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:note/data/datasources/sqlite.dart';
+import 'package:note/data/repositories/crud_repository.dart';
+import 'package:note/domain/usecases/usecases.dart';
 import 'package:note/presentation/pages/homepage/home.dart';
 import 'package:note/utils/route_animation.dart';
 import 'package:note/utils/init_database.dart';
@@ -16,14 +19,13 @@ class SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.sync(() async {
-      Database db = await initDatabase();
+    Future.delayed(Duration(seconds: 3), () async {
+      Database _db = await initDatabase();
+      SqliteDatasource _datasource = SqliteDatasource(db: _db);
+      CrudRepository _repository = CrudRepository(datasourceBase: _datasource);
+      UseCases _useCases = UseCases(repository: _repository);
 
-      Timer(
-        Duration(seconds: 3),
-        () => Navigator.of(context).pushReplacement(createRoute(Home(db: db)))
-      );
-      
+      Navigator.of(context).pushReplacement(createRoute(Home(useCase: _useCases)));
     });
   }
 

@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:note/data/datasources/sqlite.dart';
 import 'package:note/data/model/anotacao_model.dart';
-import 'package:note/data/repositories/crud_repository.dart';
 import 'package:note/domain/usecases/usecases.dart';
 import 'package:note/presentation/pages/createpage/create.dart';
 import 'package:note/presentation/pages/homepage/appbar.dart';
 import 'package:note/presentation/pages/homepage/card.dart';
 import 'package:note/utils/route_animation.dart';
-import 'package:sqflite/sqflite.dart';
 
 class Home extends StatefulWidget {
-  final Database db;
+  final UseCases useCase;
 
-  Home({required this.db});
+  Home({required this.useCase});
   
   @override
   HomeState createState() => HomeState();
@@ -20,35 +17,66 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> {
 
-
-  GlobalKey<ScaffoldState> _homeState = new GlobalKey();
-
-  late SqliteDatasource _datasource;
-  late CrudRepository _repository;
-  late UseCases _useCases;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _datasource = SqliteDatasource(db: widget.db);
-    _repository = CrudRepository(datasourceBase: _datasource);
-    _useCases = UseCases(repository: _repository);
-  }
-
   Future<List<Widget>> _getNotes() async {
-    List<AnotacaoModel?> listaAnotacao = await _useCases.findAlluseCase();
+    List<AnotacaoModel?> listaAnotacao = await widget.useCase.findAlluseCase();
     List<Widget> _listaNote = [];
 
     listaAnotacao.forEach((anotacao) {
       _listaNote.add(
         CardNote(
           anotacaoModel: anotacao!,
+          useCase: widget.useCase,
+          removeNote: () {
+            removeNote(anotacao.id!);
+          },
+          updateSituacao: () {
+            updateSituacao(anotacao);
+          },
         ),
       );
     });
 
     return _listaNote;
+  }
+
+  void removeNote(int id) async {
+    int? delete = await widget.useCase.deleteUseCase(id: id);
+    
+    if (delete == 1) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(context).primaryColor,
+          content: Text("Anotacão deletada com sucesso!"),
+          action: SnackBarAction(
+            label: "Fechar",
+            textColor: Colors.white,
+            onPressed: () {},
+          ),
+        ),
+      );
+
+      setState(() {});
+    }
+  }
+
+  void updateSituacao(AnotacaoModel anotacaoModel) async {
+    int? update = await widget.useCase.updateSituacaoUseCase(anotacao: anotacaoModel);
+    
+    if (update != 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(context).primaryColor,
+          content: Text("Anotacão finalizada com sucesso!"),
+          action: SnackBarAction(
+            label: "Fechar",
+            textColor: Colors.white,
+            onPressed: () {},
+          ),
+        ),
+      );
+
+      setState(() {});
+    }
   }
 
   Widget _home() {
@@ -63,9 +91,15 @@ class HomeState extends State<Home> {
             if (snapshot.hasError) {
               return Center(child: Text("Erro ao carregar os dados"));
             } else {
-              return ListView(
-                children: snapshot.data!,
-              );
+              if (snapshot.data!.isEmpty) {
+                return Center(
+                  child: Text("Sem anotações!"),
+                );
+              } else {
+                return ListView(
+                  children: snapshot.data!,
+                );
+              }
             }
           }
         },
@@ -76,7 +110,16 @@ class HomeState extends State<Home> {
   FloatingActionButton _button() {
     return FloatingActionButton(
       backgroundColor: Theme.of(context).floatingActionButtonTheme.backgroundColor,
-      onPressed: () => Navigator.of(context).push(createRoute(CreateNote(db: widget.db, key: _homeState))),
+      onPressed: () => Navigator.of(context).push(
+        createRoute(
+          CreateNote(
+            useCase: widget.useCase,
+            setState: () {
+              setState(() {});
+            },
+          )
+        )
+      ),
       child: Icon(Icons.add),
     );
   }
@@ -84,7 +127,6 @@ class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _homeState,
       appBar: PreferredSize(
         child: AppBarHome(titulo: "Note"),
         preferredSize: Size.fromHeight(56.0),

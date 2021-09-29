@@ -25,4 +25,9 @@ class UseCases {
   Future<AnotacaoModel?> getByIdUseCase({required int id}) async {
     return await repository.getById(id: id);
   }
+
+  Future<int?> updateSituacaoUseCase({required AnotacaoModel anotacao}) async {
+    anotacao.situacao = anotacao.situacao == 1 ? 0 : 1;
+    return await repository.updateSituacao(anotacao: anotacao);
+  }
 }

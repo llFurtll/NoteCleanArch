@@ -12,7 +12,7 @@ class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
   Future<List<AnotacaoModel>> findAll() async {
     List<AnotacaoModel> listAnotacao = [];
     
-    List<Map> listNote = await db.rawQuery("SELECT * FROM NOTE");
+    List<Map> listNote = await db.rawQuery("SELECT * FROM NOTE WHERE SITUACAO = 1 ORDER BY DATA DESC");
 
     listNote.forEach((elemento) {
       listAnotacao.add(AnotacaoModel.fromJson(elemento));
@@ -71,6 +71,22 @@ class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
       [
         anotacao.titulo, anotacao.data, anotacao.situacao,
         anotacao.imagemFundo, anotacao.observacao, anotacao.id
+      ]
+    );
+
+    return update;
+  }
+
+  @override
+  Future<int?> updateSituacao({required AnotacaoModel anotacao}) async {
+    int update;
+
+    update = await db.rawUpdate(
+      """
+      UPDATE NOTE SET SITUACAO = ? WHERE ID = ?
+      """,
+      [
+        anotacao.situacao, anotacao.id
       ]
     );
 

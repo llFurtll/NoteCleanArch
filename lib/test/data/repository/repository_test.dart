@@ -29,8 +29,8 @@ void main() {
       test("Testando o findAll", () async {
         List<AnotacaoModel?> lista = await repositoryTest.findAll();
         expect(lista.length, 2);
-        expect(lista[0]!.id, 1);
-        expect(lista[1]!.id, 2);
+        expect(lista[0]!.id, 2);
+        expect(lista[1]!.id, 1);
       });
 
       test("Testando o getById", () async {
@@ -41,6 +41,19 @@ void main() {
 
       test("Testando o update", () async {
         int? update = await repositoryTest.update(anotacao: gerarAnotacao(
+          id: 1,
+          data: DateTime.now().toIso8601String(),
+          imagemFundo: "Legal",
+          observacao: "Eu amo flutter",
+          situacao: 0,
+          titulo: "Lindo"
+        ) as AnotacaoModel);
+
+        assert(update == 1);
+      });
+
+      test("Testando o update situacao", () async {
+        int? update = await repositoryTest.updateSituacao(anotacao: gerarAnotacao(
           id: 1,
           data: DateTime.now().toIso8601String(),
           imagemFundo: "Legal",

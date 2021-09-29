@@ -31,7 +31,7 @@ class AppBarCreateState extends State<AppBarCreate> {
               Icons.arrow_back_ios,
               color: Theme.of(context).appBarTheme.titleTextStyle!.color
             ),
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.pop(context),
           );
       }
     );

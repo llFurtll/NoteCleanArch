@@ -49,6 +49,19 @@ void main() {
         assert(update == 1);
       });
 
+      test("Testando o updateSituacaoUseCase", () async {
+        int? update = await useCases.updateSituacaoUseCase(anotacao: gerarAnotacao(
+          id: 1,
+          data: DateTime.now().toIso8601String(),
+          imagemFundo: "Legal",
+          observacao: "Eu amo flutter",
+          situacao: 0,
+          titulo: "Lindo"
+        ) as AnotacaoModel);
+
+        assert(update == 1);
+      });
+
        test("Testando o deleteUseCase", () async {
         int? delete = await useCases.deleteUseCase(id: 1);
          assert(delete == 1);

@@ -1,16 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:note/data/datasources/sqlite.dart';
 import 'package:note/data/model/anotacao_model.dart';
-import 'package:note/data/repositories/crud_repository.dart';
 import 'package:note/domain/usecases/usecases.dart';
 import 'package:note/presentation/pages/createpage/appbar.dart';
-import 'package:sqflite/sqflite.dart';
 
 class CreateNote extends StatefulWidget {
-  Database db;
-  GlobalKey key;
+  final UseCases useCase;
+  final Function setState;
 
-  CreateNote({required this.db, required this.key});
+  CreateNote({required this.useCase, required this.setState});
 
   @override
   CreateNoteState createState() => CreateNoteState();
@@ -18,28 +15,20 @@ class CreateNote extends StatefulWidget {
 
 class CreateNoteState extends State<CreateNote> {
 
-  GlobalKey<ScaffoldState> _createState = GlobalKey();
-
-  late SqliteDatasource _datasource;
-  late CrudRepository _repository;
-  late UseCases _useCases;
-
   final _formKey = GlobalKey<FormState>();
   TextEditingController _title = TextEditingController();
   TextEditingController _obs = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-
-    _datasource = SqliteDatasource(db: widget.db);
-    _repository = CrudRepository(datasourceBase: _datasource);
-    _useCases = UseCases(repository: _repository);
-  }
-
   TextFormField _titulo() {
     return TextFormField(
       controller: _title,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Por favor preencha o título!";
+        }
+
+        return null;
+      },
       decoration: InputDecoration(
         hintText: "Título",
         hintStyle: TextStyle(
@@ -103,30 +92,34 @@ class CreateNoteState extends State<CreateNote> {
     return FloatingActionButton(
       backgroundColor: Theme.of(context).floatingActionButtonTheme.backgroundColor,
       onPressed: () async {
-        AnotacaoModel anotacaoModel = AnotacaoModel(
+        if (_formKey.currentState!.validate()) {
+          AnotacaoModel anotacaoModel = AnotacaoModel(
           titulo: _title.text,
           observacao: _obs.text,
           data: DateTime.now().toIso8601String(),
           imagemFundo: "",
           situacao: 1
-        );
-        
-        int? insert = await _useCases.insertUseCase(anotacao: anotacaoModel);
-
-        if (insert != 0) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              backgroundColor: Theme.of(context).primaryColor,
-              content: Text("Anotacão cadastrada com sucesso!"),
-              action: SnackBarAction(
-                label: "Fechar",
-                textColor: Colors.white,
-                onPressed: () {},
-              ),
-            )
           );
+          
+          int? insert = await widget.useCase.insertUseCase(anotacao: anotacaoModel);
 
-          widget.key.currentState!.setState(() {});
+          if (insert != 0) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                backgroundColor: Theme.of(context).primaryColor,
+                content: Text("Anotacão cadastrada com sucesso!"),
+                action: SnackBarAction(
+                  label: "Fechar",
+                  textColor: Colors.white,
+                  onPressed: () {},
+                ),
+              )
+            );
+
+            widget.setState();
+
+            Navigator.of(context).pop();
+          }
         }
       },
       child: Icon(Icons.save),
@@ -136,7 +129,6 @@ class CreateNoteState extends State<CreateNote> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _createState,
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         child: AppBarCreate(),

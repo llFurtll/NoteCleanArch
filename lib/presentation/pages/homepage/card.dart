@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:note/data/model/anotacao_model.dart';
+import 'package:note/domain/usecases/usecases.dart';
 
 class CardNote extends StatefulWidget {
   final AnotacaoModel anotacaoModel;
+  final UseCases useCase;
+  final Function()? removeNote;
+  final Function()? updateSituacao;
 
   CardNote({
-    required this.anotacaoModel
+      required this.anotacaoModel,
+      required this.useCase,
+      required this.removeNote,
+      this.updateSituacao
   });
   
   @override
@@ -140,7 +147,7 @@ class CardNoteState extends State<CardNote> {
                     shape: CircleBorder()
                   ),
                   child: Icon(Icons.delete, color: Colors.white),
-                  onPressed: () {},
+                  onPressed: widget.removeNote
                 ),
               ),
               Transform.scale(
@@ -151,7 +158,7 @@ class CardNoteState extends State<CardNote> {
                     shape: CircleBorder()
                   ),
                   child: Icon(Icons.check, color: Colors.white),
-                  onPressed: () {},
+                  onPressed: widget.updateSituacao,
                 ),
               ),
             ]

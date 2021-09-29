@@ -61,6 +61,21 @@ void main() {
         assert(update == 1);
       });
 
+      test("Testando o updateSituacao", () async {
+        int? update = await datasourceTest.updateSituacao(
+          anotacao: gerarAnotacao(
+            id: 3,
+            titulo: "Daniel",
+            data: DateTime.now().toIso8601String(),
+            situacao: 0,
+            imagemFundo: "https",
+            observacao: "Daniel e lindo!"
+          ) as AnotacaoModel
+        );
+
+        assert(update == 1);
+      });
+
       test("Testando o delete", () async {
         int? delete = await datasourceTest.delete(id: 1);
         assert(delete == 1);

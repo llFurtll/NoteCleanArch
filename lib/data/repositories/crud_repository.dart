@@ -32,4 +32,9 @@ class CrudRepository implements IRepository<AnotacaoModel> {
   Future<AnotacaoModel?> getById({required int id}) async {
     return await datasourceBase.getById(id: id);
   }
+
+  @override
+  Future<int?> updateSituacao({required AnotacaoModel anotacao}) async {
+    return await datasourceBase.updateSituacao(anotacao: anotacao);
+  }
 }

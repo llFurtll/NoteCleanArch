@@ -6,4 +6,5 @@ abstract class DatasourceBase<T extends Anotacao> {
   Future<int?> insert({required T anotacao});
   Future<int?> update({required T anotacao});
   Future<int?> delete({required int id});
+  Future<int?> updateSituacao({required T anotacao});
 }
