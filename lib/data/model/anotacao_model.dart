@@ -34,7 +34,7 @@ class AnotacaoModel implements Anotacao {
     return AnotacaoModel(
       id: json["id"],
       data: json["data"],
-      imagemFundo: json["imagemFundo"],
+      imagemFundo: json["imagem_fundo"],
       observacao: json["observacao"],
       situacao: json["situacao"],
       titulo: json["titulo"]

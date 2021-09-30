@@ -26,57 +26,14 @@ class HomeState extends State<Home> {
         CardNote(
           anotacaoModel: anotacao!,
           useCase: widget.useCase,
-          removeNote: () {
-            removeNote(anotacao.id!);
-          },
-          updateSituacao: () {
-            updateSituacao(anotacao);
+          setState: () {
+            setState(() {});
           },
         ),
       );
     });
 
     return _listaNote;
-  }
-
-  void removeNote(int id) async {
-    int? delete = await widget.useCase.deleteUseCase(id: id);
-    
-    if (delete == 1) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Theme.of(context).primaryColor,
-          content: Text("Anotacão deletada com sucesso!"),
-          action: SnackBarAction(
-            label: "Fechar",
-            textColor: Colors.white,
-            onPressed: () {},
-          ),
-        ),
-      );
-
-      setState(() {});
-    }
-  }
-
-  void updateSituacao(AnotacaoModel anotacaoModel) async {
-    int? update = await widget.useCase.updateSituacaoUseCase(anotacao: anotacaoModel);
-    
-    if (update != 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Theme.of(context).primaryColor,
-          content: Text("Anotacão finalizada com sucesso!"),
-          action: SnackBarAction(
-            label: "Fechar",
-            textColor: Colors.white,
-            onPressed: () {},
-          ),
-        ),
-      );
-
-      setState(() {});
-    }
   }
 
   Widget _home() {

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/domain/usecases/usecases.dart';
+import 'package:note/presentation/pages/createpage/create.dart';
+import 'package:note/utils/route_animation.dart';
 
 class CardNote extends StatefulWidget {
   final AnotacaoModel anotacaoModel;
   final UseCases useCase;
-  final Function()? removeNote;
-  final Function()? updateSituacao;
+  final Function setState;
 
   CardNote({
       required this.anotacaoModel,
       required this.useCase,
-      required this.removeNote,
-      this.updateSituacao
+      required this.setState
   });
   
   @override
@@ -51,19 +51,27 @@ class CardNoteState extends State<CardNote> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          widget.anotacaoModel.titulo!,
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 18.0,
-            fontWeight: FontWeight.bold
+        Padding(
+          padding: EdgeInsets.only(bottom: 5.0),
+          child: Text(
+            widget.anotacaoModel.titulo!,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold
+            ),
           ),
         ),
-        Text(
-          widget.anotacaoModel.observacao!,
-          style: TextStyle(
-            color: Color(0XFF808080),
-            fontSize: 15.0
+        Padding(
+          padding: EdgeInsets.only(bottom: 5.0),
+          child:  Text(
+            widget.anotacaoModel.observacao!,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 3,
+            style: TextStyle(
+              color: Color(0XFF808080),
+              fontSize: 15.0
+            ),
           ),
         ),
         Text(
@@ -81,6 +89,18 @@ class CardNoteState extends State<CardNote> {
     return Container(
       width: MediaQuery.of(context).size.width,
       child: GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            createRoute(
+              CreateNote(
+                useCase: widget.useCase,
+                setState: widget.setState,
+                id: widget.anotacaoModel.id!,
+              )
+            )
+          );
+        },
         onHorizontalDragUpdate: (details) {
           if (details.delta.dx < 0) {
             setState(() {
@@ -147,7 +167,7 @@ class CardNoteState extends State<CardNote> {
                     shape: CircleBorder()
                   ),
                   child: Icon(Icons.delete, color: Colors.white),
-                  onPressed: widget.removeNote
+                  onPressed: removeNote
                 ),
               ),
               Transform.scale(
@@ -158,7 +178,7 @@ class CardNoteState extends State<CardNote> {
                     shape: CircleBorder()
                   ),
                   child: Icon(Icons.check, color: Colors.white),
-                  onPressed: widget.updateSituacao,
+                  onPressed: updateSituacao,
                 ),
               ),
             ]
@@ -180,5 +200,45 @@ class CardNoteState extends State<CardNote> {
   @override
   Widget build(BuildContext context) {
     return _cardWithButtons();
+  }
+
+  void removeNote() async {
+    int? delete = await widget.useCase.deleteUseCase(id: widget.anotacaoModel.id!);
+    
+    if (delete == 1) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(context).primaryColor,
+          content: Text("Anotacão deletada com sucesso!"),
+          action: SnackBarAction(
+            label: "Fechar",
+            textColor: Colors.white,
+            onPressed: () {},
+          ),
+        ),
+      );
+
+      widget.setState();
+    }
+  }
+
+  void updateSituacao() async {
+    int? update = await widget.useCase.updateSituacaoUseCase(anotacao: widget.anotacaoModel);
+    
+    if (update != 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(context).primaryColor,
+          content: Text("Anotacão finalizada com sucesso!"),
+          action: SnackBarAction(
+            label: "Fechar",
+            textColor: Colors.white,
+            onPressed: () {},
+          ),
+        ),
+      );
+
+      widget.setState();
+    }
   }
 }

@@ -6,8 +6,9 @@ import 'package:note/presentation/pages/createpage/appbar.dart';
 class CreateNote extends StatefulWidget {
   final UseCases useCase;
   final Function setState;
+  final int? id;
 
-  CreateNote({required this.useCase, required this.setState});
+  CreateNote({required this.useCase, required this.setState, this.id});
 
   @override
   CreateNoteState createState() => CreateNoteState();
@@ -16,8 +17,31 @@ class CreateNote extends StatefulWidget {
 class CreateNoteState extends State<CreateNote> {
 
   final _formKey = GlobalKey<FormState>();
+  late AnotacaoModel? _anotacaoModel;
+
   TextEditingController _title = TextEditingController();
   TextEditingController _obs = TextEditingController();
+  String pathImage = "";
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.id != null) {
+      Future.sync(() async {
+        _anotacaoModel = await widget.useCase.getByIdUseCase(id: widget.id!);
+
+        _title.text = _anotacaoModel!.titulo!;
+        _obs.text = _anotacaoModel!.observacao!;
+        setState(() {
+          if (_anotacaoModel!.imagemFundo != null) {
+            pathImage = _anotacaoModel!.imagemFundo!;
+          }
+        });
+      });
+    }
+  }
 
   TextFormField _titulo() {
     return TextFormField(
@@ -59,32 +83,45 @@ class CreateNoteState extends State<CreateNote> {
         color: Colors.black,
         fontSize: 18.0
       ),
-      minLines: 20,
+      minLines: 50,
       maxLines: null,
       keyboardType: TextInputType.multiline,
     );
   }
 
   Widget _home() {
-    return Container(
-      padding: EdgeInsets.all(25.0),
-      child: SingleChildScrollView(
-        child: Builder(
-          builder: (BuildContext context) {
-            return Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _titulo(),
-                  _descricao(),
-                ],
-              ),
-            );
-          },
+    return Stack(
+      children: [
+        Container(
+          decoration: pathImage.isEmpty ? null : BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(pathImage),
+              fit: BoxFit.fill,
+            ),
+          ),
         ),
-      ),
+        Container(
+          color: Colors.white.withOpacity(0.3),
+          padding: EdgeInsets.all(25.0),
+          child: SingleChildScrollView(
+            child: Builder(
+              builder: (BuildContext context) {
+                return Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _titulo(),
+                      _descricao(),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -93,33 +130,18 @@ class CreateNoteState extends State<CreateNote> {
       backgroundColor: Theme.of(context).floatingActionButtonTheme.backgroundColor,
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
-          AnotacaoModel anotacaoModel = AnotacaoModel(
-          titulo: _title.text,
-          observacao: _obs.text,
-          data: DateTime.now().toIso8601String(),
-          imagemFundo: "",
-          situacao: 1
-          );
-          
-          int? insert = await widget.useCase.insertUseCase(anotacao: anotacaoModel);
-
-          if (insert != 0) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                backgroundColor: Theme.of(context).primaryColor,
-                content: Text("Anotacão cadastrada com sucesso!"),
-                action: SnackBarAction(
-                  label: "Fechar",
-                  textColor: Colors.white,
-                  onPressed: () {},
-                ),
-              )
-            );
-
-            widget.setState();
-
-            Navigator.of(context).pop();
+          if (widget.id == null) {
+            insertNote(_title.text, _obs.text, widget.useCase, context);
+          } else {
+            _anotacaoModel!.titulo = _title.text;
+            _anotacaoModel!.observacao = _obs.text;
+            _anotacaoModel!.imagemFundo = pathImage;
+            updateNote(_anotacaoModel!, widget.useCase, context);
           }
+
+          widget.setState();
+
+          Navigator.of(context).pop();
         }
       },
       child: Icon(Icons.save),
@@ -131,11 +153,62 @@ class CreateNoteState extends State<CreateNote> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        child: AppBarCreate(),
+        child: AppBarCreate(updateImage: updatePathImage),
         preferredSize: Size.fromHeight(56.0),
       ),
       body: _home(),
       floatingActionButton: _button(),
     );
+  }
+
+  void insertNote(String title, String obs, UseCases useCase, BuildContext context) async {
+    print(pathImage);
+    AnotacaoModel anotacaoModel = AnotacaoModel(
+      titulo: title,
+      observacao: obs,
+      data: DateTime.now().toIso8601String(),
+      imagemFundo: pathImage,
+      situacao: 1
+    );
+    
+    int? insert = await useCase.insertUseCase(anotacao: anotacaoModel);
+
+    if (insert != 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(context).primaryColor,
+          content: Text("Anotacão cadastrada com sucesso!"),
+          action: SnackBarAction(
+            label: "Fechar",
+            textColor: Colors.white,
+            onPressed: () {},
+          ),
+        )
+      );
+    }
+  }
+
+  void updateNote(AnotacaoModel anotacao, UseCases useCase, BuildContext context) async {
+    int? updated = await useCase.updateUseCase(anotacao: anotacao);
+
+    if (updated != 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(context).primaryColor,
+          content: Text("Anotacão atualizada com sucesso!"),
+          action: SnackBarAction(
+            label: "Fechar",
+            textColor: Colors.white,
+            onPressed: () {},
+          ),
+        )
+      );
+    }
+  }
+
+  void updatePathImage(String path) {
+    setState(() {
+      pathImage = path;
+    });
   }
 }
