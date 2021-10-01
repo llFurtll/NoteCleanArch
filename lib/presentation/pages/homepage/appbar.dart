@@ -21,7 +21,7 @@ class AppBarHomeState extends State<AppBarHome> {
   PopupMenuButton _createMenuItens() {
     return PopupMenuButton<int>(
       child: IconButton(
-        icon: Icon(Icons.more_vert, color: Theme.of(context).appBarTheme.titleTextStyle!.color,),
+        icon: Icon(Icons.more_vert, color: Theme.of(context).appBarTheme.iconTheme!.color,),
         tooltip: "Alterar exibição",
         onPressed: () => _menuPopup.currentState!.showButtonMenu(),
         splashColor: Color(0xFF004D98),

@@ -56,7 +56,7 @@ class CardNoteState extends State<CardNote> {
           child: Text(
             widget.anotacaoModel.titulo!,
             style: TextStyle(
-              color: Colors.black,
+              color: widget.anotacaoModel.imagemFundo!.isEmpty ? Colors.black : Colors.white,
               fontSize: 18.0,
               fontWeight: FontWeight.bold
             ),
@@ -69,7 +69,7 @@ class CardNoteState extends State<CardNote> {
             overflow: TextOverflow.ellipsis,
             maxLines: 3,
             style: TextStyle(
-              color: Color(0XFF808080),
+              color: widget.anotacaoModel.imagemFundo!.isEmpty ? Color(0XFF808080) : Colors.white,
               fontSize: 15.0
             ),
           ),
@@ -77,7 +77,7 @@ class CardNoteState extends State<CardNote> {
         Text(
           _formatDate(widget.anotacaoModel.data!),
           style: TextStyle(
-            color: Color(0XFF808080),
+            color: widget.anotacaoModel.imagemFundo!.isEmpty ? Color(0XFF808080) : Colors.white,
             fontSize: 14.0
           ),
         ),
@@ -87,6 +87,7 @@ class CardNoteState extends State<CardNote> {
 
   Container _card() {
     return Container(
+      margin: EdgeInsets.only(bottom: 15.0),
       width: MediaQuery.of(context).size.width,
       child: GestureDetector(
         onTap: () {
@@ -138,9 +139,30 @@ class CardNoteState extends State<CardNote> {
             color: Theme.of(context).cardColor,
             elevation: 0.0,
             shadowColor: Theme.of(context).scaffoldBackgroundColor,
-            child: Padding(
-              padding: EdgeInsets.all(20.0),
-              child: _contentCard()
+            child: Container(
+              decoration: widget.anotacaoModel.imagemFundo!.isEmpty ? null : BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(widget.anotacaoModel.imagemFundo!),
+                  fit: BoxFit.cover,
+                ),
+                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black,
+                    blurRadius: 5.0,
+                  )
+                ]
+              ),
+              child: Container(
+                decoration: widget.anotacaoModel.imagemFundo!.isEmpty ? null : BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  color: Colors.black.withOpacity(0.5),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: _contentCard(),
+                ),
+              ),
             ),
           ),
         ),

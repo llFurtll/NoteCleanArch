@@ -12,6 +12,9 @@ void main() => runApp(
         titleTextStyle: TextStyle(
           color: Color(0xFF004D98)
         ),
+        iconTheme: IconThemeData(
+          color: Color(0xFF004D98)
+        )
       ),
       scaffoldBackgroundColor: Color(0xFFE6E6E6),
       floatingActionButtonTheme: FloatingActionButtonThemeData(

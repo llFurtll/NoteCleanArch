@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:note/presentation/pages/createpage/create.dart';
 
 class AppBarCreate extends StatefulWidget {
   final Function(String pathImage) updateImage;
@@ -15,13 +14,27 @@ class AppBarCreate extends StatefulWidget {
 
 class AppBarCreateState extends State<AppBarCreate> {
 
-  final GlobalKey<CreateNoteState> _creaKey = GlobalKey();
+  bool _removeBackground = false;
 
   List<Widget> _actions() {
     return [
+      Visibility(
+        visible: _removeBackground,
+        child: IconButton(
+          color: Colors.black,
+          padding: EdgeInsets.only(top: 25.0, bottom: 25.0, right: 10.0),
+          onPressed: () {
+            widget.updateImage("");
+            setState(() {
+              _removeBackground = false;
+            });
+          },
+          icon: Icon(Icons.close)
+        )
+      ),
       IconButton(
         splashColor: Color(0xFF004D98),
-        padding: EdgeInsets.all(25.0),
+        padding: EdgeInsets.only(top: 25.0, bottom: 25.0, right: 25.0),
         onPressed: () {
           Scaffold.of(context).showBottomSheet((context) => Container(
             padding: EdgeInsets.all(15.0),
@@ -53,7 +66,7 @@ class AppBarCreateState extends State<AppBarCreate> {
         },
         icon: Icon(
           Icons.photo,
-          color: Theme.of(context).appBarTheme.titleTextStyle!.color,
+          color: Colors.black,
         ),
       ),
     ];
@@ -82,7 +95,7 @@ class AppBarCreateState extends State<AppBarCreate> {
             padding: EdgeInsets.all(25.0),
             icon: Icon(
               Icons.arrow_back_ios,
-              color: Theme.of(context).appBarTheme.titleTextStyle!.color
+              color: Colors.black
             ),
             onPressed: () => Navigator.pop(context),
           );
@@ -94,6 +107,9 @@ class AppBarCreateState extends State<AppBarCreate> {
     return GestureDetector(
       onTap: () {
         widget.updateImage(image);
+        setState(() {
+          _removeBackground = true;
+        });
       },
       child: Container(
         margin: EdgeInsets.only(right: 15.0),
@@ -113,7 +129,7 @@ class AppBarCreateState extends State<AppBarCreate> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
       elevation: 0,
       actions: _actions(),
       leading: _iconLeading(),

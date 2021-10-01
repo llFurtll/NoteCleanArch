@@ -27,7 +27,6 @@ class CreateNoteState extends State<CreateNote> {
   @override
   void initState() {
     super.initState();
-
     if (widget.id != null) {
       Future.sync(() async {
         _anotacaoModel = await widget.useCase.getByIdUseCase(id: widget.id!);
@@ -90,38 +89,25 @@ class CreateNoteState extends State<CreateNote> {
   }
 
   Widget _home() {
-    return Stack(
-      children: [
-        Container(
-          decoration: pathImage.isEmpty ? null : BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage(pathImage),
-              fit: BoxFit.fill,
-            ),
-          ),
+    return Container(
+      padding: EdgeInsets.all(25.0),
+      child: SingleChildScrollView(
+        child: Builder(
+          builder: (BuildContext context) {
+            return Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _titulo(),
+                  _descricao(),
+                ],
+              ),
+            );
+          },
         ),
-        Container(
-          color: Colors.white.withOpacity(0.3),
-          padding: EdgeInsets.all(25.0),
-          child: SingleChildScrollView(
-            child: Builder(
-              builder: (BuildContext context) {
-                return Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _titulo(),
-                      _descricao(),
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
@@ -151,18 +137,39 @@ class CreateNoteState extends State<CreateNote> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         child: AppBarCreate(updateImage: updatePathImage),
         preferredSize: Size.fromHeight(56.0),
       ),
-      body: _home(),
+      body: Stack(
+        children: [
+          Container(
+            decoration: pathImage.isEmpty ? null : BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(pathImage),
+                fit: BoxFit.fill,
+              ),
+            ),
+            width: double.infinity,
+            height: double.infinity,
+          ),
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.white.withOpacity(0.5),
+            child: SafeArea(
+              child: _home(),
+            ),
+          ),
+        ],
+      ),
       floatingActionButton: _button(),
     );
   }
 
   void insertNote(String title, String obs, UseCases useCase, BuildContext context) async {
-    print(pathImage);
     AnotacaoModel anotacaoModel = AnotacaoModel(
       titulo: title,
       observacao: obs,
