@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/domain/usecases/usecases.dart';
 import 'package:note/presentation/pages/createpage/appbar.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class CreateNote extends StatefulWidget {
   final UseCases useCase;
@@ -19,8 +20,11 @@ class CreateNoteState extends State<CreateNote> {
   final _formKey = GlobalKey<FormState>();
   late AnotacaoModel? _anotacaoModel;
 
+  Color _colorNote = Color(0xFF000000);
+
   TextEditingController _title = TextEditingController();
   TextEditingController _obs = TextEditingController();
+  TextEditingController _cor = TextEditingController();
   String pathImage = "";
 
 
@@ -34,8 +38,13 @@ class CreateNoteState extends State<CreateNote> {
         _title.text = _anotacaoModel!.titulo!;
         _obs.text = _anotacaoModel!.observacao!;
         setState(() {
-          if (_anotacaoModel!.imagemFundo != null) {
+          if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
             pathImage = _anotacaoModel!.imagemFundo!;
+            AppBarCreate.removeBackground = true;
+          }
+          if (_anotacaoModel!.cor != null &&_anotacaoModel!.cor!.isNotEmpty) {
+            _colorNote = Color(int.parse("0xFF${_anotacaoModel!.cor}"));
+            AppBarCreate.color = _colorNote;
           }
         });
       });
@@ -55,14 +64,14 @@ class CreateNoteState extends State<CreateNote> {
       decoration: InputDecoration(
         hintText: "Título",
         hintStyle: TextStyle(
-          color: Colors.black,
+          color: _colorNote,
           fontWeight: FontWeight.bold,
           fontSize: 20.0
         ),
-        border: InputBorder.none,
+        border: InputBorder.none, 
       ),
       style: TextStyle(
-        color: Colors.black,
+        color: _colorNote,
         fontWeight: FontWeight.bold,
         fontSize: 20.0
       ),
@@ -79,7 +88,7 @@ class CreateNoteState extends State<CreateNote> {
         border: InputBorder.none,
       ),
       style: TextStyle(
-        color: Colors.black,
+        color: _colorNote,
         fontSize: 18.0
       ),
       minLines: 50,
@@ -117,65 +126,108 @@ class CreateNoteState extends State<CreateNote> {
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           if (widget.id == null) {
-            insertNote(_title.text, _obs.text, widget.useCase, context);
+            insertNote(_title.text, _obs.text, _cor.text, widget.useCase, context);
           } else {
             _anotacaoModel!.titulo = _title.text;
             _anotacaoModel!.observacao = _obs.text;
             _anotacaoModel!.imagemFundo = pathImage;
+            _anotacaoModel!.cor =_cor.text;
             updateNote(_anotacaoModel!, widget.useCase, context);
           }
 
           widget.setState();
-
-          Navigator.of(context).pop();
         }
       },
       child: Icon(Icons.save),
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.white,
-      appBar: PreferredSize(
-        child: AppBarCreate(updateImage: updatePathImage),
-        preferredSize: Size.fromHeight(56.0),
-      ),
-      body: Stack(
-        children: [
-          Container(
-            decoration: pathImage.isEmpty ? null : BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(pathImage),
-                fit: BoxFit.fill,
-              ),
+  void showColorPicker() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        contentPadding: EdgeInsets.all(10.0),
+        title: Text("Cor das letras"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ColorPicker(
+              pickerColor: _colorNote,
+              onColorChanged: changeColor,
+              showLabel: false,
+              enableAlpha: false,
+              pickerAreaBorderRadius: BorderRadius.all(Radius.circular(15.0)),
+              pickerAreaHeightPercent: 0.7,
+              hexInputController: _cor,
             ),
-            width: double.infinity,
-            height: double.infinity,
-          ),
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Colors.white.withOpacity(0.5),
-            child: SafeArea(
-              child: _home(),
-            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text("Salvar"),
           ),
         ],
       ),
-      floatingActionButton: _button(),
     );
   }
 
-  void insertNote(String title, String obs, UseCases useCase, BuildContext context) async {
+  void changeColor(Color color) {
+    setState(() {
+      _colorNote = color;
+      AppBarCreate.color = color;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        AppBarCreate.color = Color(0xFF000000);
+        return true;
+      },
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        backgroundColor: Colors.white,
+        appBar: PreferredSize(
+          child: AppBarCreate(updateImage: updatePathImage, showColorPicker: showColorPicker),
+          preferredSize: Size.fromHeight(56.0),
+        ),
+        body: Stack(
+          children: [
+            Container(
+              decoration: pathImage.isEmpty ? null : BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(pathImage),
+                  fit: BoxFit.fill,
+                ),
+              ),
+              width: double.infinity,
+              height: double.infinity,
+            ),
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              color: Colors.white.withOpacity(0.5),
+              child: SafeArea(
+                child: _home(),
+              ),
+            ),
+          ],
+        ),
+        floatingActionButton: _button(),
+      ),
+    );
+  }
+
+  void insertNote(String title, String obs, String cor, UseCases useCase, BuildContext context) async {
     AnotacaoModel anotacaoModel = AnotacaoModel(
       titulo: title,
       observacao: obs,
       data: DateTime.now().toIso8601String(),
       imagemFundo: pathImage,
-      situacao: 1
+      situacao: 1,
+      cor: cor
     );
     
     int? insert = await useCase.insertUseCase(anotacao: anotacaoModel);

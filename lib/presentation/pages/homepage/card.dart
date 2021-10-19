@@ -56,7 +56,7 @@ class CardNoteState extends State<CardNote> {
           child: Text(
             widget.anotacaoModel.titulo!,
             style: TextStyle(
-              color: widget.anotacaoModel.imagemFundo!.isEmpty ? Colors.black : Colors.white,
+              color: widget.anotacaoModel.cor!.isNotEmpty ? Color(int.parse("0xFF${widget.anotacaoModel.cor}")) : Colors.black,
               fontSize: 18.0,
               fontWeight: FontWeight.bold
             ),
@@ -69,7 +69,7 @@ class CardNoteState extends State<CardNote> {
             overflow: TextOverflow.ellipsis,
             maxLines: 3,
             style: TextStyle(
-              color: widget.anotacaoModel.imagemFundo!.isEmpty ? Color(0XFF808080) : Colors.white,
+              color: widget.anotacaoModel.cor!.isNotEmpty ? Color(int.parse("0xFF${widget.anotacaoModel.cor}")) : Colors.black,
               fontSize: 15.0
             ),
           ),
@@ -77,7 +77,7 @@ class CardNoteState extends State<CardNote> {
         Text(
           _formatDate(widget.anotacaoModel.data!),
           style: TextStyle(
-            color: widget.anotacaoModel.imagemFundo!.isEmpty ? Color(0XFF808080) : Colors.white,
+            color: widget.anotacaoModel.cor!.isNotEmpty ? Color(int.parse("0xFF${widget.anotacaoModel.cor}")) : Colors.black,
             fontSize: 14.0
           ),
         ),
@@ -136,8 +136,12 @@ class CardNoteState extends State<CardNote> {
         child: Transform.translate(
           offset: Offset(_offset, 0.0),
           child: Card(
+            clipBehavior: Clip.antiAlias,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(10.0))
+            ),
             color: Theme.of(context).cardColor,
-            elevation: 0.0,
+            elevation: 10.0,
             shadowColor: Theme.of(context).scaffoldBackgroundColor,
             child: Container(
               decoration: widget.anotacaoModel.imagemFundo!.isEmpty ? null : BoxDecoration(
@@ -145,18 +149,11 @@ class CardNoteState extends State<CardNote> {
                   image: AssetImage(widget.anotacaoModel.imagemFundo!),
                   fit: BoxFit.cover,
                 ),
-                borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black,
-                    blurRadius: 5.0,
-                  )
-                ]
               ),
               child: Container(
                 decoration: widget.anotacaoModel.imagemFundo!.isEmpty ? null : BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                  color: Colors.black.withOpacity(0.5),
+                  color: Colors.white.withOpacity(0.5),
                 ),
                 child: Padding(
                   padding: EdgeInsets.all(20.0),

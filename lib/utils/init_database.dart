@@ -14,7 +14,8 @@ Future<Database> initDatabase() async {
             data DATETIME NOT NULL,
             situacao INTEGER NOT NULL,
             imagem_fundo TEXT,
-            observacao TEXT
+            observacao TEXT,
+            cor TEXT
           )
         """
       );

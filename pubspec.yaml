@@ -38,6 +38,7 @@ dev_dependencies:
   build_runner:
   faker:
   sqflite_common_ffi:
+  flutter_colorpicker:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

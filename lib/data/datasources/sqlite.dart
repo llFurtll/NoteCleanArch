@@ -40,10 +40,10 @@ class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
     int? insert;
 
     insert = await db.rawInsert(
-      """INSERT INTO NOTE(titulo, data, situacao, imagem_fundo, observacao)
-          VALUES(?, ?, ?, ?, ?)
+      """INSERT INTO NOTE(titulo, data, situacao, imagem_fundo, observacao, cor)
+          VALUES(?, ?, ?, ?, ?, ?)
       """,
-      [anotacao.titulo, anotacao.data, anotacao.situacao, anotacao.imagemFundo, anotacao.observacao]
+      [anotacao.titulo, anotacao.data, anotacao.situacao, anotacao.imagemFundo, anotacao.observacao, anotacao.cor]
     );
 
     return insert;
@@ -66,11 +66,11 @@ class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
 
     update = await db.rawUpdate(
       """
-      UPDATE NOTE SET TITULO = ?, DATA = ?, SITUACAO = ?, IMAGEM_FUNDO = ?, OBSERVACAO = ? WHERE ID = ?
+      UPDATE NOTE SET TITULO = ?, DATA = ?, SITUACAO = ?, IMAGEM_FUNDO = ?, OBSERVACAO = ?, COR = ? WHERE ID = ?
       """,
       [
         anotacao.titulo, anotacao.data, anotacao.situacao,
-        anotacao.imagemFundo, anotacao.observacao, anotacao.id
+        anotacao.imagemFundo, anotacao.observacao, anotacao.cor, anotacao.id
       ]
     );
 

@@ -5,8 +5,12 @@ import 'package:flutter/services.dart';
 
 class AppBarCreate extends StatefulWidget {
   final Function(String pathImage) updateImage;
+  final Function showColorPicker;
 
-  AppBarCreate({required this.updateImage});
+  static bool removeBackground = false;
+  static Color color = Color(0xFF000000);
+
+  AppBarCreate({required this.updateImage, required this.showColorPicker});
 
   @override
   AppBarCreateState createState() => AppBarCreateState();
@@ -14,19 +18,25 @@ class AppBarCreate extends StatefulWidget {
 
 class AppBarCreateState extends State<AppBarCreate> {
 
-  bool _removeBackground = false;
-
   List<Widget> _actions() {
     return [
+    IconButton(
+        icon: Icon(Icons.color_lens),
+        padding: EdgeInsets.only(top: 25.0, bottom: 25.0, right: 10.0),
+        color: AppBarCreate.color,
+        onPressed: () {
+          widget.showColorPicker();
+        },
+      ),
       Visibility(
-        visible: _removeBackground,
+        visible: AppBarCreate.removeBackground,
         child: IconButton(
-          color: Colors.black,
+          color: AppBarCreate.color,
           padding: EdgeInsets.only(top: 25.0, bottom: 25.0, right: 10.0),
           onPressed: () {
             widget.updateImage("");
             setState(() {
-              _removeBackground = false;
+              AppBarCreate.removeBackground = false;
             });
           },
           icon: Icon(Icons.close)
@@ -66,7 +76,7 @@ class AppBarCreateState extends State<AppBarCreate> {
         },
         icon: Icon(
           Icons.photo,
-          color: Colors.black,
+          color: AppBarCreate.color,
         ),
       ),
     ];
@@ -95,9 +105,13 @@ class AppBarCreateState extends State<AppBarCreate> {
             padding: EdgeInsets.all(25.0),
             icon: Icon(
               Icons.arrow_back_ios,
-              color: Colors.black
+              color: AppBarCreate.color
             ),
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              Navigator.pop(context);
+              AppBarCreate.removeBackground = false;
+              AppBarCreate.color = Color(0xFF000000);
+            },
           );
       }
     );
@@ -108,7 +122,7 @@ class AppBarCreateState extends State<AppBarCreate> {
       onTap: () {
         widget.updateImage(image);
         setState(() {
-          _removeBackground = true;
+          AppBarCreate.removeBackground = true;
         });
       },
       child: Container(
