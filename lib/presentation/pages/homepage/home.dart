@@ -18,10 +18,10 @@ class Home extends StatefulWidget {
 class HomeState extends State<Home> {
 
   Future<List<Widget>> _getNotes() async {
-    List<AnotacaoModel?> listaAnotacao = await widget.useCase.findAlluseCase();
+    List<AnotacaoModel?> _listaAnotacao = await widget.useCase.findAlluseCase();
     List<Widget> _listaNote = [];
 
-    listaAnotacao.forEach((anotacao) {
+    _listaAnotacao.forEach((anotacao) {
       _listaNote.add(
         CardNote(
           anotacaoModel: anotacao!,

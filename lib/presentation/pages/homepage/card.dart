@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/domain/usecases/usecases.dart';
@@ -146,7 +148,9 @@ class CardNoteState extends State<CardNote> {
             child: Container(
               decoration: widget.anotacaoModel.imagemFundo!.isEmpty ? null : BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(widget.anotacaoModel.imagemFundo!),
+                  image: widget.anotacaoModel.imagemFundo!.contains("lib") ?
+                    AssetImage(widget.anotacaoModel.imagemFundo!) as ImageProvider :
+                    FileImage(File(widget.anotacaoModel.imagemFundo!)),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -186,7 +190,7 @@ class CardNoteState extends State<CardNote> {
                     shape: CircleBorder()
                   ),
                   child: Icon(Icons.delete, color: Colors.white),
-                  onPressed: removeNote
+                  onPressed: _removeNote
                 ),
               ),
               Transform.scale(
@@ -197,7 +201,7 @@ class CardNoteState extends State<CardNote> {
                     shape: CircleBorder()
                   ),
                   child: Icon(Icons.check, color: Colors.white),
-                  onPressed: updateSituacao,
+                  onPressed: _updateSituacao,
                 ),
               ),
             ]
@@ -221,7 +225,7 @@ class CardNoteState extends State<CardNote> {
     return _cardWithButtons();
   }
 
-  void removeNote() async {
+  void _removeNote() async {
     int? delete = await widget.useCase.deleteUseCase(id: widget.anotacaoModel.id!);
     
     if (delete == 1) {
@@ -241,7 +245,7 @@ class CardNoteState extends State<CardNote> {
     }
   }
 
-  void updateSituacao() async {
+  void _updateSituacao() async {
     int? update = await widget.useCase.updateSituacaoUseCase(anotacao: widget.anotacaoModel);
     
     if (update != 0) {

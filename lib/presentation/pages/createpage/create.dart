@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/domain/usecases/usecases.dart';
@@ -25,8 +27,7 @@ class CreateNoteState extends State<CreateNote> {
   TextEditingController _title = TextEditingController();
   TextEditingController _obs = TextEditingController();
   TextEditingController _cor = TextEditingController();
-  String pathImage = "";
-
+  String _pathImage = "";
 
   @override
   void initState() {
@@ -37,12 +38,14 @@ class CreateNoteState extends State<CreateNote> {
 
         _title.text = _anotacaoModel!.titulo!;
         _obs.text = _anotacaoModel!.observacao!;
+
         setState(() {
           if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
-            pathImage = _anotacaoModel!.imagemFundo!;
+            _pathImage = _anotacaoModel!.imagemFundo!;
             AppBarCreate.removeBackground = true;
           }
-          if (_anotacaoModel!.cor != null &&_anotacaoModel!.cor!.isNotEmpty) {
+
+          if (_anotacaoModel!.cor != null && _anotacaoModel!.cor!.isNotEmpty) {
             _colorNote = Color(int.parse("0xFF${_anotacaoModel!.cor}"));
             AppBarCreate.color = _colorNote;
           }
@@ -63,6 +66,7 @@ class CreateNoteState extends State<CreateNote> {
       },
       decoration: InputDecoration(
         hintText: "Título",
+        errorStyle: TextStyle(color: _colorNote),
         hintStyle: TextStyle(
           color: _colorNote,
           fontWeight: FontWeight.bold,
@@ -85,13 +89,14 @@ class CreateNoteState extends State<CreateNote> {
     return TextFormField(
       controller: _obs,
       decoration: InputDecoration(
+        errorStyle: TextStyle(color: _colorNote),
         border: InputBorder.none,
       ),
       style: TextStyle(
         color: _colorNote,
         fontSize: 18.0
       ),
-      minLines: 50,
+      minLines: 10,
       maxLines: null,
       keyboardType: TextInputType.multiline,
     );
@@ -126,13 +131,13 @@ class CreateNoteState extends State<CreateNote> {
       onPressed: () async {
         if (_formKey.currentState!.validate()) {
           if (widget.id == null) {
-            insertNote(_title.text, _obs.text, _cor.text, widget.useCase, context);
+            _insertNote();
           } else {
             _anotacaoModel!.titulo = _title.text;
             _anotacaoModel!.observacao = _obs.text;
-            _anotacaoModel!.imagemFundo = pathImage;
-            _anotacaoModel!.cor =_cor.text;
-            updateNote(_anotacaoModel!, widget.useCase, context);
+            _anotacaoModel!.imagemFundo = _pathImage;
+            _anotacaoModel!.cor = _cor.text;
+            _updateNote(_anotacaoModel!);
           }
 
           widget.setState();
@@ -142,7 +147,7 @@ class CreateNoteState extends State<CreateNote> {
     );
   }
 
-  void showColorPicker() {
+  void _showColorPicker() {
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
@@ -165,7 +170,7 @@ class CreateNoteState extends State<CreateNote> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text("Salvar"),
+            child: Text("Ok"),
           ),
         ],
       ),
@@ -184,21 +189,24 @@ class CreateNoteState extends State<CreateNote> {
     return WillPopScope(
       onWillPop: () async {
         AppBarCreate.color = Color(0xFF000000);
+        AppBarCreate.removeBackground = false;
         return true;
       },
       child: Scaffold(
         extendBodyBehindAppBar: true,
         backgroundColor: Colors.white,
         appBar: PreferredSize(
-          child: AppBarCreate(updateImage: updatePathImage, showColorPicker: showColorPicker),
+          child: AppBarCreate(updateImage: _updatePathImage, showColorPicker: _showColorPicker),
           preferredSize: Size.fromHeight(56.0),
         ),
         body: Stack(
           children: [
             Container(
-              decoration: pathImage.isEmpty ? null : BoxDecoration(
+              decoration: _pathImage.isEmpty ? null : BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(pathImage),
+                  image: _pathImage.contains('lib') ?
+                    AssetImage(_pathImage) as ImageProvider :
+                    FileImage(File(_pathImage)),
                   fit: BoxFit.fill,
                 ),
               ),
@@ -220,17 +228,17 @@ class CreateNoteState extends State<CreateNote> {
     );
   }
 
-  void insertNote(String title, String obs, String cor, UseCases useCase, BuildContext context) async {
+  void _insertNote() async {
     AnotacaoModel anotacaoModel = AnotacaoModel(
-      titulo: title,
-      observacao: obs,
+      titulo: _title.text,
+      observacao: _obs.text,
       data: DateTime.now().toIso8601String(),
-      imagemFundo: pathImage,
+      imagemFundo: _pathImage,
       situacao: 1,
-      cor: cor
+      cor: _cor.text
     );
     
-    int? insert = await useCase.insertUseCase(anotacao: anotacaoModel);
+    int? insert = await widget.useCase.insertUseCase(anotacao: anotacaoModel);
 
     if (insert != 0) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -247,8 +255,8 @@ class CreateNoteState extends State<CreateNote> {
     }
   }
 
-  void updateNote(AnotacaoModel anotacao, UseCases useCase, BuildContext context) async {
-    int? updated = await useCase.updateUseCase(anotacao: anotacao);
+  void _updateNote(AnotacaoModel anotacao) async {
+    int? updated = await widget.useCase.updateUseCase(anotacao: anotacao);
 
     if (updated != 0) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -265,9 +273,9 @@ class CreateNoteState extends State<CreateNote> {
     }
   }
 
-  void updatePathImage(String path) {
+  void _updatePathImage(String path) {
     setState(() {
-      pathImage = path;
+      _pathImage = path;
     });
   }
 }

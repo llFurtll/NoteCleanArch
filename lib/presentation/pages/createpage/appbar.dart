@@ -1,7 +1,10 @@
 import 'dart:convert';
-
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
+
+import 'camera.dart';
 
 class AppBarCreate extends StatefulWidget {
   final Function(String pathImage) updateImage;
@@ -17,6 +20,12 @@ class AppBarCreate extends StatefulWidget {
 }
 
 class AppBarCreateState extends State<AppBarCreate> {
+
+  int? imageSelected;
+
+  late PersistentBottomSheetController _controller;
+  ScrollController _scrollController = ScrollController();
+  double _positionList = 0.0;
 
   List<Widget> _actions() {
     return [
@@ -46,27 +55,60 @@ class AppBarCreateState extends State<AppBarCreate> {
         splashColor: Color(0xFF004D98),
         padding: EdgeInsets.only(top: 25.0, bottom: 25.0, right: 25.0),
         onPressed: () {
-          Scaffold.of(context).showBottomSheet((context) => Container(
+          _controller = Scaffold.of(context).showBottomSheet((context) => Container(
             padding: EdgeInsets.all(15.0),
             height: 200.0,
             decoration: BoxDecoration(
               color: Colors.white,
             ),
             child: FutureBuilder<List<String>>(
-              future: listAllAssetsImage(),
+              future: _listAllAssetsImage(),
               builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+                WidgetsBinding.instance!.addPostFrameCallback((_) {
+                  _scrollController.jumpTo(_positionList);
+                });
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting: return Center(child: CircularProgressIndicator());
                   default:
                   if (snapshot.hasError) {
                     return Center(child: Text("Erro ao carregar os dados"));
                   } else {
-                    return ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return buildCardImage(snapshot.data![index]);  
-                      }
+                    return NotificationListener(
+                      child: ListView.builder(
+                        controller: _scrollController,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: snapshot.data!.length+1,
+                        itemBuilder: (BuildContext context, int index) {
+                          if (index <= snapshot.data!.length-1) {
+                            return _buildCardImage(snapshot.data![index], index); 
+                          } else {
+                            return Container(
+                              margin: EdgeInsets.only(right: 15.0),
+                              width: 120.0,
+                              height: 150.0,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15.0),
+                                color: Colors.grey,
+                              ),
+                              child: Center(
+                                child: IconButton(
+                                  onPressed: () => Navigator.push(
+                                    context, MaterialPageRoute(builder: (context) => CameraPicture(updateImage: widget.updateImage))
+                                  ),
+                                  icon: Icon(Icons.camera, color: Colors.white, size: 40.0),
+                                ),
+                              ),
+                            );
+                          }
+                        }
+                      ),
+                      onNotification: (t) {
+                        if (t is ScrollEndNotification) {
+                          _positionList = _scrollController.position.pixels;
+                        }
+
+                        return true;
+                      },
                     );
                   }
                 }
@@ -82,17 +124,25 @@ class AppBarCreateState extends State<AppBarCreate> {
     ];
   }
 
-  Future<List<String>> listAllAssetsImage() async {
-    List<String> assetImages;
+  Future<List<String>> _listAllAssetsImage() async {
+    List<String> assetImages = [];
 
     final manifestContent = await rootBundle.loadString('AssetManifest.json');
 
     final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+
+    Directory((await getApplicationDocumentsDirectory()).path).listSync().forEach((element) {
+      if (element.path.contains('jpg')) {
+        assetImages.add(element.path);
+      }
+    });
     
-    assetImages = manifestMap.keys
+    assetImages.addAll(
+      manifestMap.keys
       .where((String key) => key.contains('lib/images/'))
       .where((String key) => key.contains('.jpg'))
-      .toList();
+      .toList()
+    );
 
     return assetImages;
   }
@@ -101,29 +151,72 @@ class AppBarCreateState extends State<AppBarCreate> {
     return Builder(
       builder: (BuildContext context) {
         return IconButton(
-            splashColor:  Color(0xFF004D98),
-            padding: EdgeInsets.all(25.0),
-            icon: Icon(
-              Icons.arrow_back_ios,
-              color: AppBarCreate.color
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-              AppBarCreate.removeBackground = false;
-              AppBarCreate.color = Color(0xFF000000);
-            },
-          );
+          splashColor:  Color(0xFF004D98),
+          padding: EdgeInsets.all(25.0),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: AppBarCreate.color
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+            AppBarCreate.removeBackground = false;
+            AppBarCreate.color = Color(0xFF000000);
+          },
+        );
       }
     );
   }
 
-  GestureDetector buildCardImage(String image) {
+  GestureDetector _buildCardImage(String image, int index) {
     return GestureDetector(
       onTap: () {
         widget.updateImage(image);
-        setState(() {
+        _controller.setState!(() {
           AppBarCreate.removeBackground = true;
+          imageSelected = index;
+
+          Future.delayed(Duration(milliseconds: 500), () {
+            _scrollController.jumpTo(_positionList);
+          });
         });
+      },
+      onLongPress: () {
+        if (!image.contains('lib')) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: Text("Deletar imagem?"),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(
+                      "Não",
+                      style: TextStyle(
+                        color: AppBarCreate.color,
+                        fontWeight: FontWeight.bold
+                      ),
+                    )
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      File(image).delete();
+                    },
+                    child: Text(
+                      "Sim",
+                      style: TextStyle(
+                        color: AppBarCreate.color,
+                        fontWeight: FontWeight.bold
+                      ),
+                    )
+                  )
+                ],
+              );
+            }
+          );
+        }
       },
       child: Container(
         margin: EdgeInsets.only(right: 15.0),
@@ -131,10 +224,13 @@ class AppBarCreateState extends State<AppBarCreate> {
         height: 150.0,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(image),
+            image: image.contains('lib') ? AssetImage(image) as ImageProvider : FileImage(File(image)),
             fit: BoxFit.cover,
           ),
-          borderRadius: BorderRadius.circular(15.0)
+          borderRadius: BorderRadius.circular(15.0),
+          border: imageSelected == index ? Border.all(
+            color: Colors.blueAccent, width: 10.0
+          ) : null
         ),
       ),
     );
