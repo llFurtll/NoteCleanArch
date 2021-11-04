@@ -16,7 +16,8 @@ Future<Database> inicializeDatabase() async {
         data DATETIME NOT NULL,
         situacao INTEGER NOT NULL,
         imagem_fundo TEXT,
-        observacao TEXT
+        observacao TEXT,
+        cor TEXT
       )
       """
     );
@@ -29,7 +30,7 @@ Future<Database> inicializeDatabase() async {
 
 Anotacao gerarAnotacao(
   {int id = 0, String titulo = "", String data = "",
-  int situacao = 1, String imagemFundo = "", String observacao = ""}
+  int situacao = 1, String imagemFundo = "", String observacao = "", String cor = ""}
   ) {
     AnotacaoModel anotacao =  new AnotacaoModel(
       id: id,
@@ -37,7 +38,8 @@ Anotacao gerarAnotacao(
       data: data,
       situacao: situacao,
       imagemFundo: imagemFundo,
-      observacao: observacao
+      observacao: observacao,
+      cor: cor
     );
 
     return anotacao;
@@ -51,6 +53,7 @@ Map<String, Object?> inserirAnotacao() {
   insert["situacao"] = 1;
   insert["imagem_fundo"] = "http";
   insert["observacao"] = "gostei";
+  insert["cor"] = "#FFFFFF";
 
   return insert;
 }

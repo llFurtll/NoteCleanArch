@@ -46,7 +46,8 @@ void main() {
           imagemFundo: "Legal",
           observacao: "Eu amo flutter",
           situacao: 0,
-          titulo: "Lindo"
+          titulo: "Lindo",
+          cor: "#FFFFFF"
         ) as AnotacaoModel);
 
         assert(update == 1);
@@ -59,7 +60,8 @@ void main() {
           imagemFundo: "Legal",
           observacao: "Eu amo flutter",
           situacao: 0,
-          titulo: "Lindo"
+          titulo: "Lindo",
+          cor: "#FFFFFF"
         ) as AnotacaoModel);
 
         assert(update == 1);
@@ -77,7 +79,8 @@ void main() {
             data: DateTime.now().toIso8601String(),
             situacao: 1,
             imagemFundo: "http",
-            observacao: "Teste insert"
+            observacao: "Teste insert",
+            cor: "#FFFFFF"
           ) as AnotacaoModel
         );
 

@@ -39,7 +39,8 @@ void main() {
             data: DateTime.now().toIso8601String(),
             situacao: 1,
             imagemFundo: "http",
-            observacao: "Teste insert"
+            observacao: "Teste insert",
+            cor: "#FFFFFF"
           ) as AnotacaoModel
         );
 
@@ -54,7 +55,8 @@ void main() {
             data: DateTime.now().toIso8601String(),
             situacao: 0,
             imagemFundo: "https",
-            observacao: "Daniel e lindo!"
+            observacao: "Daniel e lindo!",
+            cor: "#FFFFFF"
           ) as AnotacaoModel
         );
 
@@ -69,7 +71,8 @@ void main() {
             data: DateTime.now().toIso8601String(),
             situacao: 0,
             imagemFundo: "https",
-            observacao: "Daniel e lindo!"
+            observacao: "Daniel e lindo!",
+            cor: "#FFFFFF"
           ) as AnotacaoModel
         );
 

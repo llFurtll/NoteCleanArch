@@ -26,8 +26,8 @@ void main() {
       test("Testando o findAlluseCase", () async {
         List<AnotacaoModel?> lista = await useCases.findAlluseCase();
           expect(lista.length, 2);
-          expect(lista[0]!.id, 1);
-          expect(lista[1]!.id, 2);
+          expect(lista[0]!.id, 2);
+          expect(lista[1]!.id, 1);
       });
 
       test("Testando o getByIdUseCase", () async {
@@ -43,7 +43,8 @@ void main() {
           imagemFundo: "Legal",
           observacao: "Eu amo flutter",
           situacao: 0,
-          titulo: "Lindo"
+          titulo: "Lindo",
+          cor: "#FFFFFF"
         ) as AnotacaoModel);
 
         assert(update == 1);
@@ -56,7 +57,8 @@ void main() {
           imagemFundo: "Legal",
           observacao: "Eu amo flutter",
           situacao: 0,
-          titulo: "Lindo"
+          titulo: "Lindo",
+          cor: "#FFFFFF"
         ) as AnotacaoModel);
 
         assert(update == 1);
@@ -74,7 +76,8 @@ void main() {
             data: DateTime.now().toIso8601String(),
             situacao: 1,
             imagemFundo: "http",
-            observacao: "Teste insert"
+            observacao: "Teste insert",
+            cor: "#FFFFFF"
           ) as AnotacaoModel
         );
 

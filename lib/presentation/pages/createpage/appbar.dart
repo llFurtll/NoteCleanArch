@@ -9,11 +9,12 @@ import 'camera.dart';
 class AppBarCreate extends StatefulWidget {
   final Function(String pathImage) updateImage;
   final Function showColorPicker;
+  String? pathImage = "";
 
   static bool removeBackground = false;
   static Color color = Color(0xFF000000);
 
-  AppBarCreate({required this.updateImage, required this.showColorPicker});
+  AppBarCreate({required this.updateImage, required this.showColorPicker, this.pathImage});
 
   @override
   AppBarCreateState createState() => AppBarCreateState();
@@ -21,7 +22,7 @@ class AppBarCreate extends StatefulWidget {
 
 class AppBarCreateState extends State<AppBarCreate> {
 
-  int? imageSelected;
+  int? _imageSelected;
 
   late PersistentBottomSheetController _controller;
   ScrollController _scrollController = ScrollController();
@@ -93,7 +94,11 @@ class AppBarCreateState extends State<AppBarCreate> {
                               child: Center(
                                 child: IconButton(
                                   onPressed: () => Navigator.push(
-                                    context, MaterialPageRoute(builder: (context) => CameraPicture(updateImage: widget.updateImage))
+                                    context, MaterialPageRoute(builder: (context) => CameraPicture(
+                                      updateImage: widget.updateImage,
+                                      controller: _controller,
+                                      )
+                                    )
                                   ),
                                   icon: Icon(Icons.camera, color: Colors.white, size: 40.0),
                                 ),
@@ -168,12 +173,18 @@ class AppBarCreateState extends State<AppBarCreate> {
   }
 
   GestureDetector _buildCardImage(String image, int index) {
+    if (widget.pathImage!.isNotEmpty) {
+      if (image == widget.pathImage) {
+        _imageSelected = index;
+      }
+    }
     return GestureDetector(
       onTap: () {
         widget.updateImage(image);
+        widget.pathImage = image;
         _controller.setState!(() {
           AppBarCreate.removeBackground = true;
-          imageSelected = index;
+          _imageSelected = index;
 
           Future.delayed(Duration(milliseconds: 500), () {
             _scrollController.jumpTo(_positionList);
@@ -181,7 +192,7 @@ class AppBarCreateState extends State<AppBarCreate> {
         });
       },
       onLongPress: () {
-        if (!image.contains('lib')) {
+        if (!image.contains('lib') && widget.pathImage != image) {
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -203,6 +214,8 @@ class AppBarCreateState extends State<AppBarCreate> {
                   TextButton(
                     onPressed: () {
                       File(image).delete();
+                      _controller.setState!(() {});
+                      Navigator.of(context).pop();
                     },
                     child: Text(
                       "Sim",
@@ -228,7 +241,7 @@ class AppBarCreateState extends State<AppBarCreate> {
             fit: BoxFit.cover,
           ),
           borderRadius: BorderRadius.circular(15.0),
-          border: imageSelected == index ? Border.all(
+          border: _imageSelected == index ? Border.all(
             color: Colors.blueAccent, width: 10.0
           ) : null
         ),

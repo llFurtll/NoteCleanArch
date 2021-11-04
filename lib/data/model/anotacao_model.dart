@@ -19,6 +19,7 @@ class AnotacaoModel implements Anotacao {
   @override
   String? titulo;
 
+  @override
   String? cor;
 
 

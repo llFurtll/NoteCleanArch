@@ -5,6 +5,7 @@ abstract class Anotacao {
   int? situacao;
   String? imagemFundo;
   String? observacao;
+  String? cor;
   
   Anotacao();
 

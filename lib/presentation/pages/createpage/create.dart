@@ -196,7 +196,7 @@ class CreateNoteState extends State<CreateNote> {
         extendBodyBehindAppBar: true,
         backgroundColor: Colors.white,
         appBar: PreferredSize(
-          child: AppBarCreate(updateImage: _updatePathImage, showColorPicker: _showColorPicker),
+          child: AppBarCreate(updateImage: _updatePathImage, showColorPicker: _showColorPicker, pathImage: _pathImage),
           preferredSize: Size.fromHeight(56.0),
         ),
         body: Stack(
