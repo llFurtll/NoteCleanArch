@@ -136,7 +136,7 @@ class CreateNoteState extends State<CreateNote> {
             _anotacaoModel!.titulo = _title.text;
             _anotacaoModel!.observacao = _obs.text;
             _anotacaoModel!.imagemFundo = _pathImage;
-            _anotacaoModel!.cor = _cor.text;
+            _anotacaoModel!.cor = _cor.text.isNotEmpty ? _cor.text : _anotacaoModel!.cor;
             _updateNote(_anotacaoModel!);
           }
 
@@ -196,7 +196,12 @@ class CreateNoteState extends State<CreateNote> {
         extendBodyBehindAppBar: true,
         backgroundColor: Colors.white,
         appBar: PreferredSize(
-          child: AppBarCreate(updateImage: _updatePathImage, showColorPicker: _showColorPicker, pathImage: _pathImage),
+          child: AppBarCreate(
+            updateImage: _updatePathImage,
+            showColorPicker: _showColorPicker,
+            pathImage: _pathImage,
+            useCase: widget.useCase,
+          ),
           preferredSize: Size.fromHeight(56.0),
         ),
         body: Stack(
@@ -276,6 +281,7 @@ class CreateNoteState extends State<CreateNote> {
   void _updatePathImage(String path) {
     setState(() {
       _pathImage = path;
+      widget.setState();
     });
   }
 }

@@ -92,4 +92,15 @@ class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
 
     return update;
   }
+
+  Future<int?> removeBackgroundNote({required String image}) async {
+    int? update = await db.rawUpdate(
+      """
+      UPDATE NOTE SET imagem_fundo = '' WHERE imagem_fundo = ?
+      """,
+      [ image ]
+    );
+
+    return update;
+  }
 }

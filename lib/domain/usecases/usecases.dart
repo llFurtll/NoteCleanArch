@@ -1,4 +1,5 @@
 import 'package:note/data/model/anotacao_model.dart';
+import 'package:note/data/repositories/crud_repository.dart';
 import '../repositories/irepository.dart';
 
 class UseCases {
@@ -29,5 +30,10 @@ class UseCases {
   Future<int?> updateSituacaoUseCase({required AnotacaoModel anotacao}) async {
     anotacao.situacao = anotacao.situacao == 1 ? 0 : 1;
     return await repository.updateSituacao(anotacao: anotacao);
+  }
+
+  Future<int?> removeBackgroundNote({required String image}) async {
+    int? update = await (repository as CrudRepository).removeBackgroundNote(image: image);
+    return update;
   }
 }

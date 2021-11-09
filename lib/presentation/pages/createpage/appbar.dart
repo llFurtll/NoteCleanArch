@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:note/domain/usecases/usecases.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'camera.dart';
@@ -10,11 +11,12 @@ class AppBarCreate extends StatefulWidget {
   final Function(String pathImage) updateImage;
   final Function showColorPicker;
   String? pathImage = "";
+  final UseCases useCase;
 
   static bool removeBackground = false;
   static Color color = Color(0xFF000000);
 
-  AppBarCreate({required this.updateImage, required this.showColorPicker, this.pathImage});
+  AppBarCreate({required this.updateImage, required this.showColorPicker, this.pathImage, required this.useCase});
 
   @override
   AppBarCreateState createState() => AppBarCreateState();
@@ -65,9 +67,6 @@ class AppBarCreateState extends State<AppBarCreate> {
             child: FutureBuilder<List<String>>(
               future: _listAllAssetsImage(),
               builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-                WidgetsBinding.instance!.addPostFrameCallback((_) {
-                  _scrollController.jumpTo(_positionList);
-                });
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting: return Center(child: CircularProgressIndicator());
                   default:
@@ -181,7 +180,6 @@ class AppBarCreateState extends State<AppBarCreate> {
     return GestureDetector(
       onTap: () {
         widget.updateImage(image);
-        widget.pathImage = image;
         _controller.setState!(() {
           AppBarCreate.removeBackground = true;
           _imageSelected = index;
@@ -192,7 +190,7 @@ class AppBarCreateState extends State<AppBarCreate> {
         });
       },
       onLongPress: () {
-        if (!image.contains('lib') && widget.pathImage != image) {
+        if (!image.contains('lib')) {
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -212,9 +210,15 @@ class AppBarCreateState extends State<AppBarCreate> {
                     )
                   ),
                   TextButton(
-                    onPressed: () {
+                    onPressed: () async {
                       File(image).delete();
                       _controller.setState!(() {});
+                      int? update = await widget.useCase.removeBackgroundNote(image: image);
+                      if (update != 0) {
+                        widget.updateImage("");
+                        _imageSelected = -1;
+                        AppBarCreate.removeBackground = false;
+                      }
                       Navigator.of(context).pop();
                     },
                     child: Text(

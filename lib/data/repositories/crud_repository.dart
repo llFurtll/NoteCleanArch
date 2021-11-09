@@ -1,4 +1,5 @@
 import 'package:note/data/datasources/datasource.dart';
+import 'package:note/data/datasources/sqlite.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/domain/repositories/irepository.dart';
 
@@ -36,5 +37,10 @@ class CrudRepository implements IRepository<AnotacaoModel> {
   @override
   Future<int?> updateSituacao({required AnotacaoModel anotacao}) async {
     return await datasourceBase.updateSituacao(anotacao: anotacao);
+  }
+
+  Future<int?> removeBackgroundNote({required String image}) async {
+    int? update = await (datasourceBase as SqliteDatasource).removeBackgroundNote(image: image);
+    return update;
   }
 }
