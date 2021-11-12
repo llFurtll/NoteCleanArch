@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:note/data/datasources/get_connection.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/domain/usecases/usecases.dart';
 import 'package:note/presentation/pages/createpage/create.dart';
@@ -8,12 +9,10 @@ import 'package:note/utils/route_animation.dart';
 
 class CardNote extends StatefulWidget {
   final AnotacaoModel anotacaoModel;
-  final UseCases useCase;
   final Function setState;
 
   CardNote({
       required this.anotacaoModel,
-      required this.useCase,
       required this.setState
   });
   
@@ -97,7 +96,6 @@ class CardNoteState extends State<CardNote> {
             context,
             createRoute(
               CreateNote(
-                useCase: widget.useCase,
                 setState: widget.setState,
                 id: widget.anotacaoModel.id!,
               )
@@ -226,7 +224,9 @@ class CardNoteState extends State<CardNote> {
   }
 
   void _removeNote() async {
-    int? delete = await widget.useCase.deleteUseCase(id: widget.anotacaoModel.id!);
+    UseCases useCase = await GetConnectionDataSource.getConnection();
+    int? delete = await useCase.deleteUseCase(id: widget.anotacaoModel.id!);
+    GetConnectionDataSource.closeConnection();
     
     if (delete == 1) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -246,7 +246,9 @@ class CardNoteState extends State<CardNote> {
   }
 
   void _updateSituacao() async {
-    int? update = await widget.useCase.updateSituacaoUseCase(anotacao: widget.anotacaoModel);
+    UseCases useCase = await GetConnectionDataSource.getConnection();
+    int? update = await useCase.updateSituacaoUseCase(anotacao: widget.anotacaoModel);
+    GetConnectionDataSource.closeConnection();
     
     if (update != 0) {
       ScaffoldMessenger.of(context).showSnackBar(

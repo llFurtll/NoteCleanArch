@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:note/data/datasources/get_connection.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/domain/usecases/usecases.dart';
 import 'package:note/presentation/pages/createpage/create.dart';
@@ -7,10 +8,6 @@ import 'package:note/presentation/pages/homepage/card.dart';
 import 'package:note/utils/route_animation.dart';
 
 class Home extends StatefulWidget {
-  final UseCases useCase;
-
-  Home({required this.useCase});
-  
   @override
   HomeState createState() => HomeState();
 }
@@ -18,14 +15,17 @@ class Home extends StatefulWidget {
 class HomeState extends State<Home> {
 
   Future<List<Widget>> _getNotes() async {
-    List<AnotacaoModel?> _listaAnotacao = await widget.useCase.findAlluseCase();
+    UseCases useCase = await GetConnectionDataSource.getConnection();
+    
+    List<AnotacaoModel?> _listaAnotacao = await useCase.findAlluseCase();
     List<Widget> _listaNote = [];
+
+    GetConnectionDataSource.closeConnection();
 
     _listaAnotacao.forEach((anotacao) {
       _listaNote.add(
         CardNote(
           anotacaoModel: anotacao!,
-          useCase: widget.useCase,
           setState: () {
             setState(() {});
           },
@@ -70,7 +70,6 @@ class HomeState extends State<Home> {
       onPressed: () => Navigator.of(context).push(
         createRoute(
           CreateNote(
-            useCase: widget.useCase,
             setState: () {
               setState(() {});
             },

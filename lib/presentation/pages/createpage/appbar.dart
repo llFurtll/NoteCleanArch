@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:note/data/datasources/get_connection.dart';
 import 'package:note/domain/usecases/usecases.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -11,12 +12,11 @@ class AppBarCreate extends StatefulWidget {
   final Function(String pathImage) updateImage;
   final Function showColorPicker;
   String? pathImage = "";
-  final UseCases useCase;
 
   static bool removeBackground = false;
   static Color color = Color(0xFF000000);
 
-  AppBarCreate({required this.updateImage, required this.showColorPicker, this.pathImage, required this.useCase});
+  AppBarCreate({required this.updateImage, required this.showColorPicker, this.pathImage});
 
   @override
   AppBarCreateState createState() => AppBarCreateState();
@@ -26,7 +26,7 @@ class AppBarCreateState extends State<AppBarCreate> {
 
   int? _imageSelected;
 
-  late PersistentBottomSheetController _controller;
+  PersistentBottomSheetController? _controller;
   ScrollController _scrollController = ScrollController();
   double _positionList = 0.0;
 
@@ -47,9 +47,10 @@ class AppBarCreateState extends State<AppBarCreate> {
           padding: EdgeInsets.only(top: 25.0, bottom: 25.0, right: 10.0),
           onPressed: () {
             widget.updateImage("");
-            setState(() {
-              AppBarCreate.removeBackground = false;
-            });
+            if (_controller != null) {
+              _controller!.setState!(() {});
+            }
+            AppBarCreate.removeBackground = false;
           },
           icon: Icon(Icons.close)
         )
@@ -95,7 +96,7 @@ class AppBarCreateState extends State<AppBarCreate> {
                                   onPressed: () => Navigator.push(
                                     context, MaterialPageRoute(builder: (context) => CameraPicture(
                                       updateImage: widget.updateImage,
-                                      controller: _controller,
+                                      controller: _controller!,
                                       )
                                     )
                                   ),
@@ -180,14 +181,14 @@ class AppBarCreateState extends State<AppBarCreate> {
     return GestureDetector(
       onTap: () {
         widget.updateImage(image);
-        _controller.setState!(() {
-          AppBarCreate.removeBackground = true;
+        _controller!.setState!(() {
           _imageSelected = index;
 
           Future.delayed(Duration(milliseconds: 500), () {
             _scrollController.jumpTo(_positionList);
           });
         });
+        AppBarCreate.removeBackground = true;
       },
       onLongPress: () {
         if (!image.contains('lib')) {
@@ -195,7 +196,7 @@ class AppBarCreateState extends State<AppBarCreate> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text("Deletar imagem?"),
+                title: Text("Deletar imagem?", style: TextStyle(color: AppBarCreate.color)),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -212,13 +213,22 @@ class AppBarCreateState extends State<AppBarCreate> {
                   TextButton(
                     onPressed: () async {
                       File(image).delete();
-                      _controller.setState!(() {});
-                      int? update = await widget.useCase.removeBackgroundNote(image: image);
+
+                      _controller!.setState!(() {
+                        _imageSelected = -1;
+                      });
+
+                      UseCases useCase = await GetConnectionDataSource.getConnection();
+
+                      int? update = await useCase.removeBackgroundNote(image: image);
+                      
+                      GetConnectionDataSource.closeConnection();
+
                       if (update != 0) {
                         widget.updateImage("");
-                        _imageSelected = -1;
                         AppBarCreate.removeBackground = false;
                       }
+                      
                       Navigator.of(context).pop();
                     },
                     child: Text(

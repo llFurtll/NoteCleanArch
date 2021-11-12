@@ -1,17 +1,17 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:note/data/datasources/get_connection.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/domain/usecases/usecases.dart';
 import 'package:note/presentation/pages/createpage/appbar.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class CreateNote extends StatefulWidget {
-  final UseCases useCase;
   final Function setState;
   final int? id;
 
-  CreateNote({required this.useCase, required this.setState, this.id});
+  CreateNote({required this.setState, this.id});
 
   @override
   CreateNoteState createState() => CreateNoteState();
@@ -34,7 +34,11 @@ class CreateNoteState extends State<CreateNote> {
     super.initState();
     if (widget.id != null) {
       Future.sync(() async {
-        _anotacaoModel = await widget.useCase.getByIdUseCase(id: widget.id!);
+        UseCases useCase = await GetConnectionDataSource.getConnection();
+
+        _anotacaoModel = await useCase.getByIdUseCase(id: widget.id!);
+        
+        GetConnectionDataSource.closeConnection();
 
         _title.text = _anotacaoModel!.titulo!;
         _obs.text = _anotacaoModel!.observacao!;
@@ -181,6 +185,7 @@ class CreateNoteState extends State<CreateNote> {
     setState(() {
       _colorNote = color;
       AppBarCreate.color = color;
+      _pathImage.isNotEmpty ? AppBarCreate.removeBackground = true : AppBarCreate.removeBackground = false;
     });
   }
 
@@ -200,7 +205,6 @@ class CreateNoteState extends State<CreateNote> {
             updateImage: _updatePathImage,
             showColorPicker: _showColorPicker,
             pathImage: _pathImage,
-            useCase: widget.useCase,
           ),
           preferredSize: Size.fromHeight(56.0),
         ),
@@ -242,8 +246,12 @@ class CreateNoteState extends State<CreateNote> {
       situacao: 1,
       cor: _cor.text
     );
+
+    UseCases useCase = await GetConnectionDataSource.getConnection();
     
-    int? insert = await widget.useCase.insertUseCase(anotacao: anotacaoModel);
+    int? insert = await useCase.insertUseCase(anotacao: anotacaoModel);
+
+    GetConnectionDataSource.closeConnection();
 
     if (insert != 0) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -261,7 +269,11 @@ class CreateNoteState extends State<CreateNote> {
   }
 
   void _updateNote(AnotacaoModel anotacao) async {
-    int? updated = await widget.useCase.updateUseCase(anotacao: anotacao);
+    UseCases useCase = await GetConnectionDataSource.getConnection();
+
+    int? updated = await useCase.updateUseCase(anotacao: anotacao);
+
+    GetConnectionDataSource.closeConnection();
 
     if (updated != 0) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -281,7 +293,8 @@ class CreateNoteState extends State<CreateNote> {
   void _updatePathImage(String path) {
     setState(() {
       _pathImage = path;
-      widget.setState();
+      AppBarCreate.color = _colorNote;
+      print(AppBarCreate.color);
     });
   }
 }
