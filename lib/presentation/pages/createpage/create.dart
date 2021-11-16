@@ -6,6 +6,7 @@ import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/domain/usecases/usecases.dart';
 import 'package:note/presentation/pages/createpage/appbar.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:note/presentation/pages/createpage/color_inherited.dart';
 
 class CreateNote extends StatefulWidget {
   final Function setState;
@@ -51,7 +52,7 @@ class CreateNoteState extends State<CreateNote> {
 
           if (_anotacaoModel!.cor != null && _anotacaoModel!.cor!.isNotEmpty) {
             _colorNote = Color(int.parse("0xFF${_anotacaoModel!.cor}"));
-            AppBarCreate.color = _colorNote;
+            SetColor.of(context).color = _colorNote;
           }
         });
       });
@@ -184,56 +185,58 @@ class CreateNoteState extends State<CreateNote> {
   void changeColor(Color color) {
     setState(() {
       _colorNote = color;
-      AppBarCreate.color = color;
+      SetColor.of(context).color = color;
       _pathImage.isNotEmpty ? AppBarCreate.removeBackground = true : AppBarCreate.removeBackground = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        AppBarCreate.color = Color(0xFF000000);
-        AppBarCreate.removeBackground = false;
-        return true;
-      },
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
-        backgroundColor: Colors.white,
-        appBar: PreferredSize(
-          child: AppBarCreate(
-            updateImage: _updatePathImage,
-            showColorPicker: _showColorPicker,
-            pathImage: _pathImage,
+    return SetColor(
+      color: Colors.black,
+      child: WillPopScope(
+        onWillPop: () async {
+          AppBarCreate.removeBackground = false;
+          return true;
+        },
+        child: Scaffold(
+          extendBodyBehindAppBar: true,
+          backgroundColor: Colors.white,
+          appBar: PreferredSize(
+            child: AppBarCreate(
+              updateImage: _updatePathImage,
+              showColorPicker: _showColorPicker,
+              pathImage: _pathImage,
+            ),
+            preferredSize: Size.fromHeight(56.0),
           ),
-          preferredSize: Size.fromHeight(56.0),
-        ),
-        body: Stack(
-          children: [
-            Container(
-              decoration: _pathImage.isEmpty ? null : BoxDecoration(
-                image: DecorationImage(
-                  image: _pathImage.contains('lib') ?
-                    AssetImage(_pathImage) as ImageProvider :
-                    FileImage(File(_pathImage)),
-                  fit: BoxFit.fill,
+          body: Stack(
+            children: [
+              Container(
+                decoration: _pathImage.isEmpty ? null : BoxDecoration(
+                  image: DecorationImage(
+                    image: _pathImage.contains('lib') ?
+                      AssetImage(_pathImage) as ImageProvider :
+                      FileImage(File(_pathImage)),
+                    fit: BoxFit.fill,
+                  ),
+                ),
+                width: double.infinity,
+                height: double.infinity,
+              ),
+              Container(
+                width: double.infinity,
+                height: double.infinity,
+                color: Colors.white.withOpacity(0.5),
+                child: SafeArea(
+                  child: _home(),
                 ),
               ),
-              width: double.infinity,
-              height: double.infinity,
-            ),
-            Container(
-              width: double.infinity,
-              height: double.infinity,
-              color: Colors.white.withOpacity(0.5),
-              child: SafeArea(
-                child: _home(),
-              ),
-            ),
-          ],
+            ],
+          ),
+          floatingActionButton: _button(),
         ),
-        floatingActionButton: _button(),
-      ),
+      )
     );
   }
 
@@ -293,8 +296,7 @@ class CreateNoteState extends State<CreateNote> {
   void _updatePathImage(String path) {
     setState(() {
       _pathImage = path;
-      AppBarCreate.color = _colorNote;
-      print(AppBarCreate.color);
+      SetColor.of(context).color = _colorNote;
     });
   }
 }

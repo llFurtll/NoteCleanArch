@@ -7,6 +7,7 @@ import 'package:note/domain/usecases/usecases.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'camera.dart';
+import 'color_inherited.dart';
 
 class AppBarCreate extends StatefulWidget {
   final Function(String pathImage) updateImage;
@@ -14,7 +15,6 @@ class AppBarCreate extends StatefulWidget {
   String? pathImage = "";
 
   static bool removeBackground = false;
-  static Color color = Color(0xFF000000);
 
   AppBarCreate({required this.updateImage, required this.showColorPicker, this.pathImage});
 
@@ -35,7 +35,7 @@ class AppBarCreateState extends State<AppBarCreate> {
     IconButton(
         icon: Icon(Icons.color_lens),
         padding: EdgeInsets.only(top: 25.0, bottom: 25.0, right: 10.0),
-        color: AppBarCreate.color,
+        color: SetColor.of(context).color,
         onPressed: () {
           widget.showColorPicker();
         },
@@ -43,7 +43,7 @@ class AppBarCreateState extends State<AppBarCreate> {
       Visibility(
         visible: AppBarCreate.removeBackground,
         child: IconButton(
-          color: AppBarCreate.color,
+          color: SetColor.of(context).color,
           padding: EdgeInsets.only(top: 25.0, bottom: 25.0, right: 10.0),
           onPressed: () {
             widget.updateImage("");
@@ -123,7 +123,7 @@ class AppBarCreateState extends State<AppBarCreate> {
         },
         icon: Icon(
           Icons.photo,
-          color: AppBarCreate.color,
+          color: SetColor.of(context).color,
         ),
       ),
     ];
@@ -160,12 +160,12 @@ class AppBarCreateState extends State<AppBarCreate> {
           padding: EdgeInsets.all(25.0),
           icon: Icon(
             Icons.arrow_back_ios,
-            color: AppBarCreate.color
+            color: SetColor.of(context).color
           ),
           onPressed: () {
             Navigator.pop(context);
             AppBarCreate.removeBackground = false;
-            AppBarCreate.color = Color(0xFF000000);
+            SetColor.of(context).color = Color(0xFF000000);
           },
         );
       }
@@ -196,7 +196,7 @@ class AppBarCreateState extends State<AppBarCreate> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text("Deletar imagem?", style: TextStyle(color: AppBarCreate.color)),
+                title: Text("Deletar imagem?", style: TextStyle(color: SetColor.of(context).color)),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -205,7 +205,7 @@ class AppBarCreateState extends State<AppBarCreate> {
                     child: Text(
                       "Não",
                       style: TextStyle(
-                        color: AppBarCreate.color,
+                        color: SetColor.of(context).color,
                         fontWeight: FontWeight.bold
                       ),
                     )
@@ -234,7 +234,7 @@ class AppBarCreateState extends State<AppBarCreate> {
                     child: Text(
                       "Sim",
                       style: TextStyle(
-                        color: AppBarCreate.color,
+                        color: SetColor.of(context).color,
                         fontWeight: FontWeight.bold
                       ),
                     )
