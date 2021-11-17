@@ -1,9 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:note/data/datasources/get_connection.dart';
 import 'package:note/data/model/anotacao_model.dart';
+import 'package:note/data/repositories/crud_repository.dart';
 import 'package:note/domain/usecases/usecases.dart';
+import 'package:note/presentation/pages/createpage/config_app.dart';
 import 'package:note/presentation/pages/createpage/create.dart';
 import 'package:note/utils/route_animation.dart';
 
@@ -21,6 +22,17 @@ class CardNote extends StatefulWidget {
 }
 
 class CardNoteState extends State<CardNote> {
+
+  late UseCases useCases;
+
+  @override
+  void didChangeDependencies() {
+    useCases = UseCases(
+      repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
+    );
+
+    super.didChangeDependencies();
+  }
 
   bool _visibilityButtons = false;
   double _offset = 0.0;
@@ -224,9 +236,7 @@ class CardNoteState extends State<CardNote> {
   }
 
   void _removeNote() async {
-    UseCases useCase = await GetConnectionDataSource.getConnection();
-    int? delete = await useCase.deleteUseCase(id: widget.anotacaoModel.id!);
-    GetConnectionDataSource.closeConnection();
+    int? delete = await useCases.deleteUseCase(id: widget.anotacaoModel.id!);
     
     if (delete == 1) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -246,9 +256,7 @@ class CardNoteState extends State<CardNote> {
   }
 
   void _updateSituacao() async {
-    UseCases useCase = await GetConnectionDataSource.getConnection();
-    int? update = await useCase.updateSituacaoUseCase(anotacao: widget.anotacaoModel);
-    GetConnectionDataSource.closeConnection();
+    int? update = await useCases.updateSituacaoUseCase(anotacao: widget.anotacaoModel);
     
     if (update != 0) {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:camera_camera/camera_camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:note/presentation/pages/createpage/appbar.dart';
 import 'package:path_provider/path_provider.dart';
+
+import 'config_app.dart';
 
 class CameraPicture extends StatefulWidget {
   final Function(String pathImage) updateImage;
@@ -28,7 +29,7 @@ class CameraPictureState extends State<CameraPicture> {
           file.delete();
           widget.updateImage(newImage.path);
           widget.controller.setState!(() {});
-          AppBarCreate.removeBackground = true;
+          ConfigApp.of(context).removeBackground = true;
           Navigator.of(context).pop();
         },
       )

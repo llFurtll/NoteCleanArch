@@ -2,19 +2,17 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:note/data/datasources/get_connection.dart';
+import 'package:note/data/repositories/crud_repository.dart';
 import 'package:note/domain/usecases/usecases.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'camera.dart';
-import 'color_inherited.dart';
+import 'config_app.dart';
 
 class AppBarCreate extends StatefulWidget {
   final Function(String pathImage) updateImage;
   final Function showColorPicker;
   String? pathImage = "";
-
-  static bool removeBackground = false;
 
   AppBarCreate({required this.updateImage, required this.showColorPicker, this.pathImage});
 
@@ -26,6 +24,17 @@ class AppBarCreateState extends State<AppBarCreate> {
 
   int? _imageSelected;
 
+  late UseCases useCases;
+
+  @override
+  void didChangeDependencies() {
+    useCases = UseCases(
+      repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
+    );
+
+    super.didChangeDependencies();
+  }
+
   PersistentBottomSheetController? _controller;
   ScrollController _scrollController = ScrollController();
   double _positionList = 0.0;
@@ -35,22 +44,24 @@ class AppBarCreateState extends State<AppBarCreate> {
     IconButton(
         icon: Icon(Icons.color_lens),
         padding: EdgeInsets.only(top: 25.0, bottom: 25.0, right: 10.0),
-        color: SetColor.of(context).color,
+        color: ConfigApp.of(context).color,
         onPressed: () {
           widget.showColorPicker();
         },
       ),
       Visibility(
-        visible: AppBarCreate.removeBackground,
+        visible: ConfigApp.of(context).removeBackground,
         child: IconButton(
-          color: SetColor.of(context).color,
+          color: ConfigApp.of(context).color,
           padding: EdgeInsets.only(top: 25.0, bottom: 25.0, right: 10.0),
           onPressed: () {
             widget.updateImage("");
             if (_controller != null) {
-              _controller!.setState!(() {});
+              _controller!.setState!(() {
+                _imageSelected = -1;
+              });
             }
-            AppBarCreate.removeBackground = false;
+            ConfigApp.of(context).removeBackground = false;
           },
           icon: Icon(Icons.close)
         )
@@ -123,7 +134,7 @@ class AppBarCreateState extends State<AppBarCreate> {
         },
         icon: Icon(
           Icons.photo,
-          color: SetColor.of(context).color,
+          color: ConfigApp.of(context).color,
         ),
       ),
     ];
@@ -160,12 +171,12 @@ class AppBarCreateState extends State<AppBarCreate> {
           padding: EdgeInsets.all(25.0),
           icon: Icon(
             Icons.arrow_back_ios,
-            color: SetColor.of(context).color
+            color: ConfigApp.of(context).color
           ),
           onPressed: () {
             Navigator.pop(context);
-            AppBarCreate.removeBackground = false;
-            SetColor.of(context).color = Color(0xFF000000);
+            ConfigApp.of(context).removeBackground = false;
+            ConfigApp.of(context).color = Color(0xFF000000);
           },
         );
       }
@@ -184,11 +195,11 @@ class AppBarCreateState extends State<AppBarCreate> {
         _controller!.setState!(() {
           _imageSelected = index;
 
-          Future.delayed(Duration(milliseconds: 500), () {
+          Future.delayed(Duration(milliseconds: 100), () {
             _scrollController.jumpTo(_positionList);
           });
         });
-        AppBarCreate.removeBackground = true;
+        ConfigApp.of(context).removeBackground = true;
       },
       onLongPress: () {
         if (!image.contains('lib')) {
@@ -196,7 +207,7 @@ class AppBarCreateState extends State<AppBarCreate> {
             context: context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text("Deletar imagem?", style: TextStyle(color: SetColor.of(context).color)),
+                title: Text("Deletar imagem?", style: TextStyle(color: ConfigApp.of(context).color)),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -205,7 +216,7 @@ class AppBarCreateState extends State<AppBarCreate> {
                     child: Text(
                       "Não",
                       style: TextStyle(
-                        color: SetColor.of(context).color,
+                        color: ConfigApp.of(context).color,
                         fontWeight: FontWeight.bold
                       ),
                     )
@@ -214,19 +225,14 @@ class AppBarCreateState extends State<AppBarCreate> {
                     onPressed: () async {
                       File(image).delete();
 
-                      _controller!.setState!(() {
-                        _imageSelected = -1;
-                      });
-
-                      UseCases useCase = await GetConnectionDataSource.getConnection();
-
-                      int? update = await useCase.removeBackgroundNote(image: image);
+                      int? update = await useCases.removeBackgroundNote(image: image);
                       
-                      GetConnectionDataSource.closeConnection();
-
                       if (update != 0) {
                         widget.updateImage("");
-                        AppBarCreate.removeBackground = false;
+                        _controller!.setState!(() {
+                          _imageSelected = -1;
+                        });
+                        ConfigApp.of(context).removeBackground = false;
                       }
                       
                       Navigator.of(context).pop();
@@ -234,7 +240,7 @@ class AppBarCreateState extends State<AppBarCreate> {
                     child: Text(
                       "Sim",
                       style: TextStyle(
-                        color: SetColor.of(context).color,
+                        color: ConfigApp.of(context).color,
                         fontWeight: FontWeight.bold
                       ),
                     )

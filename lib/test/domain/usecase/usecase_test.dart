@@ -1,21 +1,18 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:note/data/datasources/sqlite.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/data/repositories/crud_repository.dart';
 import 'package:note/domain/usecases/usecases.dart';
+import 'package:note/test/data/datasource/sqlite_datasource_test.dart';
 import 'package:note/test/utils/utils.dart';
-import 'package:sqflite/sqflite.dart';
 
 void main() {
   late UseCases useCases;
   late CrudRepository crudRepository;
-  late SqliteDatasource sqliteDatasource;
-  late Database db;
+  late DatasourceTest datasourceTest;
 
   setUp(() async {
-    db = await inicializeDatabase();
-    sqliteDatasource = SqliteDatasource(db: db);
-    crudRepository = CrudRepository(datasourceBase: sqliteDatasource);
+    datasourceTest = DatasourceTest();
+    crudRepository = CrudRepository(datasourceBase: datasourceTest);
     useCases = UseCases(repository: crudRepository);
   });
 
@@ -82,10 +79,6 @@ void main() {
         );
 
         assert(insert != 0);
-      });
-      
-      tearDownAll(() async {
-        await db.close();
       });
 
     }

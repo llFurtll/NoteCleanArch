@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:note/data/datasources/get_connection.dart';
 import 'package:note/data/model/anotacao_model.dart';
+import 'package:note/data/repositories/crud_repository.dart';
 import 'package:note/domain/usecases/usecases.dart';
+import 'package:note/presentation/pages/createpage/config_app.dart';
 import 'package:note/presentation/pages/createpage/create.dart';
 import 'package:note/presentation/pages/homepage/appbar.dart';
 import 'package:note/presentation/pages/homepage/card.dart';
@@ -14,13 +15,21 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> {
 
-  Future<List<Widget>> _getNotes() async {
-    UseCases useCase = await GetConnectionDataSource.getConnection();
-    
-    List<AnotacaoModel?> _listaAnotacao = await useCase.findAlluseCase();
-    List<Widget> _listaNote = [];
+  late UseCases useCases;
 
-    GetConnectionDataSource.closeConnection();
+  @override
+  void didChangeDependencies() {
+    useCases = UseCases(
+      repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
+    );
+
+    super.didChangeDependencies();
+  }
+
+  Future<List<Widget>> _getNotes() async {
+    List<AnotacaoModel?> _listaAnotacao = await useCases.findAlluseCase();
+    
+    List<Widget> _listaNote = [];
 
     _listaAnotacao.forEach((anotacao) {
       _listaNote.add(

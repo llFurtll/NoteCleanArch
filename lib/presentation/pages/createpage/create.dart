@@ -1,12 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:note/data/datasources/datasource.dart';
 import 'package:note/data/datasources/get_connection.dart';
 import 'package:note/data/model/anotacao_model.dart';
+import 'package:note/data/repositories/crud_repository.dart';
 import 'package:note/domain/usecases/usecases.dart';
 import 'package:note/presentation/pages/createpage/appbar.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:note/presentation/pages/createpage/color_inherited.dart';
+import 'package:note/presentation/pages/createpage/config_app.dart';
 
 class CreateNote extends StatefulWidget {
   final Function setState;
@@ -23,7 +25,7 @@ class CreateNoteState extends State<CreateNote> {
   final _formKey = GlobalKey<FormState>();
   late AnotacaoModel? _anotacaoModel;
 
-  Color _colorNote = Color(0xFF000000);
+  late UseCases useCases;
 
   TextEditingController _title = TextEditingController();
   TextEditingController _obs = TextEditingController();
@@ -31,15 +33,15 @@ class CreateNoteState extends State<CreateNote> {
   String _pathImage = "";
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    useCases = UseCases(
+      repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
+    );
+
     if (widget.id != null) {
       Future.sync(() async {
-        UseCases useCase = await GetConnectionDataSource.getConnection();
 
-        _anotacaoModel = await useCase.getByIdUseCase(id: widget.id!);
-        
-        GetConnectionDataSource.closeConnection();
+        _anotacaoModel = await useCases.getByIdUseCase(id: widget.id!);
 
         _title.text = _anotacaoModel!.titulo!;
         _obs.text = _anotacaoModel!.observacao!;
@@ -47,16 +49,22 @@ class CreateNoteState extends State<CreateNote> {
         setState(() {
           if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
             _pathImage = _anotacaoModel!.imagemFundo!;
-            AppBarCreate.removeBackground = true;
+            ConfigApp.of(context).removeBackground = true;
           }
 
           if (_anotacaoModel!.cor != null && _anotacaoModel!.cor!.isNotEmpty) {
-            _colorNote = Color(int.parse("0xFF${_anotacaoModel!.cor}"));
-            SetColor.of(context).color = _colorNote;
+            ConfigApp.of(context).color = Color(int.parse("0xFF${_anotacaoModel!.cor}"));
           }
         });
       });
     }
+    
+    super.didChangeDependencies();
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   TextFormField _titulo() {
@@ -71,16 +79,16 @@ class CreateNoteState extends State<CreateNote> {
       },
       decoration: InputDecoration(
         hintText: "Título",
-        errorStyle: TextStyle(color: _colorNote),
+        errorStyle: TextStyle(color: ConfigApp.of(context).color),
         hintStyle: TextStyle(
-          color: _colorNote,
+          color: ConfigApp.of(context).color,
           fontWeight: FontWeight.bold,
           fontSize: 20.0
         ),
         border: InputBorder.none, 
       ),
       style: TextStyle(
-        color: _colorNote,
+        color: ConfigApp.of(context).color,
         fontWeight: FontWeight.bold,
         fontSize: 20.0
       ),
@@ -94,11 +102,11 @@ class CreateNoteState extends State<CreateNote> {
     return TextFormField(
       controller: _obs,
       decoration: InputDecoration(
-        errorStyle: TextStyle(color: _colorNote),
+        errorStyle: TextStyle(color: ConfigApp.of(context).color),
         border: InputBorder.none,
       ),
       style: TextStyle(
-        color: _colorNote,
+        color: ConfigApp.of(context).color,
         fontSize: 18.0
       ),
       minLines: 10,
@@ -162,7 +170,7 @@ class CreateNoteState extends State<CreateNote> {
           mainAxisSize: MainAxisSize.min,
           children: [
             ColorPicker(
-              pickerColor: _colorNote,
+              pickerColor: ConfigApp.of(context).color,
               onColorChanged: changeColor,
               showLabel: false,
               enableAlpha: false,
@@ -184,60 +192,9 @@ class CreateNoteState extends State<CreateNote> {
 
   void changeColor(Color color) {
     setState(() {
-      _colorNote = color;
-      SetColor.of(context).color = color;
-      _pathImage.isNotEmpty ? AppBarCreate.removeBackground = true : AppBarCreate.removeBackground = false;
+      ConfigApp.of(context).color = color;
+      _pathImage.isNotEmpty ? ConfigApp.of(context).removeBackground = true : ConfigApp.of(context).removeBackground = false;
     });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return SetColor(
-      color: Colors.black,
-      child: WillPopScope(
-        onWillPop: () async {
-          AppBarCreate.removeBackground = false;
-          return true;
-        },
-        child: Scaffold(
-          extendBodyBehindAppBar: true,
-          backgroundColor: Colors.white,
-          appBar: PreferredSize(
-            child: AppBarCreate(
-              updateImage: _updatePathImage,
-              showColorPicker: _showColorPicker,
-              pathImage: _pathImage,
-            ),
-            preferredSize: Size.fromHeight(56.0),
-          ),
-          body: Stack(
-            children: [
-              Container(
-                decoration: _pathImage.isEmpty ? null : BoxDecoration(
-                  image: DecorationImage(
-                    image: _pathImage.contains('lib') ?
-                      AssetImage(_pathImage) as ImageProvider :
-                      FileImage(File(_pathImage)),
-                    fit: BoxFit.fill,
-                  ),
-                ),
-                width: double.infinity,
-                height: double.infinity,
-              ),
-              Container(
-                width: double.infinity,
-                height: double.infinity,
-                color: Colors.white.withOpacity(0.5),
-                child: SafeArea(
-                  child: _home(),
-                ),
-              ),
-            ],
-          ),
-          floatingActionButton: _button(),
-        ),
-      )
-    );
   }
 
   void _insertNote() async {
@@ -249,12 +206,12 @@ class CreateNoteState extends State<CreateNote> {
       situacao: 1,
       cor: _cor.text
     );
-
-    UseCases useCase = await GetConnectionDataSource.getConnection();
     
-    int? insert = await useCase.insertUseCase(anotacao: anotacaoModel);
+    UseCases useCases = UseCases(
+      repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
+    );
 
-    GetConnectionDataSource.closeConnection();
+    int? insert = await useCases.insertUseCase(anotacao: anotacaoModel);
 
     if (insert != 0) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -272,11 +229,11 @@ class CreateNoteState extends State<CreateNote> {
   }
 
   void _updateNote(AnotacaoModel anotacao) async {
-    UseCases useCase = await GetConnectionDataSource.getConnection();
+    UseCases useCases = UseCases(
+      repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
+    );
 
-    int? updated = await useCase.updateUseCase(anotacao: anotacao);
-
-    GetConnectionDataSource.closeConnection();
+    int? updated = await useCases.updateUseCase(anotacao: anotacao);
 
     if (updated != 0) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -296,7 +253,53 @@ class CreateNoteState extends State<CreateNote> {
   void _updatePathImage(String path) {
     setState(() {
       _pathImage = path;
-      SetColor.of(context).color = _colorNote;
     });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+       ConfigApp.of(context).removeBackground = false;
+        return true;
+      },
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        backgroundColor: Colors.white,
+        appBar: PreferredSize(
+          child: AppBarCreate(
+            updateImage: _updatePathImage,
+            showColorPicker: _showColorPicker,
+            pathImage: _pathImage,
+          ),
+          preferredSize: Size.fromHeight(56.0),
+        ),
+        body: Stack(
+          children: [
+            Container(
+              decoration: _pathImage.isEmpty ? null : BoxDecoration(
+                image: DecorationImage(
+                  image: _pathImage.contains('lib') ?
+                    AssetImage(_pathImage) as ImageProvider :
+                    FileImage(File(_pathImage)),
+                  fit: BoxFit.fill,
+                ),
+              ),
+              width: double.infinity,
+              height: double.infinity,
+            ),
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              color: Colors.white.withOpacity(0.5),
+              child: SafeArea(
+                child: _home(),
+              ),
+            ),
+          ],
+        ),
+        floatingActionButton: _button(),
+      ),
+    );
   }
 }

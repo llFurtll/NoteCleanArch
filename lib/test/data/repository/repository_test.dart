@@ -3,24 +3,21 @@ import 'package:note/data/datasources/datasource.dart';
 import 'package:note/data/datasources/sqlite.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/data/repositories/crud_repository.dart';
+import 'package:note/test/data/datasource/sqlite_datasource_test.dart';
 import 'package:note/test/utils/utils.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common/sqlite_api.dart';
 
 class RepositoryTest extends CrudRepository {
   RepositoryTest(DatasourceBase<AnotacaoModel> datasourceBase) : super(datasourceBase: datasourceBase);
 }
 
 void main() {
-  late SqliteDatasource sqliteDatasource;
+  late DatasourceTest datasourceTest;
   late RepositoryTest repositoryTest;
-  late Database db;
 
   setUp(() async {
-    db = await inicializeDatabase();
-    sqliteDatasource = SqliteDatasource(db: db);
-    repositoryTest = RepositoryTest(sqliteDatasource);
+    datasourceTest = DatasourceTest();
+    repositoryTest = RepositoryTest(datasourceTest);
   });
 
   group(
@@ -85,10 +82,6 @@ void main() {
         );
 
         assert(insert != 0);
-      });
-
-      tearDownAll(() async {
-        await db.close();
       });
 
     });
