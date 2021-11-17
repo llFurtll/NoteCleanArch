@@ -61,7 +61,7 @@ class AppBarHomeState extends State<AppBarHome> {
         ),
       ),
       backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-      actions: _actions(),
+      //actions: _actions(),
     );
   }
 }

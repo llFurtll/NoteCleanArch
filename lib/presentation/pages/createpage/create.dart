@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:note/data/datasources/datasource.dart';
-import 'package:note/data/datasources/get_connection.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/data/repositories/crud_repository.dart';
 import 'package:note/domain/usecases/usecases.dart';
@@ -206,10 +204,6 @@ class CreateNoteState extends State<CreateNote> {
       situacao: 1,
       cor: _cor.text
     );
-    
-    UseCases useCases = UseCases(
-      repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
-    );
 
     int? insert = await useCases.insertUseCase(anotacao: anotacaoModel);
 
@@ -229,10 +223,6 @@ class CreateNoteState extends State<CreateNote> {
   }
 
   void _updateNote(AnotacaoModel anotacao) async {
-    UseCases useCases = UseCases(
-      repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
-    );
-
     int? updated = await useCases.updateUseCase(anotacao: anotacao);
 
     if (updated != 0) {

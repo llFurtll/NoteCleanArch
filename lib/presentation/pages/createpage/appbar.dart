@@ -12,7 +12,7 @@ import 'config_app.dart';
 class AppBarCreate extends StatefulWidget {
   final Function(String pathImage) updateImage;
   final Function showColorPicker;
-  String? pathImage = "";
+  final String? pathImage;
 
   AppBarCreate({required this.updateImage, required this.showColorPicker, this.pathImage});
 
@@ -67,7 +67,6 @@ class AppBarCreateState extends State<AppBarCreate> {
         )
       ),
       IconButton(
-        splashColor: Color(0xFF004D98),
         padding: EdgeInsets.only(top: 25.0, bottom: 25.0, right: 25.0),
         onPressed: () {
           _controller = Scaffold.of(context).showBottomSheet((context) => Container(
@@ -167,7 +166,6 @@ class AppBarCreateState extends State<AppBarCreate> {
     return Builder(
       builder: (BuildContext context) {
         return IconButton(
-          splashColor:  Color(0xFF004D98),
           padding: EdgeInsets.all(25.0),
           icon: Icon(
             Icons.arrow_back_ios,
