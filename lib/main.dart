@@ -22,7 +22,7 @@ void main() => runApp(
             color: Color(0xFF004D98)
           )
         ),
-        scaffoldBackgroundColor: Color(0xFFE6E6E6),
+        scaffoldBackgroundColor: Colors.white,
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: Color(0XFFA50044)
         ),
@@ -30,6 +30,7 @@ void main() => runApp(
         textSelectionTheme: TextSelectionThemeData(
           cursorColor: Color(0XFFA50044)
         ),
+        accentColor: Color(0xFFA50044)
       ),
     )
   )

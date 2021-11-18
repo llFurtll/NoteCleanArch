@@ -101,7 +101,7 @@ class CardNoteState extends State<CardNote> {
   Container _card() {
     return Container(
       margin: EdgeInsets.only(bottom: 15.0),
-      width: MediaQuery.of(context).size.width,
+      width: MediaQuery.of(context).size.width * 0.7,
       child: GestureDetector(
         onTap: () {
           Navigator.push(

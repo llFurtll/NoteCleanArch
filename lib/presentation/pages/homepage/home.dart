@@ -4,7 +4,6 @@ import 'package:note/data/repositories/crud_repository.dart';
 import 'package:note/domain/usecases/usecases.dart';
 import 'package:note/presentation/pages/createpage/config_app.dart';
 import 'package:note/presentation/pages/createpage/create.dart';
-import 'package:note/presentation/pages/homepage/appbar.dart';
 import 'package:note/presentation/pages/homepage/card.dart';
 import 'package:note/utils/route_animation.dart';
 
@@ -13,7 +12,7 @@ class Home extends StatefulWidget {
   HomeState createState() => HomeState();
 }
 
-class HomeState extends State<Home> {
+class HomeState extends State<Home> with TickerProviderStateMixin {
 
   late UseCases useCases;
 
@@ -45,9 +44,80 @@ class HomeState extends State<Home> {
     return _listaNote;
   }
 
-  Widget _home() {
-    return Container(
-      padding: EdgeInsets.all(10.0),
+  Positioned _top() {
+    return Positioned(
+      top: 0.0,
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.4,
+        width: MediaQuery.of(context).size.width,
+        child: Center(
+          child: SafeArea(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(bottom: 20.0, top: 20.0),
+                  child: CircleAvatar(
+                    backgroundColor: Colors.yellow,
+                    radius: 35.0,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 20.0),
+                  child: Text("Daniel Melonari",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold
+                    ),
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  child: TextFormField(
+                    decoration: InputDecoration(
+                      hintText: "Pesquisar anotação",
+                      suffixIcon: Icon(Icons.search, color: Colors.white),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(
+                          color: Colors.white
+                        )
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white
+                        )
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white
+                        )
+                      ),
+                      hintStyle: TextStyle(
+                        color: Colors.white54
+                      )
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50.0), bottomRight: Radius.circular(50.0)),
+          color: Theme.of(context).primaryColor
+        ),
+      )
+    );
+  }
+
+  Positioned _listaNote() {
+    return Positioned(
+      top: MediaQuery.of(context).size.height * 0.31,
+      bottom: 0.0,
+      left: 0.0,
+      right: 0.0,
       child: FutureBuilder<List<Widget>>(
         future: _getNotes(),
         builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
@@ -62,14 +132,30 @@ class HomeState extends State<Home> {
                   child: Text("Sem anotações!"),
                 );
               } else {
-                return ListView(
-                  children: snapshot.data!,
+                return Center(
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    scrollDirection: Axis.vertical,
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      return  AnimatedListItem(index, Align(child: snapshot.data![index]));
+                    },
+                  ),
                 );
               }
             }
           }
         },
       ),
+    );
+  }
+
+  Stack _home() {
+    return Stack(
+      children: [
+        _top(),
+        _listaNote()
+      ],
     );
   }
 
@@ -92,12 +178,61 @@ class HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        child: AppBarHome(titulo: "Note"),
-        preferredSize: Size.fromHeight(56.0),
-      ),
+      extendBodyBehindAppBar: true,
       body: _home(),
       floatingActionButton: _button(),
+    );
+  }
+}
+
+class AnimatedListItem extends StatefulWidget {
+  final int index;
+  final Widget child;
+
+  AnimatedListItem(this.index, this.child, {Key? key}) : super(key: key);
+
+  @override
+  _AnimatedListItemState createState() => _AnimatedListItemState();
+}
+
+class _AnimatedListItemState extends State<AnimatedListItem> {
+  bool _animate = false;
+
+  static bool _isStart = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _isStart
+        ? Future.delayed(Duration(milliseconds: widget.index * 100), () {
+            setState(() {
+              _animate = true;
+              _isStart = false;
+            });
+          })
+        : _animate = true;
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedOpacity(
+      duration: Duration(milliseconds: 1000),
+      opacity: _animate ? 1 : 0,
+      curve: Curves.easeInOutQuart,
+      child: AnimatedPadding(
+        duration: Duration(milliseconds: 1000),
+        padding: _animate
+            ? const EdgeInsets.all(4.0)
+            : const EdgeInsets.only(top: 10),
+        child: Container(
+          child: widget.child
+        ),
+      ),
     );
   }
 }
