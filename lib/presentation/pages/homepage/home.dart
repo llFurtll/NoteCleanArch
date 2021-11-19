@@ -44,81 +44,85 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
     return _listaNote;
   }
 
-  Positioned _top() {
-    return Positioned(
-      top: 0.0,
-      child: Container(
-        height: MediaQuery.of(context).size.height * 0.4,
-        width: MediaQuery.of(context).size.width,
-        child: Center(
-          child: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(bottom: 20.0, top: 20.0),
-                  child: CircleAvatar(
-                    backgroundColor: Colors.yellow,
-                    radius: 35.0,
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 20.0),
-                  child: Text("Daniel Melonari",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold
+  Widget _top() {
+    return SliverAppBar(
+      backgroundColor: Colors.white,
+      expandedHeight: 250.0,
+      flexibleSpace: FlexibleSpaceBar(
+        background: Container(
+          height: MediaQuery.of(context).size.height * 0.4,
+          width: MediaQuery.of(context).size.width,
+          child: Center(
+            child: SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 20.0, top: 20.0),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.yellow,
+                      radius: 35.0,
                     ),
                   ),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  child: TextFormField(
-                    decoration: InputDecoration(
-                      hintText: "Pesquisar anotação",
-                      suffixIcon: Icon(Icons.search, color: Colors.white),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(
-                          color: Colors.white
-                        )
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 20.0),
+                    child: Text("Daniel Melonari",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.white
-                        )
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.white
-                        )
-                      ),
-                      hintStyle: TextStyle(
-                        color: Colors.white54
-                      )
                     ),
                   ),
-                )
-              ],
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        hintText: "Pesquisar anotação",
+                        suffixIcon: Icon(Icons.search, color: Colors.white),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(
+                            color: Colors.white
+                          )
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white
+                          )
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white
+                          )
+                        ),
+                        hintStyle: TextStyle(
+                          color: Colors.white54
+                        )
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
           ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50.0), bottomRight: Radius.circular(50.0)),
+            color: Theme.of(context).primaryColor
+          ),
         ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50.0), bottomRight: Radius.circular(50.0)),
-          color: Theme.of(context).primaryColor
-        ),
-      )
+      ),
     );
   }
 
-  Positioned _listaNote() {
-    return Positioned(
-      top: MediaQuery.of(context).size.height * 0.31,
-      bottom: 0.0,
-      left: 0.0,
-      right: 0.0,
-      child: FutureBuilder<List<Widget>>(
+  Widget _home() {
+    return NestedScrollView(
+      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+        return <Widget> [
+          _top()
+        ];
+      },
+      body: FutureBuilder(
         future: _getNotes(),
         builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
           switch (snapshot.connectionState) {
@@ -132,30 +136,17 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                   child: Text("Sem anotações!"),
                 );
               } else {
-                return Center(
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    scrollDirection: Axis.vertical,
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      return  AnimatedListItem(index, Align(child: snapshot.data![index]));
-                    },
-                  ),
+                return ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    return Align(child: AnimatedListItem(index, snapshot.data![index]));
+                  },
                 );
               }
             }
           }
         },
       ),
-    );
-  }
-
-  Stack _home() {
-    return Stack(
-      children: [
-        _top(),
-        _listaNote()
-      ],
     );
   }
 
