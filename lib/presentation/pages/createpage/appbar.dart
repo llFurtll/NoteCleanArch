@@ -189,15 +189,17 @@ class AppBarCreateState extends State<AppBarCreate> {
     }
     return GestureDetector(
       onTap: () {
-        widget.updateImage(image);
-        _controller!.setState!(() {
-          _imageSelected = index;
+        if (image != widget.pathImage) {
+          widget.updateImage(image);
+          _controller!.setState!(() {
+            _imageSelected = index;
 
-          Future.delayed(Duration(milliseconds: 100), () {
-            _scrollController.jumpTo(_positionList);
+            Future.delayed(Duration(milliseconds: 100), () {
+              _scrollController.jumpTo(_positionList);
+            });
           });
-        });
-        ConfigApp.of(context).removeBackground = true;
+          ConfigApp.of(context).removeBackground = true;
+        }
       },
       onLongPress: () {
         if (!image.contains('lib')) {

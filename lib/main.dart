@@ -30,7 +30,7 @@ void main() => runApp(
         textSelectionTheme: TextSelectionThemeData(
           cursorColor: Color(0XFFA50044)
         ),
-        accentColor: Color(0xFFA50044)
+        colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Color(0xFFA50044)),
       ),
     )
   )

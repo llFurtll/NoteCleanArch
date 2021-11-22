@@ -46,6 +46,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
 
   Widget _top() {
     return SliverAppBar(
+      floating: true,
       backgroundColor: Colors.white,
       expandedHeight: 250.0,
       flexibleSpace: FlexibleSpaceBar(
@@ -98,7 +99,10 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                         ),
                         hintStyle: TextStyle(
                           color: Colors.white54
-                        )
+                        ),
+                      ),
+                      style: TextStyle(
+                        color: Colors.white
                       ),
                     ),
                   )
