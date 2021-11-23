@@ -43,7 +43,7 @@ class AppBarCreateState extends State<AppBarCreate> {
     return [
     IconButton(
         icon: Icon(Icons.color_lens),
-        padding: EdgeInsets.only(top: 25.0, bottom: 25.0, right: 10.0),
+        padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 10.0),
         color: ConfigApp.of(context).color,
         onPressed: () {
           widget.showColorPicker();
@@ -53,7 +53,7 @@ class AppBarCreateState extends State<AppBarCreate> {
         visible: ConfigApp.of(context).removeBackground,
         child: IconButton(
           color: ConfigApp.of(context).color,
-          padding: EdgeInsets.only(top: 25.0, bottom: 25.0, right: 10.0),
+          padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 10.0),
           onPressed: () {
             widget.updateImage("");
             if (_controller != null) {
@@ -67,10 +67,10 @@ class AppBarCreateState extends State<AppBarCreate> {
         )
       ),
       IconButton(
-        padding: EdgeInsets.only(top: 25.0, bottom: 25.0, right: 25.0),
+        padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 25.0),
         onPressed: () {
           _controller = Scaffold.of(context).showBottomSheet((context) => Container(
-            padding: EdgeInsets.all(15.0),
+            padding: const EdgeInsets.all(15.0),
             height: 200.0,
             decoration: BoxDecoration(
               color: Colors.white,
@@ -94,7 +94,7 @@ class AppBarCreateState extends State<AppBarCreate> {
                             return _buildCardImage(snapshot.data![index], index); 
                           } else {
                             return Container(
-                              margin: EdgeInsets.only(right: 15.0),
+                              margin: const EdgeInsets.only(right: 15.0),
                               width: 120.0,
                               height: 150.0,
                               decoration: BoxDecoration(
@@ -166,7 +166,7 @@ class AppBarCreateState extends State<AppBarCreate> {
     return Builder(
       builder: (BuildContext context) {
         return IconButton(
-          padding: EdgeInsets.all(25.0),
+          padding: const EdgeInsets.all(25.0),
           icon: Icon(
             Icons.arrow_back_ios,
             color: ConfigApp.of(context).color
@@ -252,7 +252,7 @@ class AppBarCreateState extends State<AppBarCreate> {
         }
       },
       child: Container(
-        margin: EdgeInsets.only(right: 15.0),
+        margin: const EdgeInsets.only(right: 15.0),
         width: 120.0,
         height: 150.0,
         decoration: BoxDecoration(

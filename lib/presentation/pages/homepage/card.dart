@@ -11,10 +11,12 @@ import 'package:note/utils/route_animation.dart';
 class CardNote extends StatefulWidget {
   final AnotacaoModel anotacaoModel;
   final Function setState;
+  final FocusNode focus;
 
   CardNote({
-      required this.anotacaoModel,
-      required this.setState
+    required this.anotacaoModel,
+    required this.setState,
+    required this.focus
   });
   
   @override
@@ -65,7 +67,7 @@ class CardNoteState extends State<CardNote> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Padding(
-          padding: EdgeInsets.only(bottom: 5.0),
+          padding: const EdgeInsets.only(bottom: 5.0),
           child: Text(
             widget.anotacaoModel.titulo!,
             style: TextStyle(
@@ -76,7 +78,7 @@ class CardNoteState extends State<CardNote> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(bottom: 5.0),
+          padding: const EdgeInsets.only(bottom: 5.0),
           child:  Text(
             widget.anotacaoModel.observacao!,
             overflow: TextOverflow.ellipsis,
@@ -100,10 +102,11 @@ class CardNoteState extends State<CardNote> {
 
   Container _card() {
     return Container(
-      margin: EdgeInsets.only(bottom: 15.0),
-      width: MediaQuery.of(context).size.width * 0.7,
+      margin: const EdgeInsets.only(bottom: 15.0),
+      width: MediaQuery.of(context).size.width * 0.8,
       child: GestureDetector(
         onTap: () {
+          widget.focus.unfocus();
           Navigator.push(
             context,
             createRoute(
@@ -149,7 +152,7 @@ class CardNoteState extends State<CardNote> {
           offset: Offset(_offset, 0.0),
           child: Card(
             clipBehavior: Clip.antiAlias,
-            shape: RoundedRectangleBorder(
+            shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(10.0))
             ),
             color: Theme.of(context).cardColor,
@@ -166,7 +169,7 @@ class CardNoteState extends State<CardNote> {
               ),
               child: Container(
                 decoration: widget.anotacaoModel.imagemFundo!.isEmpty ? null : BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  borderRadius: const BorderRadius.all(Radius.circular(10.0)),
                   color: Colors.white.withOpacity(0.5),
                 ),
                 child: Padding(
@@ -189,7 +192,7 @@ class CardNoteState extends State<CardNote> {
         opacity: _opacity,
         child: Visibility(
         visible: _visibilityButtons,
-        child:  Column(
+        child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Transform.scale(
@@ -199,7 +202,7 @@ class CardNoteState extends State<CardNote> {
                     backgroundColor: Colors.red,
                     shape: CircleBorder()
                   ),
-                  child: Icon(Icons.delete, color: Colors.white),
+                  child: const Icon(Icons.delete, color: Colors.white),
                   onPressed: _removeNote
                 ),
               ),
@@ -208,7 +211,7 @@ class CardNoteState extends State<CardNote> {
                 child: TextButton(
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.green,
-                    shape: CircleBorder()
+                    shape: const CircleBorder()
                   ),
                   child: Icon(Icons.check, color: Colors.white),
                   onPressed: _updateSituacao,

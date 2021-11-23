@@ -1,16 +1,15 @@
 import 'package:note/data/datasources/datasource.dart';
 import 'package:note/data/model/anotacao_model.dart';
-import 'package:path/path.dart';
+import 'package:note/test/utils/utils.dart';
 import 'package:sqflite/sqflite.dart';
 
-class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
+class DatasourceTest implements DatasourceBase<AnotacaoModel> {
   
   late Database _db;
 
   Future<void> getConnection() async {
-    _db = await openDatabase(
-      join(await getDatabasesPath(), "note.db")
-    );
+  
+    _db = await inicializeDatabase();
   }
 
   Future<void> closeConnection() async {
@@ -18,12 +17,12 @@ class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
   }
 
   @override
-  Future<List<AnotacaoModel>> findAll() async {
+  Future<List<AnotacaoModel?>> findAll() async {
     await getConnection();
 
-    List<AnotacaoModel> listAnotacao = [];
+    List<AnotacaoModel?> listAnotacao = [];
     
-    List<Map> listNote = await _db.rawQuery("SELECT * FROM NOTE WHERE SITUACAO = 1 ORDER BY DATA DESC");
+    List<Map>? listNote = await _db.rawQuery("SELECT * FROM NOTE WHERE SITUACAO = 1 ORDER BY DATA DESC");
 
     listNote.forEach((elemento) {
       listAnotacao.add(AnotacaoModel.fromJson(elemento));
@@ -158,4 +157,5 @@ class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
 
     return listAnotacao;
   }
+  
 }

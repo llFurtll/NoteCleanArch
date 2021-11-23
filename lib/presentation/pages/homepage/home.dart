@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/data/repositories/crud_repository.dart';
@@ -7,6 +9,8 @@ import 'package:note/presentation/pages/createpage/create.dart';
 import 'package:note/presentation/pages/homepage/card.dart';
 import 'package:note/utils/route_animation.dart';
 
+import 'animated_list.dart';
+
 class Home extends StatefulWidget {
   @override
   HomeState createState() => HomeState();
@@ -15,6 +19,9 @@ class Home extends StatefulWidget {
 class HomeState extends State<Home> with TickerProviderStateMixin {
 
   late UseCases useCases;
+  Timer? _debounce;
+  late FocusNode _focusNode;
+  TextEditingController _textController = TextEditingController();
 
   @override
   void didChangeDependencies() {
@@ -25,8 +32,35 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
     super.didChangeDependencies();
   }
 
+  @override
+  void initState() {
+    super.initState();
+
+    _focusNode = FocusNode();
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _focusNode.dispose();
+
+    super.dispose();
+  }
+
+  void _onSearch(String query) {
+    if (_debounce?.isActive ?? false) _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      setState(() {});
+    });
+  }
+
   Future<List<Widget>> _getNotes() async {
-    List<AnotacaoModel?> _listaAnotacao = await useCases.findAlluseCase();
+    List<AnotacaoModel?> _listaAnotacao = [];
+    if (_textController.text.isNotEmpty) {
+      _listaAnotacao = await useCases.findWithDesc(desc: _textController.text);
+    } else {
+      _listaAnotacao = await useCases.findAlluseCase();
+    }
     
     List<Widget> _listaNote = [];
 
@@ -37,6 +71,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
           setState: () {
             setState(() {});
           },
+          focus: _focusNode,
         ),
       );
     });
@@ -45,88 +80,87 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   Widget _top() {
-    return SliverAppBar(
-      floating: true,
-      backgroundColor: Colors.white,
-      expandedHeight: 250.0,
-      flexibleSpace: FlexibleSpaceBar(
-        background: Container(
-          height: MediaQuery.of(context).size.height * 0.4,
-          width: MediaQuery.of(context).size.width,
-          child: Center(
-            child: SafeArea(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 20.0, top: 20.0),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.yellow,
-                      radius: 35.0,
+    return Positioned(
+      top: 0.0,
+      height: 320.0,
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        child: Center(
+          child: SafeArea(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 20.0, top: 20.0),
+                  child: CircleAvatar(
+                    backgroundColor: Colors.yellow,
+                    radius: 35.0,
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 20.0),
+                  child: Text("Daniel Melonari",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 20.0),
-                    child: Text("Daniel Melonari",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  child: TextFormField(
+                    focusNode: _focusNode,
+                    controller: _textController,
+                    onChanged: _onSearch,
+                    decoration: InputDecoration(
+                      hintText: "Pesquisar anotação",
+                      suffixIcon: Icon(Icons.search, color: Colors.white),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(
+                          color: Colors.white
+                        )
                       ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white
+                        )
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white
+                        )
+                      ),
+                      hintStyle: TextStyle(
+                        color: Colors.white54
+                      ),
+                    ),
+                    cursorColor: Colors.white,
+                    style: TextStyle(
+                      color: Colors.white
                     ),
                   ),
-                  Container(
-                    width: MediaQuery.of(context).size.width * 0.7,
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        hintText: "Pesquisar anotação",
-                        suffixIcon: Icon(Icons.search, color: Colors.white),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(
-                            color: Colors.white
-                          )
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.white
-                          )
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.white
-                          )
-                        ),
-                        hintStyle: TextStyle(
-                          color: Colors.white54
-                        ),
-                      ),
-                      style: TextStyle(
-                        color: Colors.white
-                      ),
-                    ),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
           ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50.0), bottomRight: Radius.circular(50.0)),
-            color: Theme.of(context).primaryColor
-          ),
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50.0), bottomRight: Radius.circular(50.0)),
+          color: Theme.of(context).primaryColor,
         ),
       ),
     );
   }
 
-  Widget _home() {
-    return NestedScrollView(
-      headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
-        return <Widget> [
-          _top()
-        ];
-      },
-      body: FutureBuilder(
+  Widget _listaNote() {
+    return Positioned(
+      top: 270.0,
+      bottom: 0.0,
+      left: 0.0,
+      right: 0.0,
+      child: FutureBuilder(
         future: _getNotes(),
         builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
           switch (snapshot.connectionState) {
@@ -141,6 +175,9 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                 );
               } else {
                 return ListView.builder(
+                  padding: EdgeInsets.zero,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.vertical,
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
                     return Align(child: AnimatedListItem(index, snapshot.data![index]));
@@ -154,18 +191,30 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
     );
   }
 
+  Widget _home() {
+    return Stack(
+      children: [
+        _top(),
+        _listaNote()
+      ],
+    );
+  }
+
   FloatingActionButton _button() {
     return FloatingActionButton(
       backgroundColor: Theme.of(context).floatingActionButtonTheme.backgroundColor,
-      onPressed: () => Navigator.of(context).push(
-        createRoute(
-          CreateNote(
-            setState: () {
-              setState(() {});
-            },
+      onPressed: () {
+        _focusNode.unfocus();
+        Navigator.of(context).push(
+          createRoute(
+            CreateNote(
+              setState: () {
+                setState(() {});
+              },
+            )
           )
-        )
-      ),
+        );
+      },
       child: Icon(Icons.add),
     );
   }
@@ -173,61 +222,11 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
-      body: _home(),
-      floatingActionButton: _button(),
-    );
-  }
-}
-
-class AnimatedListItem extends StatefulWidget {
-  final int index;
-  final Widget child;
-
-  AnimatedListItem(this.index, this.child, {Key? key}) : super(key: key);
-
-  @override
-  _AnimatedListItemState createState() => _AnimatedListItemState();
-}
-
-class _AnimatedListItemState extends State<AnimatedListItem> {
-  bool _animate = false;
-
-  static bool _isStart = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _isStart
-        ? Future.delayed(Duration(milliseconds: widget.index * 100), () {
-            setState(() {
-              _animate = true;
-              _isStart = false;
-            });
-          })
-        : _animate = true;
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedOpacity(
-      duration: Duration(milliseconds: 1000),
-      opacity: _animate ? 1 : 0,
-      curve: Curves.easeInOutQuart,
-      child: AnimatedPadding(
-        duration: Duration(milliseconds: 1000),
-        padding: _animate
-            ? const EdgeInsets.all(4.0)
-            : const EdgeInsets.only(top: 10),
-        child: Container(
-          child: widget.child
-        ),
+      body: GestureDetector(
+        onTap: () => _focusNode.unfocus(),
+        child: _home(),
       ),
+      floatingActionButton: _button(),
     );
   }
 }

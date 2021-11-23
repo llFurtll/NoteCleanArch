@@ -162,7 +162,7 @@ class CreateNoteState extends State<CreateNote> {
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        contentPadding: EdgeInsets.all(10.0),
+        contentPadding: const EdgeInsets.all(10.0),
         title: Text("Cor das letras"),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -246,6 +246,33 @@ class CreateNoteState extends State<CreateNote> {
     });
   }
 
+  Widget _body() {
+    return Stack(
+      children: [
+        Container(
+          decoration: _pathImage.isEmpty ? null : BoxDecoration(
+            image: DecorationImage(
+              image: _pathImage.contains('lib') ?
+                AssetImage(_pathImage) as ImageProvider :
+                FileImage(File(_pathImage)),
+              fit: BoxFit.fill,
+            ),
+          ),
+          width: double.infinity,
+          height: double.infinity,
+        ),
+        Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Colors.white.withOpacity(0.5),
+          child: SafeArea(
+            child: _home(),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -264,30 +291,7 @@ class CreateNoteState extends State<CreateNote> {
           ),
           preferredSize: Size.fromHeight(56.0),
         ),
-        body: Stack(
-          children: [
-            Container(
-              decoration: _pathImage.isEmpty ? null : BoxDecoration(
-                image: DecorationImage(
-                  image: _pathImage.contains('lib') ?
-                    AssetImage(_pathImage) as ImageProvider :
-                    FileImage(File(_pathImage)),
-                  fit: BoxFit.fill,
-                ),
-              ),
-              width: double.infinity,
-              height: double.infinity,
-            ),
-            Container(
-              width: double.infinity,
-              height: double.infinity,
-              color: Colors.white.withOpacity(0.5),
-              child: SafeArea(
-                child: _home(),
-              ),
-            ),
-          ],
-        ),
+        body: _body(),
         floatingActionButton: _button(),
       ),
     );

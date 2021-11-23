@@ -1,13 +1,13 @@
 import 'package:note/data/datasources/datasource.dart';
-import 'package:note/data/datasources/sqlite.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/domain/repositories/irepository.dart';
+import 'package:note/test/data/datasource/sqlite.dart';
 
-class CrudRepository implements IRepository<AnotacaoModel> {
+class RepositoryTest implements IRepository<AnotacaoModel> {
 
   DatasourceBase<AnotacaoModel> datasourceBase;
 
-  CrudRepository({required this.datasourceBase});
+  RepositoryTest({required this.datasourceBase});
 
   @override
   Future<int?> delete({required int id}) async {
@@ -40,11 +40,12 @@ class CrudRepository implements IRepository<AnotacaoModel> {
   }
 
   Future<int?> removeBackgroundNote({required String image}) async {
-    int? update = await (datasourceBase as SqliteDatasource).removeBackgroundNote(image: image);
+    int? update = await (datasourceBase as DatasourceTest).removeBackgroundNote(image: image);
     return update;
   }
 
   Future<List<AnotacaoModel?>> findWithDesc({String desc = ""}) async {
-    return await (datasourceBase as SqliteDatasource).findWithDesc(desc: desc);
+    return await (datasourceBase as DatasourceTest).findWithDesc(desc: desc);
   }
+  
 }

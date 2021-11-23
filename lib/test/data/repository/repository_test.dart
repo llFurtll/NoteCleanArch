@@ -1,15 +1,13 @@
 
 import 'package:note/data/datasources/datasource.dart';
-import 'package:note/data/datasources/sqlite.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/data/repositories/crud_repository.dart';
-import 'package:note/test/data/datasource/sqlite_datasource_test.dart';
+import 'package:note/domain/entities/anotacao.dart';
+import 'package:note/domain/repositories/irepository.dart';
+import 'package:note/test/data/datasource/sqlite.dart';
+import 'package:note/test/data/repository/test_repository.dart';
 import 'package:note/test/utils/utils.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-class RepositoryTest extends CrudRepository {
-  RepositoryTest(DatasourceBase<AnotacaoModel> datasourceBase) : super(datasourceBase: datasourceBase);
-}
 
 void main() {
   late DatasourceTest datasourceTest;
@@ -17,7 +15,7 @@ void main() {
 
   setUp(() async {
     datasourceTest = DatasourceTest();
-    repositoryTest = RepositoryTest(datasourceTest);
+    repositoryTest = RepositoryTest(datasourceBase: datasourceTest);
   });
 
   group(
@@ -66,7 +64,7 @@ void main() {
 
       test("Testando o delete", () async {
         int? delete = await repositoryTest.delete(id: 1);
-         assert(delete == 1);
+        assert(delete == 1);
       });
 
       test("Testando o insert", () async {
@@ -82,6 +80,16 @@ void main() {
         );
 
         assert(insert != 0);
+      });
+
+      test("Removendo o background", () async {
+        int? updated = await repositoryTest.removeBackgroundNote(image: "http");
+        assert(updated == 2);
+      });
+
+      test("find com desc", () async {
+        List<AnotacaoModel?> listaAnotacao = await repositoryTest.findWithDesc(desc: "teste");
+        expect(listaAnotacao.length, 2);
       });
 
     });
