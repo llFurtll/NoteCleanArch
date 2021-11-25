@@ -39,12 +39,14 @@ class CrudRepository implements IRepository<AnotacaoModel> {
     return await datasourceBase.updateSituacao(anotacao: anotacao);
   }
 
+  @override
   Future<int?> removeBackgroundNote({required String image}) async {
-    int? update = await (datasourceBase as SqliteDatasource).removeBackgroundNote(image: image);
+    int? update = await datasourceBase.removeBackgroundNote(image: image);
     return update;
   }
 
+  @override
   Future<List<AnotacaoModel?>> findWithDesc({String desc = ""}) async {
-    return await (datasourceBase as SqliteDatasource).findWithDesc(desc: desc);
+    return await datasourceBase.findWithDesc(desc: desc);
   }
 }

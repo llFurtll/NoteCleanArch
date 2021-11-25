@@ -1,5 +1,4 @@
 import 'package:note/data/model/anotacao_model.dart';
-import 'package:note/data/repositories/crud_repository.dart';
 import '../repositories/irepository.dart';
 
 class UseCases {
@@ -33,11 +32,11 @@ class UseCases {
   }
 
   Future<int?> removeBackgroundNote({required String image}) async {
-    int? update = await (repository as CrudRepository).removeBackgroundNote(image: image);
+    int? update = await repository.removeBackgroundNote(image: image);
     return update;
   }
 
   Future<List<AnotacaoModel?>> findWithDesc({String desc = ""}) async {
-    return await (repository as CrudRepository).findWithDesc(desc: desc);
+    return await repository.findWithDesc(desc: desc);
   }
 }

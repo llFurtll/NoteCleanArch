@@ -1,11 +1,6 @@
-
-import 'package:note/data/datasources/datasource.dart';
 import 'package:note/data/model/anotacao_model.dart';
-import 'package:note/data/repositories/crud_repository.dart';
-import 'package:note/domain/entities/anotacao.dart';
-import 'package:note/domain/repositories/irepository.dart';
-import 'package:note/test/data/datasource/sqlite.dart';
-import 'package:note/test/data/repository/test_repository.dart';
+import 'package:note/test/data/datasource/datasourcetest.dart';
+import 'package:note/test/data/repository/repositorytest.dart';
 import 'package:note/test/utils/utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 

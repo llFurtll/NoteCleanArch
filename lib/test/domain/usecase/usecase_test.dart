@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:note/data/model/anotacao_model.dart';
-import 'package:note/test/data/datasource/sqlite.dart';
-import 'package:note/test/data/repository/test_repository.dart';
+import 'package:note/test/data/datasource/datasourcetest.dart';
+import 'package:note/test/data/repository/repositorytest.dart';
 import 'package:note/test/domain/usecase/test_usecases.dart';
 import 'package:note/test/utils/utils.dart';
 

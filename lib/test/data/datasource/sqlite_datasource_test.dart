@@ -1,7 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:note/data/model/anotacao_model.dart';
-import 'package:note/test/data/datasource/sqlite.dart';
 import 'package:note/test/utils/utils.dart';
+
+import 'datasourcetest.dart';
 
 void main() {
   late DatasourceTest datasourceTest;

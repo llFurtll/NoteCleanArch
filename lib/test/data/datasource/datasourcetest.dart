@@ -125,6 +125,7 @@ class DatasourceTest implements DatasourceBase<AnotacaoModel> {
     return update;
   }
 
+  @override
   Future<int?> removeBackgroundNote({required String image}) async {
     await getConnection();
 
@@ -140,6 +141,7 @@ class DatasourceTest implements DatasourceBase<AnotacaoModel> {
     return update;
   }
 
+  @override
   Future<List<AnotacaoModel?>> findWithDesc({String desc = ""}) async {
     await getConnection();
 
