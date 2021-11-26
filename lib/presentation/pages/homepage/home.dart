@@ -9,6 +9,7 @@ import 'package:note/presentation/pages/createpage/create.dart';
 import 'package:note/presentation/pages/homepage/card.dart';
 import 'package:note/utils/route_animation.dart';
 
+import 'alter_name.dart';
 import 'animated_list.dart';
 
 class Home extends StatefulWidget {
@@ -22,6 +23,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   Timer? _debounce;
   late FocusNode _focusNode;
   TextEditingController _textController = TextEditingController();
+  String? _userName;
 
   @override
   void didChangeDependencies() {
@@ -35,6 +37,8 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+
+    _userName = "Daniel Melonari";
 
     _focusNode = FocusNode();
   }
@@ -97,14 +101,13 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                     radius: 35.0,
                   ),
                 ),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(bottom: 20.0),
-                  child: Text("Daniel Melonari",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold
-                    ),
+                  child: TextButton(
+                    child: Text(_userName!, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0)),
+                    onPressed: () {
+                      showModalBottomSheet(context: context, builder: (context) => AlterName(userName: _userName,));
+                    },
                   ),
                 ),
                 Container(
