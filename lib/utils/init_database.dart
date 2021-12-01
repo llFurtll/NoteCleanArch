@@ -19,6 +19,16 @@ Future<void> initDatabase() async {
           )
         """
       );
+
+      await db.execute(
+        """
+          CREATE TABLE IF NOT EXISTS CONFIGUSER(
+            id INTEGER PRIMARY KEY,
+            path_foto TEXT DEFAULT NULL
+            nome TEXT DEFAULT NULL
+          )
+        """
+      );
     }
   );
 }

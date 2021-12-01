@@ -104,7 +104,14 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                 Padding(
                   padding: EdgeInsets.only(bottom: 20.0),
                   child: TextButton(
-                    child: Text(_userName!, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0)),
+                    autofocus: false,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(_userName!, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0)),
+                        Icon(Icons.edit, color: Colors.white),
+                      ],
+                    ),
                     onPressed: () {
                       showModalBottomSheet(context: context, builder: (context) => AlterName(userName: _userName,));
                     },

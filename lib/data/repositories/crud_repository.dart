@@ -1,5 +1,4 @@
 import 'package:note/data/datasources/datasource.dart';
-import 'package:note/data/datasources/sqlite.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/domain/repositories/irepository.dart';
 

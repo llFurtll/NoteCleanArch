@@ -31,7 +31,6 @@ class _AnimatedListItemState extends State<AnimatedListItem> {
   @override
   void dispose() {
     super.dispose();
-    _isStart = true;
   }
 
   @override

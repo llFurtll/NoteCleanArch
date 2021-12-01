@@ -14,7 +14,7 @@ class AlterName extends StatelessWidget {
         return Container(
           height: 80.0,
           child: Padding(
-            padding: EdgeInsets.all(15.0),
+            padding: const EdgeInsets.all(15.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -23,10 +23,10 @@ class AlterName extends StatelessWidget {
                   width: MediaQuery.of(context).size.width - 100,
                   child: TextFormField(
                     initialValue: userName,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(
+                    decoration: const InputDecoration(
+                      border: const OutlineInputBorder(
+                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: const BorderSide(
                           color: Colors.white
                         )
                       ),
