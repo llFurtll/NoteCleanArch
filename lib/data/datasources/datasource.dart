@@ -9,4 +9,8 @@ abstract class DatasourceBase<T extends Anotacao> {
   Future<int?> updateSituacao({required T anotacao});
   Future<int?> removeBackgroundNote({required String image});
   Future<List<T?>> findWithDesc({String desc = ""});
+  Future<String?> getImage();
+  Future<String?> getName();
+  Future<int?> updateImage({required String path_image});
+  Future<int?> updateName({required String name});
 }

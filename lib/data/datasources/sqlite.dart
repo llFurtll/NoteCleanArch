@@ -160,4 +160,59 @@ class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
 
     return listAnotacao;
   }
+
+  @override
+  Future<String?> getImage() async {
+    await getConnection();
+
+    List<Map> result = await _db.rawQuery(
+      "SELECT PATH_FOTO FROM CONFIGUSER WHERE ID = 1"
+    );
+
+
+    await closeConnection();
+
+    if (result.length > 0) {
+      return result.first['path_foto'];
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  Future<String?> getName() async {
+    await getConnection();
+
+    List<Map> result = await _db.rawQuery(
+      "SELECT NOME FROM CONFIGUSER WHERE ID = 1"
+    );
+
+
+    await closeConnection();
+
+    if (result.length > 0) {
+      return result.first['nome'];
+    } else {
+      return null;
+    }
+  }
+
+  @override
+  Future<int?> updateImage({required String path_image}) {
+    // TODO: implement updateImage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<int?> updateName({required String name}) async {
+    await getConnection();
+
+    int? updated = await _db.rawUpdate(
+      "UPDATE CONFIGUSER SET NOME = ? WHERE ID = 1", [name]
+    );
+
+    await closeConnection();
+
+    return updated;
+  }
 }

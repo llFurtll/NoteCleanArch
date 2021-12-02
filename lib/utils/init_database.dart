@@ -24,11 +24,18 @@ Future<void> initDatabase() async {
         """
           CREATE TABLE IF NOT EXISTS CONFIGUSER(
             id INTEGER PRIMARY KEY,
-            path_foto TEXT DEFAULT NULL
+            path_foto TEXT DEFAULT NULL,
             nome TEXT DEFAULT NULL
           )
         """
       );
+
+      await db.rawInsert("""
+        INSERT INTO CONFIGUSER (path_foto, nome)
+        SELECT '', '' WHERE NOT EXISTS(
+          SELECT ID FROM CONFIGUSER WHERE ID = 1
+        )
+      """);
     }
   );
 }

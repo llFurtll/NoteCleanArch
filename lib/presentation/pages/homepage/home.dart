@@ -2,14 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:note/data/model/anotacao_model.dart';
+import 'package:note/data/repositories/config_repository.dart';
 import 'package:note/data/repositories/crud_repository.dart';
-import 'package:note/domain/usecases/usecases.dart';
+import 'package:note/domain/usecases/config_user_usecases.dart';
+import 'package:note/domain/usecases/crud_usecases.dart';
 import 'package:note/presentation/pages/createpage/config_app.dart';
 import 'package:note/presentation/pages/createpage/create.dart';
 import 'package:note/presentation/pages/homepage/card.dart';
 import 'package:note/utils/route_animation.dart';
 
-import 'alter_name.dart';
 import 'animated_list.dart';
 
 class Home extends StatefulWidget {
@@ -19,17 +20,39 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> with TickerProviderStateMixin {
 
-  late UseCases useCases;
+  late CrudUseCases useCases;
+  late ConfigUserUseCases configUseruseCases;
   Timer? _debounce;
+
   late FocusNode _focusNode;
+
   TextEditingController _textController = TextEditingController();
-  String? _userName;
+   final TextEditingController _name = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  String? _userName = "Digite seu nome aqui :)";
 
   @override
   void didChangeDependencies() {
-    useCases = UseCases(
+    useCases = CrudUseCases(
       repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
     );
+
+    configUseruseCases = ConfigUserUseCases(
+      configRepository: ConfigUserRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
+    );
+
+    Future.sync(() async {
+      String? nomeUser = await configUseruseCases.getName();
+      if (nomeUser!.isNotEmpty) {
+        _userName = nomeUser;
+        _name.text = nomeUser;
+      }
+      setState(() {
+      });
+    });
 
     super.didChangeDependencies();
   }
@@ -37,8 +60,6 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-
-    _userName = "Daniel Melonari";
 
     _focusNode = FocusNode();
   }
@@ -108,12 +129,76 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(_userName!, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0)),
-                        Icon(Icons.edit, color: Colors.white),
+                        Text(
+                          _userName!,
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0)
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10.0),
+                          child: Icon(Icons.edit, color: Colors.white),
+                        ),
                       ],
                     ),
                     onPressed: () {
-                      showModalBottomSheet(context: context, builder: (context) => AlterName(userName: _userName,));
+                      _scaffoldKey.currentState!.showBottomSheet((context) => Container(
+                          color: Colors.white,
+                          height: 80.0,
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.only(right: 10.0),
+                                  width: MediaQuery.of(context).size.width - 100,
+                                  child: Form(
+                                    key: _formKey,
+                                    child: TextFormField(
+                                      controller: _name,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return "Por favor preencha o nome!";
+                                        }
+
+                                        return null;
+                                      },
+                                      decoration: const InputDecoration(
+                                        border: const OutlineInputBorder(
+                                          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                                          borderSide: const BorderSide(
+                                            color: Colors.white
+                                          )
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ),
+                                TextButton(
+                                  onPressed: () async {
+                                    if (_formKey.currentState!.validate()) {
+                                      int? update = await configUseruseCases.updateName(name: _name.text);
+
+                                      if (update != 0) {
+                                        Navigator.of(context).pop();
+                                      }
+
+                                      setState(() {
+                                        Future.sync(() async {
+                                          _userName = await configUseruseCases.getName();
+                                        });
+                                      });
+                                    }
+                                  },
+                                  child: Text("Salvar", style: TextStyle(color: Colors.white)),
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: Colors.green,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      );
                     },
                   ),
                 ),
@@ -232,6 +317,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: GestureDetector(
         onTap: () => _focusNode.unfocus(),
         child: _home(),

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/data/repositories/crud_repository.dart';
-import 'package:note/domain/usecases/usecases.dart';
+import 'package:note/domain/usecases/crud_usecases.dart';
 import 'package:note/presentation/pages/createpage/config_app.dart';
 import 'package:note/presentation/pages/createpage/create.dart';
 import 'package:note/utils/route_animation.dart';
@@ -25,11 +25,11 @@ class CardNote extends StatefulWidget {
 
 class CardNoteState extends State<CardNote> {
 
-  late UseCases useCases;
+  late CrudUseCases useCases;
 
   @override
   void didChangeDependencies() {
-    useCases = UseCases(
+    useCases = CrudUseCases(
       repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
     );
 

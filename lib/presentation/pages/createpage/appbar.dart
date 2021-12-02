@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:note/data/repositories/crud_repository.dart';
-import 'package:note/domain/usecases/usecases.dart';
+import 'package:note/domain/usecases/crud_usecases.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'camera.dart';
@@ -24,11 +24,11 @@ class AppBarCreateState extends State<AppBarCreate> {
 
   int? _imageSelected;
 
-  late UseCases useCases;
+  late CrudUseCases useCases;
 
   @override
   void didChangeDependencies() {
-    useCases = UseCases(
+    useCases = CrudUseCases(
       repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
     );
 

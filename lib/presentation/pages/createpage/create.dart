@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/data/repositories/crud_repository.dart';
-import 'package:note/domain/usecases/usecases.dart';
+import 'package:note/domain/usecases/crud_usecases.dart';
 import 'package:note/presentation/pages/createpage/appbar.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:note/presentation/pages/createpage/config_app.dart';
@@ -23,7 +23,7 @@ class CreateNoteState extends State<CreateNote> {
   final _formKey = GlobalKey<FormState>();
   late AnotacaoModel? _anotacaoModel;
 
-  late UseCases useCases;
+  late CrudUseCases useCases;
 
   TextEditingController _title = TextEditingController();
   TextEditingController _obs = TextEditingController();
@@ -32,7 +32,7 @@ class CreateNoteState extends State<CreateNote> {
 
   @override
   void didChangeDependencies() {
-    useCases = UseCases(
+    useCases = CrudUseCases(
       repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
     );
 
