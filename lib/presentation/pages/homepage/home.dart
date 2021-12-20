@@ -27,39 +27,40 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   late FocusNode _focusNode;
 
   TextEditingController _textController = TextEditingController();
-   final TextEditingController _name = TextEditingController();
+  final TextEditingController _name = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String? _userName = "Digite seu nome aqui :)";
-
-  @override
-  void didChangeDependencies() {
-    useCases = CrudUseCases(
-      repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
-    );
-
-    configUseruseCases = ConfigUserUseCases(
-      configRepository: ConfigUserRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
-    );
-
-    Future.sync(() async {
-      String? nomeUser = await configUseruseCases.getName();
-      if (nomeUser!.isNotEmpty) {
-        _userName = nomeUser;
-        _name.text = nomeUser;
-      }
-      setState(() {
-      });
-    });
-
-    super.didChangeDependencies();
-  }
+  late bool _carregando;
+  List<Widget> _listaCardNote = [];
 
   @override
   void initState() {
     super.initState();
+
+    _carregando = true;
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      useCases = CrudUseCases(
+        repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
+      );
+
+      configUseruseCases = ConfigUserUseCases(
+        configRepository: ConfigUserRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
+      );
+
+      Future.sync(() async {
+        String? nomeUser = await configUseruseCases.getName();
+        if (nomeUser!.isNotEmpty) {
+          _userName = nomeUser;
+          _name.text = nomeUser;
+        }
+
+        _listaCardNote = await _getNotes();
+      });
+    });
 
     _focusNode = FocusNode();
   }
@@ -74,8 +75,14 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
 
   void _onSearch(String query) {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      setState(() {});
+    _debounce = Timer(const Duration(milliseconds: 500), () async {
+      setState(() {
+        _carregando = true;
+      });
+      _listaCardNote = await _getNotes();
+      setState(() {
+        _carregando = false;
+      });
     });
   }
 
@@ -89,16 +96,23 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
     
     List<Widget> _listaNote = [];
 
-    _listaAnotacao.forEach((anotacao) {
+    _listaAnotacao.asMap().forEach((index, anotacao) {
       _listaNote.add(
-        CardNote(
-          anotacaoModel: anotacao!,
-          setState: () {
-            setState(() {});
-          },
-          focus: _focusNode,
-        ),
+        Align(child: AnimatedListItem(
+          index,
+          CardNote(
+            anotacaoModel: anotacao!,
+            setState: () {
+              setState(() {});
+            },
+            focus: _focusNode,
+          ),
+        ))
       );
+    });
+
+    setState(() {
+      _carregando = false;
     });
 
     return _listaNote;
@@ -182,10 +196,8 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                                         Navigator.of(context).pop();
                                       }
 
-                                      setState(() {
-                                        Future.sync(() async {
-                                          _userName = await configUseruseCases.getName();
-                                        });
+                                      Future.sync(() async {
+                                        _userName = await configUseruseCases.getName();
                                       });
                                     }
                                   },
@@ -255,34 +267,51 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
       bottom: 0.0,
       left: 0.0,
       right: 0.0,
-      child: FutureBuilder(
-        future: _getNotes(),
-        builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting: return Center(child: CircularProgressIndicator());
-            default:
-            if (snapshot.hasError) {
-              return Center(child: Text("Erro ao carregar os dados"));
-            } else {
-              if (snapshot.data!.isEmpty) {
-                return Center(
-                  child: Text("Sem anotações!"),
-                );
-              } else {
-                return ListView.builder(
-                  padding: EdgeInsets.zero,
-                  shrinkWrap: true,
-                  scrollDirection: Axis.vertical,
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, index) {
-                    return Align(child: AnimatedListItem(index, snapshot.data![index]));
-                  },
-                );
-              }
-            }
+      child: Builder(
+        builder: (context) {
+          if (_carregando) {
+            return Center(child: CircularProgressIndicator());
+          } else if (_listaCardNote.isEmpty) {
+            return Center(child: Text("Sem anotações!"),);
+          } else {
+            return ListView(
+              padding: EdgeInsets.zero,
+              children: _listaCardNote,
+              shrinkWrap: true,
+              scrollDirection: Axis.vertical,
+            );
           }
         },
-      ),
+      )
+      
+      // FutureBuilder(
+      //   future: _getNotes(),
+      //   builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
+      //     switch (snapshot.connectionState) {
+      //       case ConnectionState.waiting: return Center(child: CircularProgressIndicator());
+      //       default:
+      //       if (snapshot.hasError) {
+      //         return Center(child: Text("Erro ao carregar os dados"));
+      //       } else {
+      //         if (snapshot.data!.isEmpty) {
+      //           return Center(
+      //             child: Text("Sem anotações!"),
+      //           );
+      //         } else {
+      //           return ListView.builder(
+      //             padding: EdgeInsets.zero,
+      //             shrinkWrap: true,
+      //             scrollDirection: Axis.vertical,
+      //             itemCount: snapshot.data!.length,
+      //             itemBuilder: (context, index) {
+      //               
+      //             },
+      //           );
+      //         }
+      //       }
+      //     }
+      //   },
+      // ),
     );
   }
 
