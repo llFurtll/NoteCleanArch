@@ -10,7 +10,7 @@ import 'package:note/presentation/pages/createpage/config_app.dart';
 
 class CreateNote extends StatefulWidget {
   final Function setState;
-  final int? id;
+  int? id;
 
   CreateNote({required this.setState, this.id});
 
@@ -31,38 +31,35 @@ class CreateNoteState extends State<CreateNote> {
   String _pathImage = "";
 
   @override
-  void didChangeDependencies() {
-    useCases = CrudUseCases(
-      repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
-    );
-
-    if (widget.id != null) {
-      Future.sync(() async {
-
-        _anotacaoModel = await useCases.getByIdUseCase(id: widget.id!);
-
-        _title.text = _anotacaoModel!.titulo!;
-        _obs.text = _anotacaoModel!.observacao!;
-
-        setState(() {
-          if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
-            _pathImage = _anotacaoModel!.imagemFundo!;
-            ConfigApp.of(context).removeBackground = true;
-          }
-
-          if (_anotacaoModel!.cor != null && _anotacaoModel!.cor!.isNotEmpty) {
-            ConfigApp.of(context).color = Color(int.parse("0xFF${_anotacaoModel!.cor}"));
-          }
-        });
-      });
-    }
-    
-    super.didChangeDependencies();
-  }
-
-  @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      useCases = CrudUseCases(
+        repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
+      );
+
+      if (widget.id != null) {
+        Future.sync(() async {
+
+          _anotacaoModel = await useCases.getByIdUseCase(id: widget.id!);
+
+          _title.text = _anotacaoModel!.titulo!;
+          _obs.text = _anotacaoModel!.observacao!;
+
+          setState(() {
+            if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
+              _pathImage = _anotacaoModel!.imagemFundo!;
+              ConfigApp.of(context).removeBackground = true;
+            }
+
+            if (_anotacaoModel!.cor != null && _anotacaoModel!.cor!.isNotEmpty) {
+              ConfigApp.of(context).color = Color(int.parse("0xFF${_anotacaoModel!.cor}"));
+            }
+          });
+        });
+      }
+    });
   }
 
   TextFormField _titulo() {
@@ -191,7 +188,9 @@ class CreateNoteState extends State<CreateNote> {
   void changeColor(Color color) {
     setState(() {
       ConfigApp.of(context).color = color;
-      _pathImage.isNotEmpty ? ConfigApp.of(context).removeBackground = true : ConfigApp.of(context).removeBackground = false;
+      _pathImage.isNotEmpty ?
+        ConfigApp.of(context).removeBackground = true :
+        ConfigApp.of(context).removeBackground = false;
     });
   }
 
@@ -219,6 +218,10 @@ class CreateNoteState extends State<CreateNote> {
           ),
         )
       );
+      setState(() {
+        widget.id = insert;
+      });
+      _anotacaoModel = await useCases.getByIdUseCase(id: widget.id!);
     }
   }
 

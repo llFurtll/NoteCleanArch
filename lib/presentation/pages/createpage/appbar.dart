@@ -24,15 +24,22 @@ class AppBarCreateState extends State<AppBarCreate> {
 
   int? _imageSelected;
 
-  late CrudUseCases useCases;
+  late CrudUseCases _useCases;
+  late List<String> _assetsImages;
 
   @override
-  void didChangeDependencies() {
-    useCases = CrudUseCases(
-      repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
-    );
+  void initState() {
+    super.initState();
 
-    super.didChangeDependencies();
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _useCases = CrudUseCases(
+        repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
+      );
+
+      Future.sync(() async {
+        _assetsImages = await _listAllAssetsImage();
+      });
+    });
   }
 
   PersistentBottomSheetController? _controller;
@@ -73,62 +80,53 @@ class AppBarCreateState extends State<AppBarCreate> {
             padding: const EdgeInsets.all(15.0),
             height: 200.0,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.blueGrey[50],
             ),
-            child: FutureBuilder<List<String>>(
-              future: _listAllAssetsImage(),
-              builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.waiting: return Center(child: CircularProgressIndicator());
-                  default:
-                  if (snapshot.hasError) {
-                    return Center(child: Text("Erro ao carregar os dados"));
+            child: NotificationListener(
+              child: ListView.builder(
+                controller: _scrollController,
+                scrollDirection: Axis.horizontal,
+                itemCount: _assetsImages.length+1,
+                itemBuilder: (BuildContext context, int index) {
+                  if (index <= _assetsImages.length-1) {
+                    return _buildCardImage(_assetsImages[index], index); 
                   } else {
-                    return NotificationListener(
-                      child: ListView.builder(
-                        controller: _scrollController,
-                        scrollDirection: Axis.horizontal,
-                        itemCount: snapshot.data!.length+1,
-                        itemBuilder: (BuildContext context, int index) {
-                          if (index <= snapshot.data!.length-1) {
-                            return _buildCardImage(snapshot.data![index], index); 
-                          } else {
-                            return Container(
-                              margin: const EdgeInsets.only(right: 15.0),
-                              width: 120.0,
-                              height: 150.0,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15.0),
-                                color: Colors.grey,
-                              ),
-                              child: Center(
-                                child: IconButton(
-                                  onPressed: () => Navigator.push(
-                                    context, MaterialPageRoute(builder: (context) => CameraPicture(
-                                      updateImage: widget.updateImage,
-                                      controller: _controller!,
-                                      )
-                                    )
-                                  ),
-                                  icon: Icon(Icons.camera, color: Colors.white, size: 40.0),
-                                ),
-                              ),
-                            );
-                          }
-                        }
+                    return Container(
+                      margin: const EdgeInsets.only(right: 15.0),
+                      width: 120.0,
+                      height: 150.0,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15.0),
+                        color: Colors.grey,
                       ),
-                      onNotification: (t) {
-                        if (t is ScrollEndNotification) {
-                          _positionList = _scrollController.position.pixels;
-                        }
-
-                        return true;
-                      },
+                      child: Center(
+                        child: IconButton(
+                          onPressed: () => Navigator.push(
+                            context, MaterialPageRoute(builder: (context) => CameraPicture(
+                              updateImage: widget.updateImage,
+                              updateBottomSheet: () async {
+                                _assetsImages = await _listAllAssetsImage();
+                                _controller!.setState!(() {
+                                });
+                              },
+                              )
+                            )
+                          ),
+                          icon: Icon(Icons.camera, color: Colors.white, size: 40.0),
+                        ),
+                      ),
                     );
                   }
                 }
+              ),
+              onNotification: (t) {
+                if (t is ScrollEndNotification) {
+                  _positionList = _scrollController.position.pixels;
+                }
+
+                return true;
               },
-            ),
+            )
           ));
         },
         icon: Icon(
@@ -193,10 +191,7 @@ class AppBarCreateState extends State<AppBarCreate> {
           widget.updateImage(image);
           _controller!.setState!(() {
             _imageSelected = index;
-
-            Future.delayed(Duration(milliseconds: 100), () {
-              _scrollController.jumpTo(_positionList);
-            });
+            _scrollController.jumpTo(_positionList);
           });
           ConfigApp.of(context).removeBackground = true;
         }
@@ -225,15 +220,22 @@ class AppBarCreateState extends State<AppBarCreate> {
                     onPressed: () async {
                       File(image).delete();
 
-                      int? update = await useCases.removeBackgroundNote(image: image);
+                      int? update = await _useCases.removeBackgroundNote(image: image);
+                      _assetsImages = await _listAllAssetsImage();
                       
                       if (update != 0) {
                         widget.updateImage("");
-                        _controller!.setState!(() {
-                          _imageSelected = -1;
-                        });
                         ConfigApp.of(context).removeBackground = false;
                       }
+
+                      if (update == 0 && !image.contains('lib')) {
+                        widget.updateImage("");
+                        ConfigApp.of(context).removeBackground = false;
+                      }
+
+                      _controller!.setState!(() {
+                        _imageSelected = -1;
+                      });
                       
                       Navigator.of(context).pop();
                     },

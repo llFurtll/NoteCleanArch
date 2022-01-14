@@ -13,8 +13,8 @@ class ConfigUserUseCases {
     return await configRepository.getName();
   }
 
-  Future<int?> updateImage({required String path_image}) async {
-    return await configRepository.updateImage(path_image: path_image);
+  Future<int?> updateImage({required String pathImage}) async {
+    return await configRepository.updateImage(pathImage: pathImage);
   }
 
   Future<int?> updateName({required String name}) async {

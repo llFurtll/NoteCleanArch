@@ -21,7 +21,7 @@ class Home extends StatefulWidget {
 class HomeState extends State<Home> with TickerProviderStateMixin {
 
   late CrudUseCases useCases;
-  late ConfigUserUseCases configUseruseCases;
+  late ConfigUserUseCases configUserUseCases;
   Timer? _debounce;
 
   late FocusNode _focusNode;
@@ -29,7 +29,6 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   TextEditingController _textController = TextEditingController();
   final TextEditingController _name = TextEditingController();
 
-  final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String? _userName = "Digite seu nome aqui :)";
@@ -47,12 +46,12 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
         repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
       );
 
-      configUseruseCases = ConfigUserUseCases(
+      configUserUseCases = ConfigUserUseCases(
         configRepository: ConfigUserRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
       );
 
       Future.sync(() async {
-        String? nomeUser = await configUseruseCases.getName();
+        String? nomeUser = await configUserUseCases.getName();
         if (nomeUser!.isNotEmpty) {
           _userName = nomeUser;
           _name.text = nomeUser;
@@ -102,8 +101,14 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
           index,
           CardNote(
             anotacaoModel: anotacao!,
-            setState: () {
-              setState(() {});
+            setState: () async {
+              setState(() {
+                _carregando = true;
+              });
+              _listaCardNote = await _getNotes();
+              setState(() {
+                _carregando = false;
+              });
             },
             focus: _focusNode,
           ),
@@ -155,27 +160,35 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                     ),
                     onPressed: () {
                       _scaffoldKey.currentState!.showBottomSheet((context) => Container(
-                          color: Colors.white,
-                          height: 80.0,
+                          color: Colors.blueGrey[50],
+                          height: 130.0,
                           child: Padding(
                             padding: const EdgeInsets.all(15.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Container(
-                                  padding: EdgeInsets.only(right: 10.0),
-                                  width: MediaQuery.of(context).size.width - 100,
-                                  child: Form(
-                                    key: _formKey,
+                                Expanded(
+                                  flex: 8,
+                                  child: Container(
+                                    padding: EdgeInsets.only(right: 10.0),
                                     child: TextFormField(
-                                      controller: _name,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return "Por favor preencha o nome!";
-                                        }
+                                      onFieldSubmitted: (value) async {
+                                        if (value.isNotEmpty) {
+                                          int? update = await configUserUseCases.updateName(name: _name.text);
 
-                                        return null;
+                                          if (update != 0) {
+                                            Navigator.of(context).pop();
+                                          }
+
+                                          _userName = await configUserUseCases.getName();
+
+                                          setState(() {});
+                                        } else {
+                                          Navigator.of(context).pop();
+                                        }
                                       },
+                                      controller: _name,
                                       decoration: const InputDecoration(
                                         border: const OutlineInputBorder(
                                           borderRadius: const BorderRadius.all(Radius.circular(10.0)),
@@ -186,25 +199,6 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                                       ),
                                     ),
                                   )
-                                ),
-                                TextButton(
-                                  onPressed: () async {
-                                    if (_formKey.currentState!.validate()) {
-                                      int? update = await configUseruseCases.updateName(name: _name.text);
-
-                                      if (update != 0) {
-                                        Navigator.of(context).pop();
-                                      }
-
-                                      Future.sync(() async {
-                                        _userName = await configUseruseCases.getName();
-                                      });
-                                    }
-                                  },
-                                  child: Text("Salvar", style: TextStyle(color: Colors.white)),
-                                  style: TextButton.styleFrom(
-                                    backgroundColor: Colors.green,
-                                  ),
                                 ),
                               ],
                             ),
@@ -263,7 +257,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
 
   Widget _listaNote() {
     return Positioned(
-      top: 270.0,
+      top: 280.0,
       bottom: 0.0,
       left: 0.0,
       right: 0.0,
@@ -283,35 +277,6 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
           }
         },
       )
-      
-      // FutureBuilder(
-      //   future: _getNotes(),
-      //   builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
-      //     switch (snapshot.connectionState) {
-      //       case ConnectionState.waiting: return Center(child: CircularProgressIndicator());
-      //       default:
-      //       if (snapshot.hasError) {
-      //         return Center(child: Text("Erro ao carregar os dados"));
-      //       } else {
-      //         if (snapshot.data!.isEmpty) {
-      //           return Center(
-      //             child: Text("Sem anotações!"),
-      //           );
-      //         } else {
-      //           return ListView.builder(
-      //             padding: EdgeInsets.zero,
-      //             shrinkWrap: true,
-      //             scrollDirection: Axis.vertical,
-      //             itemCount: snapshot.data!.length,
-      //             itemBuilder: (context, index) {
-      //               
-      //             },
-      //           );
-      //         }
-      //       }
-      //     }
-      //   },
-      // ),
     );
   }
 
@@ -327,13 +292,20 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   FloatingActionButton _button() {
     return FloatingActionButton(
       backgroundColor: Theme.of(context).floatingActionButtonTheme.backgroundColor,
+      heroTag: 'createNote',
       onPressed: () {
         _focusNode.unfocus();
         Navigator.of(context).push(
-          createRoute(
-            CreateNote(
-              setState: () {
-                setState(() {});
+          MaterialPageRoute(
+            builder: (context) => CreateNote(
+              setState: () async {
+                setState(() {
+                  _carregando = true;
+                });
+                _listaCardNote = await _getNotes();
+                setState(() {
+                  _carregando = false;
+                });
               },
             )
           )

@@ -198,7 +198,7 @@ class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
   }
 
   @override
-  Future<int?> updateImage({required String path_image}) {
+  Future<int?> updateImage({required String pathImage}) {
     // TODO: implement updateImage
     throw UnimplementedError();
   }

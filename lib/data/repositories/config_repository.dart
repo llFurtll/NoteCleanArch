@@ -20,8 +20,8 @@ class ConfigUserRepository implements IConfigRepository {
   }
 
   @override
-  Future<int?> updateImage({required String path_image}) async {
-    return await datasourceBase.updateImage(path_image: path_image);
+  Future<int?> updateImage({required String pathImage}) async {
+    return await datasourceBase.updateImage(pathImage: pathImage);
   }
 
   @override

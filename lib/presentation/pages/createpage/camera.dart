@@ -9,9 +9,9 @@ import 'config_app.dart';
 
 class CameraPicture extends StatefulWidget {
   final Function(String pathImage) updateImage;
-  final PersistentBottomSheetController controller;
+  final Function updateBottomSheet;
 
-  CameraPicture({required this.updateImage, required this.controller});
+  CameraPicture({required this.updateImage, required this.updateBottomSheet});
 
   @override
   CameraPictureState createState() => CameraPictureState();
@@ -28,7 +28,7 @@ class CameraPictureState extends State<CameraPicture> {
           File newImage = await file.copy("$path/${DateTime.now().toIso8601String()}.jpg");
           file.delete();
           widget.updateImage(newImage.path);
-          widget.controller.setState!(() {});
+          widget.updateBottomSheet();
           ConfigApp.of(context).removeBackground = true;
           Navigator.of(context).pop();
         },
