@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/data/repositories/config_repository.dart';
@@ -9,7 +10,6 @@ import 'package:note/domain/usecases/crud_usecases.dart';
 import 'package:note/presentation/pages/createpage/config_app.dart';
 import 'package:note/presentation/pages/createpage/create.dart';
 import 'package:note/presentation/pages/homepage/card.dart';
-import 'package:note/utils/route_animation.dart';
 
 import 'animated_list.dart';
 
@@ -26,6 +26,8 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
 
   late FocusNode _focusNode;
 
+  final double _fabDimension = 56.0;
+
   TextEditingController _textController = TextEditingController();
   final TextEditingController _name = TextEditingController();
 
@@ -34,6 +36,8 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   String? _userName = "Digite seu nome aqui :)";
   late bool _carregando;
   List<Widget> _listaCardNote = [];
+
+  ContainerTransitionType _transitionType = ContainerTransitionType.fadeThrough;
 
   @override
   void initState() {
@@ -289,29 +293,38 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
     );
   }
 
-  FloatingActionButton _button() {
-    return FloatingActionButton(
-      backgroundColor: Theme.of(context).floatingActionButtonTheme.backgroundColor,
-      heroTag: 'createNote',
-      onPressed: () {
-        _focusNode.unfocus();
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => CreateNote(
-              setState: () async {
-                setState(() {
-                  _carregando = true;
-                });
-                _listaCardNote = await _getNotes();
-                setState(() {
-                  _carregando = false;
-                });
-              },
-            )
-          )
+  OpenContainer _button() {
+    return OpenContainer(
+      openColor: Theme.of(context).floatingActionButtonTheme.backgroundColor!,
+      closedColor: Theme.of(context).floatingActionButtonTheme.backgroundColor!,
+      closedElevation: 6.0,
+      openElevation: 0.0,
+      transitionType: _transitionType,
+      transitionDuration: Duration(milliseconds: 1500),
+      closedShape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(_fabDimension / 2)),
+      ),
+      closedBuilder: (BuildContext context, VoidCallback openContainer) {
+        return FloatingActionButton(
+          backgroundColor: Theme.of(context).floatingActionButtonTheme.backgroundColor,
+          elevation: 0.0,
+          onPressed: null,
+          child: Icon(Icons.add),
         );
       },
-      child: Icon(Icons.add),
+      openBuilder: (BuildContext context, VoidCallback _) {
+        return CreateNote(
+          setState: () async {
+            setState(() {
+              _carregando = true;
+            });
+            _listaCardNote = await _getNotes();
+            setState(() {
+              _carregando = false;
+            });
+          }
+        );
+      }
     );
   }
 
