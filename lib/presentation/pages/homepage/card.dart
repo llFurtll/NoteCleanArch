@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/data/repositories/crud_repository.dart';
 import 'package:note/domain/usecases/crud_usecases.dart';
-import 'package:note/presentation/pages/createpage/config_app.dart';
+import 'package:note/core/config_app.dart';
 import 'package:note/presentation/pages/createpage/create.dart';
 import 'package:note/utils/route_animation.dart';
 
@@ -193,31 +193,31 @@ class CardNoteState extends State<CardNote> {
         child: Visibility(
         visible: _visibilityButtons,
         child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Transform.scale(
-                scale: _opacity,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.red,
-                    shape: CircleBorder()
-                  ),
-                  child: const Icon(Icons.delete, color: Colors.white),
-                  onPressed: _removeNote
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Transform.scale(
+              scale: _opacity,
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  shape: CircleBorder()
                 ),
+                child: const Icon(Icons.delete, color: Colors.white),
+                onPressed: _removeNote
               ),
-              Transform.scale(
-                scale: _opacity,
-                child: TextButton(
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    shape: const CircleBorder()
-                  ),
-                  child: Icon(Icons.check, color: Colors.white),
-                  onPressed: _updateSituacao,
-                ),
-              ),
-            ]
+            ),
+            // Transform.scale(
+            //   scale: _opacity,
+            //   child: TextButton(
+            //     style: TextButton.styleFrom(
+            //       backgroundColor: Colors.green,
+            //       shape: const CircleBorder()
+            //     ),
+            //     child: Icon(Icons.check, color: Colors.white),
+            //     onPressed: _updateSituacao,
+            //   ),
+            // ),
+          ]
           ),
         ),
       ),

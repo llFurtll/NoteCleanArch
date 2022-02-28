@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'config_app.dart';
+import 'package:note/core/config_app.dart';
 
 class CameraPicture extends StatefulWidget {
   final Function(String pathImage) updateImage;

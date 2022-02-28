@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:note/data/datasources/sqlite.dart';
-import 'package:note/presentation/pages/createpage/config_app.dart';
+import 'package:note/core/config_app.dart';
 import 'package:note/presentation/pages/splashscreen/splash.dart';
 
 void main() => runApp(

@@ -6,7 +6,7 @@ import 'package:note/data/repositories/crud_repository.dart';
 import 'package:note/domain/usecases/crud_usecases.dart';
 import 'package:note/presentation/pages/createpage/appbar.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:note/presentation/pages/createpage/config_app.dart';
+import 'package:note/core/config_app.dart';
 
 class CreateNote extends StatefulWidget {
   final Function setState;

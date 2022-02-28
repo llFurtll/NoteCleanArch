@@ -7,9 +7,9 @@ import 'package:note/data/repositories/config_repository.dart';
 import 'package:note/data/repositories/crud_repository.dart';
 import 'package:note/domain/usecases/config_user_usecases.dart';
 import 'package:note/domain/usecases/crud_usecases.dart';
-import 'package:note/presentation/pages/createpage/config_app.dart';
 import 'package:note/presentation/pages/createpage/create.dart';
 import 'package:note/presentation/pages/homepage/card.dart';
+import 'package:note/core/config_app.dart';
 
 import 'animated_list.dart';
 
@@ -300,7 +300,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
       closedElevation: 6.0,
       openElevation: 0.0,
       transitionType: _transitionType,
-      transitionDuration: Duration(milliseconds: 1500),
+      transitionDuration: Duration(milliseconds: 500),
       closedShape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(_fabDimension / 2)),
       ),
