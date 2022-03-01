@@ -1,12 +1,12 @@
 import 'dart:io';
 
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/data/repositories/crud_repository.dart';
 import 'package:note/domain/usecases/crud_usecases.dart';
 import 'package:note/core/config_app.dart';
 import 'package:note/presentation/pages/createpage/create.dart';
-import 'package:note/utils/route_animation.dart';
 
 class CardNote extends StatefulWidget {
   final AnotacaoModel anotacaoModel;
@@ -102,21 +102,9 @@ class CardNoteState extends State<CardNote> {
 
   Container _card() {
     return Container(
-      margin: const EdgeInsets.only(bottom: 15.0),
       width: MediaQuery.of(context).size.width * 0.8,
       child: GestureDetector(
-        onTap: () {
-          widget.focus.unfocus();
-          Navigator.push(
-            context,
-            createRoute(
-              CreateNote(
-                setState: widget.setState,
-                id: widget.anotacaoModel.id!,
-              )
-            )
-          );
-        },
+        onTap: null,
         onHorizontalDragUpdate: (details) {
           if (details.delta.dx < 0) {
             setState(() {
@@ -150,35 +138,47 @@ class CardNoteState extends State<CardNote> {
         },
         child: Transform.translate(
           offset: Offset(_offset, 0.0),
-          child: Card(
-            clipBehavior: Clip.antiAlias,
-            shape: const RoundedRectangleBorder(
+          child: OpenContainer(
+            transitionDuration: Duration(milliseconds: 500),
+            transitionType: ContainerTransitionType.fade,
+            closedShape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(10.0))
             ),
-            color: Theme.of(context).cardColor,
-            elevation: 10.0,
-            shadowColor: Theme.of(context).scaffoldBackgroundColor,
-            child: Container(
-              decoration: widget.anotacaoModel.imagemFundo!.isEmpty ? null : BoxDecoration(
-                image: DecorationImage(
-                  image: widget.anotacaoModel.imagemFundo!.contains("lib") ?
-                    AssetImage(widget.anotacaoModel.imagemFundo!) as ImageProvider :
-                    FileImage(File(widget.anotacaoModel.imagemFundo!)),
-                  fit: BoxFit.cover,
+            closedElevation: 0.0,
+            closedColor: Colors.transparent,
+            openBuilder: (BuildContext context, VoidCallback _) => CreateNote(setState: widget.setState, id: widget.anotacaoModel.id!),
+            closedBuilder: (BuildContext context, VoidCallback _) {
+              return Card(
+                clipBehavior: Clip.antiAlias,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0))
                 ),
-              ),
-              child: Container(
-                decoration: widget.anotacaoModel.imagemFundo!.isEmpty ? null : BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                  color: Colors.white.withOpacity(0.5),
+                color: Theme.of(context).cardColor,
+                elevation: 10.0,
+                shadowColor: Theme.of(context).scaffoldBackgroundColor,
+                child: Container(
+                  decoration: widget.anotacaoModel.imagemFundo!.isEmpty ? null : BoxDecoration(
+                    image: DecorationImage(
+                      image: widget.anotacaoModel.imagemFundo!.contains("lib") ?
+                        AssetImage(widget.anotacaoModel.imagemFundo!) as ImageProvider :
+                        FileImage(File(widget.anotacaoModel.imagemFundo!)),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Container(
+                    decoration: widget.anotacaoModel.imagemFundo!.isEmpty ? null : BoxDecoration(
+                      borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(20.0),
+                      child: _contentCard(),
+                    ),
+                  ),
                 ),
-                child: Padding(
-                  padding: EdgeInsets.all(20.0),
-                  child: _contentCard(),
-                ),
-              ),
-            ),
-          ),
+              );
+            },
+          ) 
         ),
       ),
     );
@@ -228,7 +228,7 @@ class CardNoteState extends State<CardNote> {
     return Stack(
       children: [
         _buttonsActions(),
-        _card()
+        _card(),
       ],
     );
   }
@@ -258,23 +258,23 @@ class CardNoteState extends State<CardNote> {
     }
   }
 
-  void _updateSituacao() async {
-    int? update = await useCases.updateSituacaoUseCase(anotacao: widget.anotacaoModel);
+  // void _updateSituacao() async {
+  //   int? update = await useCases.updateSituacaoUseCase(anotacao: widget.anotacaoModel);
     
-    if (update != 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Theme.of(context).primaryColor,
-          content: Text("Anotacão finalizada com sucesso!"),
-          action: SnackBarAction(
-            label: "Fechar",
-            textColor: Colors.white,
-            onPressed: () {},
-          ),
-        ),
-      );
+  //   if (update != 0) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(
+  //         backgroundColor: Theme.of(context).primaryColor,
+  //         content: Text("Anotacão finalizada com sucesso!"),
+  //         action: SnackBarAction(
+  //           label: "Fechar",
+  //           textColor: Colors.white,
+  //           onPressed: () {},
+  //         ),
+  //       ),
+  //     );
 
-      widget.setState();
-    }
-  }
+  //     widget.setState();
+  //   }
+  // }
 }

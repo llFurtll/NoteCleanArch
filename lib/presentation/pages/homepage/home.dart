@@ -273,7 +273,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
             return Center(child: Text("Sem anotações!"),);
           } else {
             return ListView(
-              padding: EdgeInsets.zero,
+              padding: EdgeInsets.only(left: 0, top: 0, right: 0, bottom: 15.0),
               children: _listaCardNote,
               shrinkWrap: true,
               scrollDirection: Axis.vertical,
