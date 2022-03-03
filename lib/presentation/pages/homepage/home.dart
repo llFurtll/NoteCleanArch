@@ -76,6 +76,62 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
     super.dispose();
   }
 
+  Future<void> teste() async {
+    return showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      context: context,
+      builder: (BuildContext context) => Container(
+        height: 200.0,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                flex: 8,
+                child: Container(
+                  padding: EdgeInsets.only(right: 10.0),
+                  child: TextFormField(
+                    onFieldSubmitted: (value) async {
+                      if (value.isNotEmpty) {
+                        int? update = await configUserUseCases.updateName(name: _name.text);
+
+                        if (update != 0) {
+                          Navigator.of(context).pop();
+                        }
+
+                        _userName = await configUserUseCases.getName();
+
+                        setState(() {});
+                      } else {
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    controller: _name,
+                    decoration: const InputDecoration(
+                      border: const OutlineInputBorder(
+                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: const BorderSide(
+                          color: Colors.white
+                        )
+                      ),
+                    ),
+                  ),
+                )
+              ),
+            ],
+          ),
+        ),
+      )
+    );
+  }
+
   void _onSearch(String query) {
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () async {
@@ -163,52 +219,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                       ],
                     ),
                     onPressed: () {
-                      _scaffoldKey.currentState!.showBottomSheet((context) => Container(
-                          color: Colors.blueGrey[50],
-                          height: 130.0,
-                          child: Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  flex: 8,
-                                  child: Container(
-                                    padding: EdgeInsets.only(right: 10.0),
-                                    child: TextFormField(
-                                      onFieldSubmitted: (value) async {
-                                        if (value.isNotEmpty) {
-                                          int? update = await configUserUseCases.updateName(name: _name.text);
-
-                                          if (update != 0) {
-                                            Navigator.of(context).pop();
-                                          }
-
-                                          _userName = await configUserUseCases.getName();
-
-                                          setState(() {});
-                                        } else {
-                                          Navigator.of(context).pop();
-                                        }
-                                      },
-                                      controller: _name,
-                                      decoration: const InputDecoration(
-                                        border: const OutlineInputBorder(
-                                          borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                                          borderSide: const BorderSide(
-                                            color: Colors.white
-                                          )
-                                        ),
-                                      ),
-                                    ),
-                                  )
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      );
+                      teste();
                     },
                   ),
                 ),

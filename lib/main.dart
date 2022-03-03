@@ -31,6 +31,13 @@ void main() => runApp(
           cursorColor: Color(0XFFA50044)
         ),
         colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Color(0xFFA50044)),
+        // bottomSheetTheme: BottomSheetThemeData(
+        //   elevation: 10.0,
+        //   backgroundColor: Colors.black.withOpacity(0.5),
+        //   constraints: new BoxConstraints(
+        //     minHeight: 500.0,
+        //   )
+        // ),
       ),
     )
   )

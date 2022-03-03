@@ -139,11 +139,13 @@ class CardNoteState extends State<CardNote> {
         child: Transform.translate(
           offset: Offset(_offset, 0.0),
           child: OpenContainer(
-            transitionDuration: Duration(milliseconds: 500),
+            transitionDuration: Duration(milliseconds: 800),
             transitionType: ContainerTransitionType.fade,
             closedShape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(10.0))
             ),
+            middleColor: Colors.red,
+            openElevation: 0.0,
             closedElevation: 0.0,
             closedColor: Colors.transparent,
             openBuilder: (BuildContext context, VoidCallback _) => CreateNote(setState: widget.setState, id: widget.anotacaoModel.id!),
