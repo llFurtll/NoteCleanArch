@@ -194,6 +194,162 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   Widget _top() {
+    return SliverAppBar(
+      backgroundColor: Colors.white,
+      expandedHeight: 300.0,
+      floating: true,
+      pinned: true,
+      snap: false,
+      flexibleSpace: Container(
+        child: Center(
+          child: SafeArea(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(bottom: 20.0, top: 20.0),
+                  child: CircleAvatar(
+                    backgroundColor: Colors.yellow,
+                    radius: 50.0,
+                    child: Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white
+                            ),
+                            child: Icon(Icons.camera, color: Theme.of(context).primaryColor, size: 30.0),
+                          ),
+                        )
+                      ]
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(bottom: 20.0),
+                  child: TextButton(
+                    autofocus: false,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          _userName!,
+                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0)
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(left: 10.0),
+                          child: Icon(Icons.edit, color: Colors.white),
+                        ),
+                      ],
+                    ),
+                    onPressed: () {
+                      _showModal();
+                    },
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.7,
+                  child: TextFormField(
+                    focusNode: _focusNode,
+                    controller: _textController,
+                    onChanged: _onSearch,
+                    decoration: InputDecoration(
+                      hintText: "Pesquisar anotação",
+                      suffixIcon: Icon(Icons.search, color: Colors.white),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(
+                          color: Colors.white
+                        )
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white
+                        )
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.white
+                        )
+                      ),
+                      hintStyle: TextStyle(
+                        color: Colors.white54
+                      ),
+                    ),
+                    cursorColor: Colors.white,
+                    style: TextStyle(
+                      color: Colors.white
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50.0), bottomRight: Radius.circular(50.0)),
+          color: Theme.of(context).primaryColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _listaNote() {
+    return Builder(
+      builder: (context) {
+        if (_carregando) {
+          print("LEGAL");
+          return Center(
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor)
+            )
+          );
+        } else if (_listaCardNote.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SvgPicture.asset("lib/images/sem-anotacao.svg", width: 100.0, height: 100.0),
+                Text(
+                  "Sem anotações!",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15.0,
+                    color: Colors.grey
+                  ),
+                )
+              ],
+            )
+          );
+        } else {
+          print("LEGAL2");
+          // return ListView(
+          //   padding: EdgeInsets.only(left: 0, top: 0, right: 0, bottom: 15.0),
+          //   children: _listaCardNote,
+          //   shrinkWrap: true,
+          //   scrollDirection: Axis.vertical,
+          // );
+
+          return SliverList(
+            delegate: SliverChildBuilderDelegate(
+              (_, int index) {
+                // return ListView(
+                //   padding: EdgeInsets.only(left: 0, top: 0, right: 0, bottom: 15.0),
+                //   children: _listaCardNote,
+                //   shrinkWrap: true,
+                //   scrollDirection: Axis.vertical,
+                // );
+              }
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Widget _top2() {
     return Positioned(
       top: 0.0,
       height: 320.0,
@@ -294,7 +450,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
     );
   }
 
-  Widget _listaNote() {
+  Widget _listaNote2() {
     return Positioned(
       top: 280.0,
       bottom: 0.0,
@@ -339,10 +495,21 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   Widget _home() {
-    return Stack(
-      children: [
+    // return Stack(
+    //   children: [
+    //     _top(),
+    //     _listaNote()
+    //   ],
+    // );
+    return CustomScrollView(
+      slivers: <Widget>[
         _top(),
-        _listaNote()
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (context, index) => ListTile(title: Text('Item #$index')),
+            childCount: 1000
+          )
+        ),
       ],
     );
   }
