@@ -23,12 +23,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  sqflite:
-  path_provider:
-  camera:
-  path:
-  camera_camera:
-  animations:
+  sqflite: 2.0.0+4
+  path_provider: 2.0.4
+  camera: 0.8.1+7
+  path: 1.8.0
+  camera_camera: 2.0.2
+  animations: 2.0.2
+  flutter_svg: 0.21.0
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -37,11 +38,11 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mockito:
-  build_runner:
-  faker:
-  sqflite_common_ffi:
-  flutter_colorpicker:
+  mockito: 5.0.15
+  build_runner: 2.1.2
+  faker: 2.0.0
+  sqflite_common_ffi: 2.1.0
+  flutter_colorpicker: 0.6.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -64,6 +65,7 @@ flutter:
     - lib/images/5.jpg
     - lib/images/6.jpg
     - lib/images/7.jpg
+    - lib/images/sem-anotacao.svg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

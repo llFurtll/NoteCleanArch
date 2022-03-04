@@ -280,7 +280,8 @@ class CreateNoteState extends State<CreateNote> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-       ConfigApp.of(context).removeBackground = false;
+        ConfigApp.of(context).removeBackground = false;
+        ConfigApp.of(context).color = Color(0xFF000000);
         return true;
       },
       child: Scaffold(

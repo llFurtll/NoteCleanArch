@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/data/repositories/config_repository.dart';
 import 'package:note/data/repositories/crud_repository.dart';
@@ -76,57 +77,66 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
     super.dispose();
   }
 
-  Future<void> teste() async {
+  Future<void> _showModal() async {
     return showModalBottomSheet(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       context: context,
-      builder: (BuildContext context) => Container(
-        height: 200.0,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(topLeft: Radius.circular(10), topRight: Radius.circular(10))
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+      builder: (BuildContext context) => Padding(
+        padding: MediaQuery.of(context).viewInsets,
+        child: Container(
+          height: 200.0,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
+          ),
+          child: Column(     
             children: [
-              Expanded(
-                flex: 8,
-                child: Container(
-                  padding: EdgeInsets.only(right: 10.0),
-                  child: TextFormField(
-                    onFieldSubmitted: (value) async {
-                      if (value.isNotEmpty) {
-                        int? update = await configUserUseCases.updateName(name: _name.text);
+              Container(
+                height: 50.0,
+                child: Icon(Icons.drag_handle, size: 45.0, color: Colors.grey),
+              ), 
+              Container(
+                alignment: Alignment.center,
+                height: 150.0,
+                padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                child: TextFormField(
+                  autofocus: true,
+                  onFieldSubmitted: (value) async {
+                    if (value.isNotEmpty) {
+                      int? update = await configUserUseCases.updateName(name: _name.text);
 
-                        if (update != 0) {
-                          Navigator.of(context).pop();
-                        }
-
-                        _userName = await configUserUseCases.getName();
-
-                        setState(() {});
-                      } else {
+                      if (update != 0) {
                         Navigator.of(context).pop();
                       }
-                    },
-                    controller: _name,
-                    decoration: const InputDecoration(
-                      border: const OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: const BorderSide(
-                          color: Colors.white
-                        )
+
+                      _userName = await configUserUseCases.getName();
+
+                      setState(() {});
+                    } else {
+                      Navigator.of(context).pop();
+                      _name.text = _userName!;
+                    }
+                  },
+                  controller: _name,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Theme.of(context).primaryColor
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Theme.of(context).primaryColor
                       ),
                     ),
                   ),
-                )
-              ),
+                ),
+              )
             ],
-          ),
+          )
         ),
       )
     );
@@ -194,11 +204,25 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(bottom: 20.0, top: 20.0),
                   child: CircleAvatar(
                     backgroundColor: Colors.yellow,
                     radius: 35.0,
+                    child: Stack(
+                      children: [
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white
+                            ),
+                            child: Icon(Icons.camera, color: Theme.of(context).primaryColor),
+                          ),
+                        )
+                      ]
+                    ),
                   ),
                 ),
                 Padding(
@@ -219,7 +243,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                       ],
                     ),
                     onPressed: () {
-                      teste();
+                      _showModal();
                     },
                   ),
                 ),
@@ -279,9 +303,28 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
       child: Builder(
         builder: (context) {
           if (_carregando) {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+              child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor)
+              )
+            );
           } else if (_listaCardNote.isEmpty) {
-            return Center(child: Text("Sem anotações!"),);
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SvgPicture.asset("lib/images/sem-anotacao.svg", width: 100.0, height: 100.0),
+                  Text(
+                    "Sem anotações!",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15.0,
+                      color: Colors.grey
+                    ),
+                  )
+                ],
+              )
+            );
           } else {
             return ListView(
               padding: EdgeInsets.only(left: 0, top: 0, right: 0, bottom: 15.0),

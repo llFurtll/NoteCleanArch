@@ -102,7 +102,7 @@ class CardNoteState extends State<CardNote> {
 
   Container _card() {
     return Container(
-      width: MediaQuery.of(context).size.width * 0.8,
+      width: MediaQuery.of(context).size.width * 0.9,
       child: GestureDetector(
         onTap: null,
         onHorizontalDragUpdate: (details) {
@@ -148,7 +148,8 @@ class CardNoteState extends State<CardNote> {
             openElevation: 0.0,
             closedElevation: 0.0,
             closedColor: Colors.transparent,
-            openBuilder: (BuildContext context, VoidCallback _) => CreateNote(setState: widget.setState, id: widget.anotacaoModel.id!),
+            openBuilder: (BuildContext context, VoidCallback _) => 
+              CreateNote(setState: widget.setState, id: widget.anotacaoModel.id!),
             closedBuilder: (BuildContext context, VoidCallback _) {
               return Card(
                 clipBehavior: Clip.antiAlias,
