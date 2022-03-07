@@ -195,11 +195,16 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
 
   Widget _top() {
     return SliverAppBar(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50.0), bottomRight: Radius.circular(50.0))
+      ),
       backgroundColor: Colors.white,
       expandedHeight: 300.0,
       floating: true,
       pinned: true,
       snap: false,
+      forceElevated: true,
+      elevation: 5.0,
       flexibleSpace: Container(
         child: Center(
           child: SafeArea(
@@ -506,8 +511,8 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
         _top(),
         SliverList(
           delegate: SliverChildBuilderDelegate(
-            (context, index) => ListTile(title: Text('Item #$index')),
-            childCount: 1000
+            (context, index) => _listaCardNote[index],
+            childCount: _listaCardNote.length,
           )
         ),
       ],
