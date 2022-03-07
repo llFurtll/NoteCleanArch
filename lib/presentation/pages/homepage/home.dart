@@ -28,9 +28,13 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   late FocusNode _focusNode;
 
   final double _fabDimension = 56.0;
+  
+  bool _showTitle = false;
 
   TextEditingController _textController = TextEditingController();
   final TextEditingController _name = TextEditingController();
+
+  ScrollController _customController = ScrollController();
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -67,14 +71,29 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
     });
 
     _focusNode = FocusNode();
+
+    _customController.addListener(_collapsedOrScroll);
   }
 
   @override
   void dispose() {
     _debounce?.cancel();
     _focusNode.dispose();
+    _customController.dispose();
 
     super.dispose();
+  }
+
+  void _collapsedOrScroll() {
+    if (_customController.offset == _customController.position.maxScrollExtent) {
+      setState(() {
+        _showTitle = true;
+      });
+    } else {
+      setState(() {
+        _showTitle = false;
+      });
+    }
   }
 
   Future<void> _showModal() async {
@@ -198,106 +217,115 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50.0), bottomRight: Radius.circular(50.0))
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).primaryColor,
       expandedHeight: 300.0,
       floating: true,
       pinned: true,
+      centerTitle: true,
       snap: false,
       forceElevated: true,
       elevation: 5.0,
-      flexibleSpace: Container(
-        child: Center(
-          child: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(bottom: 20.0, top: 20.0),
-                  child: CircleAvatar(
-                    backgroundColor: Colors.yellow,
-                    radius: 50.0,
-                    child: Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.bottomRight,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white
+      flexibleSpace: FlexibleSpaceBar(
+        collapseMode: CollapseMode.parallax,
+        title: Visibility(
+          visible: _showTitle,
+          child: Text(_userName!),
+        ),
+        centerTitle: true,
+        background: Container(
+          child: Center(
+            child: SafeArea(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 20.0, top: 20.0),
+                    child: CircleAvatar(
+                      backgroundColor: Colors.yellow,
+                      radius: 50.0,
+                      child: Stack(
+                        children: [
+                          Align(
+                            alignment: Alignment.bottomRight,
+                            child: Container(
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.white
+                              ),
+                              child: Icon(Icons.camera, color: Theme.of(context).primaryColor, size: 30.0),
                             ),
-                            child: Icon(Icons.camera, color: Theme.of(context).primaryColor, size: 30.0),
+                          )
+                        ]
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 20.0),
+                    child: TextButton(
+                      autofocus: false,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            _userName!,
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0)
                           ),
-                        )
-                      ]
+                          Padding(
+                            padding: EdgeInsets.only(left: 10.0),
+                            child: Icon(Icons.edit, color: Colors.white),
+                          ),
+                        ],
+                      ),
+                      onPressed: () {
+                        _showModal();
+                      },
                     ),
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 20.0),
-                  child: TextButton(
-                    autofocus: false,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          _userName!,
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0)
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.7,
+                    child: TextFormField(
+                      focusNode: _focusNode,
+                      controller: _textController,
+                      onChanged: _onSearch,
+                      decoration: InputDecoration(
+                        hintText: "Pesquisar anotação",
+                        suffixIcon: Icon(Icons.search, color: Colors.white),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          borderSide: BorderSide(
+                            color: Colors.white
+                          )
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 10.0),
-                          child: Icon(Icons.edit, color: Colors.white),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white
+                          )
                         ),
-                      ],
-                    ),
-                    onPressed: () {
-                      _showModal();
-                    },
-                  ),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  child: TextFormField(
-                    focusNode: _focusNode,
-                    controller: _textController,
-                    onChanged: _onSearch,
-                    decoration: InputDecoration(
-                      hintText: "Pesquisar anotação",
-                      suffixIcon: Icon(Icons.search, color: Colors.white),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(
-                          color: Colors.white
-                        )
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.white
+                          )
+                        ),
+                        hintStyle: TextStyle(
+                          color: Colors.white54
+                        ),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.white
-                        )
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.white
-                        )
-                      ),
-                      hintStyle: TextStyle(
-                        color: Colors.white54
+                      cursorColor: Colors.white,
+                      style: TextStyle(
+                        color: Colors.white
                       ),
                     ),
-                    cursorColor: Colors.white,
-                    style: TextStyle(
-                      color: Colors.white
-                    ),
-                  ),
-                )
-              ],
+                  )
+                ],
+              ),
             ),
           ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50.0), bottomRight: Radius.circular(50.0)),
+            color: Theme.of(context).primaryColor,
+          ),
         ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50.0), bottomRight: Radius.circular(50.0)),
-          color: Theme.of(context).primaryColor,
-        ),
-      ),
+      )
     );
   }
 
@@ -507,6 +535,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
     //   ],
     // );
     return CustomScrollView(
+      controller: _customController,
       slivers: <Widget>[
         _top(),
         SliverList(
