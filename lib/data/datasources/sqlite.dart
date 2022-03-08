@@ -187,7 +187,6 @@ class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
       "SELECT NOME FROM CONFIGUSER WHERE ID = 1"
     );
 
-
     await closeConnection();
 
     if (result.length > 0) {
@@ -198,9 +197,16 @@ class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
   }
 
   @override
-  Future<int?> updateImage({required String pathImage}) {
-    // TODO: implement updateImage
-    throw UnimplementedError();
+  Future<int?> updateImage({required String pathImage}) async {
+    await getConnection();
+
+    int? updated = await _db.rawUpdate(
+      "UPDATE CONFIGUSER SET PATH_PHOTO = ? WHERE ID = 1", [pathImage]
+    );
+
+    await closeConnection();
+
+    return updated;
   }
 
   @override

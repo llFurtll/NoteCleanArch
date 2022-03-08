@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:note/core/camera_gallery.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/data/repositories/config_repository.dart';
 import 'package:note/data/repositories/crud_repository.dart';
@@ -94,6 +95,20 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
         _showTitle = false;
       });
     }
+  }
+
+  void showOptionsPhoto() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CameraGallery(
+          useCase: configUserUseCases,
+          setState: () {
+            setState(() {});
+          },
+        );
+      }
+    );
   }
 
   Future<void> _showModal() async {
@@ -240,24 +255,27 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                 children: [
                   Padding(
                     padding: EdgeInsets.only(bottom: 20.0, top: 20.0),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.yellow,
-                      radius: 50.0,
-                      child: Stack(
-                        children: [
-                          Align(
-                            alignment: Alignment.bottomRight,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white
+                    child: GestureDetector(
+                      onTap: () => showOptionsPhoto(),
+                      child: CircleAvatar(
+                        backgroundColor: Colors.yellow,
+                        radius: 50.0,
+                        child: Stack(
+                          children: [
+                            Align(
+                              alignment: Alignment.bottomRight,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white
+                                ),
+                                child: Icon(Icons.camera, color: Theme.of(context).primaryColor, size: 30.0),
                               ),
-                              child: Icon(Icons.camera, color: Theme.of(context).primaryColor, size: 30.0),
-                            ),
-                          )
-                        ]
+                            )
+                          ]
+                        ),
                       ),
-                    ),
+                    )
                   ),
                   Padding(
                     padding: EdgeInsets.only(bottom: 20.0),
