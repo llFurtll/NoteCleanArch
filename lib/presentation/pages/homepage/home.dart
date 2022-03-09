@@ -258,7 +258,6 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                     child: GestureDetector(
                       onTap: () => showOptionsPhoto(),
                       child: CircleAvatar(
-                        backgroundColor: Colors.yellow,
                         radius: 50.0,
                         child: Stack(
                           children: [
@@ -352,16 +351,20 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
       delegate: SliverChildBuilderDelegate(
         (context, index) {
           if (_carregando) {
-            return Center(
-              heightFactor: 3.0,
-              child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor)
-              )
+            return SizedBox(
+              height:  MediaQuery.of(context).size.height - 350,
+              child: Center(
+                child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor)
+                )
+              ),
             );
           } else if (_listaCardNote.length == 0) {
-            return Center(
-              heightFactor: 3.0,
+            return SizedBox(
+              height: MediaQuery.of(context).size.height - 350,
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
                 children: [
                   SvgPicture.asset("lib/images/sem-anotacao.svg", width: 100.0, height: 100.0),
                   Text(
@@ -373,7 +376,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                     ),
                   )
                 ],
-              )
+              ),
             );
           } else {
             return _listaCardNote[index];
