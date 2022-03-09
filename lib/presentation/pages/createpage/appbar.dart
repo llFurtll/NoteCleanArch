@@ -6,8 +6,9 @@ import 'package:note/data/repositories/crud_repository.dart';
 import 'package:note/domain/usecases/crud_usecases.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'camera.dart';
 import 'package:note/core/config_app.dart';
+
+import '../../../core/camera_gallery.dart';
 
 class AppBarCreate extends StatefulWidget {
   final Function(String pathImage) updateImage;
@@ -45,6 +46,23 @@ class AppBarCreateState extends State<AppBarCreate> {
   PersistentBottomSheetController? _controller;
   ScrollController _scrollController = ScrollController();
   double _positionList = 0.0;
+
+  void showOptionsPhoto() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CameraGallery(
+          updateImage: widget.updateImage,
+          setState: () async {
+            _assetsImages = await _listAllAssetsImage();
+            _controller!.setState!(() {});
+            ConfigApp.of(context).removeBackground = true;
+            Navigator.of(context).pop();
+          },
+        );
+      }
+    );
+  }
 
   List<Widget> _actions() {
     return [
@@ -101,17 +119,7 @@ class AppBarCreateState extends State<AppBarCreate> {
                       ),
                       child: Center(
                         child: IconButton(
-                          onPressed: () => Navigator.push(
-                            context, MaterialPageRoute(builder: (context) => CameraPicture(
-                              updateImage: widget.updateImage,
-                              updateBottomSheet: () async {
-                                _assetsImages = await _listAllAssetsImage();
-                                _controller!.setState!(() {
-                                });
-                              },
-                              )
-                            )
-                          ),
+                          onPressed: () => showOptionsPhoto(),
                           icon: Icon(Icons.camera, color: Colors.white, size: 40.0),
                         ),
                       ),

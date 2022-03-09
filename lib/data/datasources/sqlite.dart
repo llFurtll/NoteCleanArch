@@ -201,7 +201,7 @@ class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
     await getConnection();
 
     int? updated = await _db.rawUpdate(
-      "UPDATE CONFIGUSER SET PATH_PHOTO = ? WHERE ID = 1", [pathImage]
+      "UPDATE CONFIGUSER SET PATH_FOTO = ? WHERE ID = 1", [pathImage]
     );
 
     await closeConnection();
