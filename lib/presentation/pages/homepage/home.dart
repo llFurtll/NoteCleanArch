@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
@@ -41,7 +40,6 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String? _userName = "Digite seu nome aqui :)";
-  String? _imagePath = "";
   late bool _carregando;
   List<Widget> _listaCardNote = [];
 
@@ -69,8 +67,6 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
           _name.text = nomeUser;
         }
 
-        _imagePath = await configUserUseCases.getImage();
-
         _listaCardNote = await _getNotes();
       });
     });
@@ -90,7 +86,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   void _collapsedOrScroll() {
-    if (_customController.offset.ceil() == 258) {
+    if (_customController.offset == _customController.position.maxScrollExtent) {
       setState(() {
         _showTitle = true;
       });
@@ -107,9 +103,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
       builder: (BuildContext context) {
         return CameraGallery(
           useCase: configUserUseCases,
-          setState: () async {
-            Navigator.of(context).pop();
-            _imagePath = await configUserUseCases.getImage();
+          setState: () {
             setState(() {});
           },
         );
@@ -265,9 +259,6 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                       onTap: () => showOptionsPhoto(),
                       child: CircleAvatar(
                         backgroundColor: Colors.yellow,
-                        backgroundImage: 
-                          _imagePath!.isNotEmpty ? FileImage(File(_imagePath!)) :
-                          null,
                         radius: 50.0,
                         child: Stack(
                           children: [
@@ -357,177 +348,20 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   Widget _listaNote() {
-    return Builder(
-      builder: (context) {
-        if (_carregando) {
-          print("LEGAL");
-          return Center(
-            child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor)
-            )
-          );
-        } else if (_listaCardNote.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SvgPicture.asset("lib/images/sem-anotacao.svg", width: 100.0, height: 100.0),
-                Text(
-                  "Sem anotações!",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 15.0,
-                    color: Colors.grey
-                  ),
-                )
-              ],
-            )
-          );
-        } else {
-          print("LEGAL2");
-          // return ListView(
-          //   padding: EdgeInsets.only(left: 0, top: 0, right: 0, bottom: 15.0),
-          //   children: _listaCardNote,
-          //   shrinkWrap: true,
-          //   scrollDirection: Axis.vertical,
-          // );
-
-          return SliverList(
-            delegate: SliverChildBuilderDelegate(
-              (_, int index) {
-                // return ListView(
-                //   padding: EdgeInsets.only(left: 0, top: 0, right: 0, bottom: 15.0),
-                //   children: _listaCardNote,
-                //   shrinkWrap: true,
-                //   scrollDirection: Axis.vertical,
-                // );
-              }
-            ),
-          );
-        }
-      },
-    );
-  }
-
-  Widget _top2() {
-    return Positioned(
-      top: 0.0,
-      height: 320.0,
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        child: Center(
-          child: SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(bottom: 20.0, top: 20.0),
-                  child: CircleAvatar(
-                    backgroundColor: Colors.yellow,
-                    radius: 35.0,
-                    child: Stack(
-                      children: [
-                        Align(
-                          alignment: Alignment.bottomRight,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white
-                            ),
-                            child: Icon(Icons.camera, color: Theme.of(context).primaryColor),
-                          ),
-                        )
-                      ]
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(bottom: 20.0),
-                  child: TextButton(
-                    autofocus: false,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          _userName!,
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0)
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 10.0),
-                          child: Icon(Icons.edit, color: Colors.white),
-                        ),
-                      ],
-                    ),
-                    onPressed: () {
-                      _showModal();
-                    },
-                  ),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.7,
-                  child: TextFormField(
-                    focusNode: _focusNode,
-                    controller: _textController,
-                    onChanged: _onSearch,
-                    decoration: InputDecoration(
-                      hintText: "Pesquisar anotação",
-                      suffixIcon: Icon(Icons.search, color: Colors.white),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        borderSide: BorderSide(
-                          color: Colors.white
-                        )
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.white
-                        )
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.white
-                        )
-                      ),
-                      hintStyle: TextStyle(
-                        color: Colors.white54
-                      ),
-                    ),
-                    cursorColor: Colors.white,
-                    style: TextStyle(
-                      color: Colors.white
-                    ),
-                  ),
-                )
-              ],
-            ),
-          ),
-        ),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50.0), bottomRight: Radius.circular(50.0)),
-          color: Theme.of(context).primaryColor,
-        ),
-      ),
-    );
-  }
-
-  Widget _listaNote2() {
-    return Positioned(
-      top: 280.0,
-      bottom: 0.0,
-      left: 0.0,
-      right: 0.0,
-      child: Builder(
-        builder: (context) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
           if (_carregando) {
             return Center(
+              heightFactor: 3.0,
               child: CircularProgressIndicator(
                 valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor)
               )
             );
-          } else if (_listaCardNote.isEmpty) {
+          } else if (_listaCardNote.length == 0) {
             return Center(
+              heightFactor: 3.0,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SvgPicture.asset("lib/images/sem-anotacao.svg", width: 100.0, height: 100.0),
                   Text(
@@ -542,36 +376,11 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
               )
             );
           } else {
-            return ListView(
-              padding: EdgeInsets.only(left: 0, top: 0, right: 0, bottom: 15.0),
-              children: _listaCardNote,
-              shrinkWrap: true,
-              scrollDirection: Axis.vertical,
-            );
+            return _listaCardNote[index];
           }
         },
+        childCount: _listaCardNote.length > 0 ? _listaCardNote.length : 1,
       )
-    );
-  }
-
-  Widget _home() {
-    // return Stack(
-    //   children: [
-    //     _top(),
-    //     _listaNote()
-    //   ],
-    // );
-    return CustomScrollView(
-      controller: _customController,
-      slivers: <Widget>[
-        _top(),
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) => _listaCardNote[index],
-            childCount: _listaCardNote.length,
-          )
-        ),
-      ],
     );
   }
 
@@ -607,6 +416,16 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
           }
         );
       }
+    );
+  }
+
+  Widget _home() {
+    return CustomScrollView(
+      controller: _customController,
+      slivers: <Widget>[
+        _top(),
+        _listaNote(),
+      ],
     );
   }
 
