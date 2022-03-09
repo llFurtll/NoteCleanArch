@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +41,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String? _userName = "Digite seu nome aqui :)";
+  String? _imagePath = "";
   late bool _carregando;
   List<Widget> _listaCardNote = [];
 
@@ -67,6 +69,8 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
           _name.text = nomeUser;
         }
 
+        _imagePath = await configUserUseCases.getImage();
+
         _listaCardNote = await _getNotes();
       });
     });
@@ -86,7 +90,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   void _collapsedOrScroll() {
-    if (_customController.offset == _customController.position.maxScrollExtent) {
+    if (_customController.offset.ceil() == 258) {
       setState(() {
         _showTitle = true;
       });
@@ -103,9 +107,12 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
       builder: (BuildContext context) {
         return CameraGallery(
           useCase: configUserUseCases,
-          setState: () {
+          setState: () async {
+            Navigator.of(context).pop();
+            _imagePath = await configUserUseCases.getImage();
             setState(() {});
           },
+          removerImagem: _imagePath!.isNotEmpty,
         );
       }
     );
@@ -258,6 +265,10 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                     child: GestureDetector(
                       onTap: () => showOptionsPhoto(),
                       child: CircleAvatar(
+                        backgroundColor: Colors.white,
+                        backgroundImage: 
+                          _imagePath!.isNotEmpty ? FileImage(File(_imagePath!)) :
+                          null,
                         radius: 50.0,
                         child: Stack(
                           children: [
@@ -270,7 +281,18 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                                 ),
                                 child: Icon(Icons.camera, color: Theme.of(context).primaryColor, size: 30.0),
                               ),
-                            )
+                            ),
+                            _imagePath!.isEmpty ?
+                              Center(
+                                child: Text(
+                                  "SEM FOTO",
+                                  style: TextStyle(
+                                    color: Theme.of(context).primaryColor,
+                                    fontWeight: FontWeight.bold
+                                  ),
+                                )
+                              ) :
+                              Text("") 
                           ]
                         ),
                       ),

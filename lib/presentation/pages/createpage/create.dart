@@ -258,7 +258,7 @@ class CreateNoteState extends State<CreateNote> {
               image: _pathImage.contains('lib') ?
                 AssetImage(_pathImage) as ImageProvider :
                 FileImage(File(_pathImage)),
-              fit: BoxFit.fill,
+              fit: BoxFit.cover,
             ),
           ),
           width: double.infinity,
