@@ -8,6 +8,7 @@ import 'package:note/presentation/pages/createpage/appbar.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:note/core/config_app.dart';
 
+// ignore: must_be_immutable
 class CreateNote extends StatefulWidget {
   final Function setState;
   int? id;
@@ -114,20 +115,16 @@ class CreateNoteState extends State<CreateNote> {
     return Container(
       padding: EdgeInsets.all(25.0),
       child: SingleChildScrollView(
-        child: Builder(
-          builder: (BuildContext context) {
-            return Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _titulo(),
-                  _descricao(),
-                ],
-              ),
-            );
-          },
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _titulo(),
+              _descricao(),
+            ],
+          ),
         ),
       ),
     );

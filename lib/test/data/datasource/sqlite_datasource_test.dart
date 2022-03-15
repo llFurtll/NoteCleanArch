@@ -47,7 +47,7 @@ void main() {
             data: DateTime.now().toIso8601String(),
             situacao: 0,
             imagemFundo: "https",
-            observacao: "Daniel e lindo!",
+            observacao: "Daniel!",
             cor: "#FFFFFF"
           ) as AnotacaoModel
         );
@@ -63,7 +63,7 @@ void main() {
             data: DateTime.now().toIso8601String(),
             situacao: 0,
             imagemFundo: "https",
-            observacao: "Daniel e lindo!",
+            observacao: "Daniel!",
             cor: "#FFFFFF"
           ) as AnotacaoModel
         );

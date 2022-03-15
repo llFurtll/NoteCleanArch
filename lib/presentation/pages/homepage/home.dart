@@ -23,20 +23,21 @@ class Home extends StatefulWidget {
 
 class HomeState extends State<Home> with TickerProviderStateMixin {
 
+  final _formKey = GlobalKey<FormState>();
+
   late CrudUseCases useCases;
   late ConfigUserUseCases configUserUseCases;
+
   Timer? _debounce;
 
   late FocusNode _focusNode;
-
   final double _fabDimension = 56.0;
-  
   bool _showTitle = false;
 
-  TextEditingController _textController = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
   final TextEditingController _name = TextEditingController();
 
-  ScrollController _customController = ScrollController();
+  final ScrollController _customController = ScrollController();
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -131,20 +132,57 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
             color: Colors.white,
             borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
           ),
-          child: Column(     
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Container(
                 height: 50.0,
                 child: Icon(Icons.drag_handle, size: 45.0, color: Colors.grey),
               ), 
               Container(
-                alignment: Alignment.center,
-                height: 150.0,
                 padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                child: TextFormField(
-                  autofocus: true,
-                  onFieldSubmitted: (value) async {
-                    if (value.isNotEmpty) {
+                child: Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return "Por favor preencha o título!";
+                      }
+
+                      return null;
+                    },
+                    autofocus: true,
+                    controller: _name,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).primaryColor
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                        borderSide: BorderSide(
+                          color: Theme.of(context).primaryColor
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                ),
+                height: 50.0,
+                padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Theme.of(context).primaryColor,
+                  ),
+                  onPressed: () async {
+                    if (_formKey.currentState!.validate()) {
                       int? update = await configUserUseCases.updateName(name: _name.text);
 
                       if (update != 0) {
@@ -154,26 +192,9 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                       _userName = await configUserUseCases.getName();
 
                       setState(() {});
-                    } else {
-                      Navigator.of(context).pop();
-                      _name.text = _userName!;
                     }
                   },
-                  controller: _name,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(
-                        color: Theme.of(context).primaryColor
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      borderSide: BorderSide(
-                        color: Theme.of(context).primaryColor
-                      ),
-                    ),
-                  ),
+                  child: Text("Salvar")
                 ),
               )
             ],
