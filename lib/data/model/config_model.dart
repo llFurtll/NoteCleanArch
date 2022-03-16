@@ -5,10 +5,12 @@ class ConfigModel implements Config {
   String? nome;
 
   @override
+  // ignore: non_constant_identifier_names
   String? path_foto;
 
   ConfigModel({
       this.nome,
+      // ignore: non_constant_identifier_names
       this.path_foto
     }
   );

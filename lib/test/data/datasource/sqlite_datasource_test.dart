@@ -85,6 +85,26 @@ void main() {
         List<AnotacaoModel?> lista = await datasourceTest.findWithDesc(desc: "teste");
         expect(lista.length, 2);
       }); 
+
+      test("Testando o get image", () async {
+        String? pathImage = await datasourceTest.getImage();
+        assert(pathImage == "https://teste.com.br/teste.jpg");
+      });
+
+      test("Testando o get name", () async {
+        String? name = await datasourceTest.getName();
+        assert(name == "Daniel Melonari");
+      });
+
+      test("Testando o update image", () async {
+        int? update = await datasourceTest.updateImage(pathImage: "https://teste.com.br/nova_imagem.jpg");
+        assert(update == 1);
+      });
+
+      test("Testando o update name", () async {
+        int? update = await datasourceTest.updateName(name: "Daniel");
+        assert(update == 1);
+      });
     }
   );
 }

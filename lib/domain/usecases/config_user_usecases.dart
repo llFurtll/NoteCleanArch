@@ -1,7 +1,7 @@
-import 'package:note/data/repositories/config_repository.dart';
+import 'package:note/domain/repositories/iconfig_repository.dart';
 
 class ConfigUserUseCases {
-  ConfigUserRepository configRepository;
+  IConfigRepository configRepository;
 
   ConfigUserUseCases({required this.configRepository});
 

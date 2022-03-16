@@ -22,8 +22,19 @@ Future<Database> inicializeDatabase() async {
       """
     );
 
+    await db.execute(
+      """
+        CREATE TABLE IF NOT EXISTS CONFIGUSER(
+          id INTEGER PRIMARY KEY,
+          path_foto TEXT DEFAULT NULL,
+          nome TEXT DEFAULT NULL
+        )
+      """
+    );
+
     await db.insert("NOTE", inserirAnotacao());
     await db.insert("NOTE", inserirAnotacao());
+    await db.insert("CONFIGUSER", inserirConfigUsuario());
 
     return db;
 }
@@ -54,6 +65,15 @@ Map<String, Object?> inserirAnotacao() {
   insert["imagem_fundo"] = "http";
   insert["observacao"] = "gostei";
   insert["cor"] = "#FFFFFF";
+
+  return insert;
+}
+
+Map<String, Object?> inserirConfigUsuario() {
+  Map<String, Object?> insert = Map();
+
+  insert["path_foto"] = "https://teste.com.br/teste.jpg";
+  insert["nome"] = "Daniel Melonari";
 
   return insert;
 }
