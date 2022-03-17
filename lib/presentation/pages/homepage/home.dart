@@ -127,26 +127,27 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
       builder: (BuildContext context) => Padding(
         padding: MediaQuery.of(context).viewInsets,
         child: Container(
-          height: 200.0,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                height: 50.0,
-                child: Icon(Icons.drag_handle, size: 45.0, color: Colors.grey),
+                margin: EdgeInsets.only(bottom: 10.0),
+                child: Icon(Icons.drag_handle, color: Colors.grey, size: 40.0),
               ), 
               Container(
+                margin: EdgeInsets.only(bottom: 25.0),
                 padding: EdgeInsets.only(left: 10.0, right: 10.0),
                 child: Form(
                   key: _formKey,
                   child: TextFormField(
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return "Por favor preencha o título!";
+                        return "Por favor escreva um nome";
                       }
 
                       return null;
@@ -176,6 +177,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
                   borderRadius: BorderRadius.all(Radius.circular(10.0)),
                 ),
                 height: 50.0,
+                margin: EdgeInsets.only(bottom: 25.0),
                 padding: EdgeInsets.only(left: 10.0, right: 10.0),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(

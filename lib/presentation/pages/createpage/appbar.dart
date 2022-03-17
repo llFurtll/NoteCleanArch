@@ -68,7 +68,7 @@ class AppBarCreateState extends State<AppBarCreate> {
     return [
     IconButton(
         icon: Icon(Icons.color_lens),
-        padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 10.0),
+        padding: const EdgeInsets.fromLTRB(0, 25, 0, 25),
         color: ConfigApp.of(context).color,
         onPressed: () {
           widget.showColorPicker();
@@ -78,7 +78,7 @@ class AppBarCreateState extends State<AppBarCreate> {
         visible: ConfigApp.of(context).removeBackground,
         child: IconButton(
           color: ConfigApp.of(context).color,
-          padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 10.0),
+          padding: const EdgeInsets.fromLTRB(0, 25, 0, 25),
           onPressed: () {
             widget.updateImage("");
             if (_controller != null) {
@@ -92,7 +92,7 @@ class AppBarCreateState extends State<AppBarCreate> {
         )
       ),
       IconButton(
-        padding: const EdgeInsets.only(top: 25.0, bottom: 25.0, right: 25.0),
+        padding: const EdgeInsets.fromLTRB(0, 25, 10, 25),
         onPressed: () {
           _controller = Scaffold.of(context).showBottomSheet((context) => Container(
             padding: const EdgeInsets.all(15.0),
@@ -101,31 +101,11 @@ class AppBarCreateState extends State<AppBarCreate> {
               color: Colors.blueGrey[50],
             ),
             child: NotificationListener(
-              child: ListView.builder(
+              child: ListView(
+                shrinkWrap: false,
                 controller: _scrollController,
                 scrollDirection: Axis.horizontal,
-                itemCount: _assetsImages.length+1,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index <= _assetsImages.length-1) {
-                    return _buildCardImage(_assetsImages[index], index); 
-                  } else {
-                    return Container(
-                      margin: const EdgeInsets.only(right: 15.0),
-                      width: 120.0,
-                      height: 150.0,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15.0),
-                        color: Colors.grey,
-                      ),
-                      child: Center(
-                        child: IconButton(
-                          onPressed: () => showOptionsPhoto(),
-                          icon: Icon(Icons.camera, color: Colors.white, size: 40.0),
-                        ),
-                      ),
-                    );
-                  }
-                }
+                children: _returnCardsImage(),
               ),
               onNotification: (t) {
                 if (t is ScrollEndNotification) {
@@ -168,23 +148,48 @@ class AppBarCreateState extends State<AppBarCreate> {
     return assetImages;
   }
 
-  Builder _iconLeading() {
-    return Builder(
-      builder: (BuildContext context) {
-        return IconButton(
-          padding: const EdgeInsets.all(25.0),
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: ConfigApp.of(context).color
-          ),
-          onPressed: () {
-            Navigator.pop(context);
-            ConfigApp.of(context).removeBackground = false;
-            ConfigApp.of(context).color = Color(0xFF000000);
-          },
-        );
-      }
+  IconButton _iconLeading() {
+    return IconButton(
+      padding: const EdgeInsets.all(25.0),
+      icon: Icon(
+        Icons.arrow_back_ios,
+        color: ConfigApp.of(context).color
+      ),
+      onPressed: () {
+        Navigator.pop(context);
+        ConfigApp.of(context).removeBackground = false;
+        ConfigApp.of(context).color = Color(0xFF000000);
+      },
     );
+  }
+
+  Widget _addPhoto() {
+    return Container(
+      margin: const EdgeInsets.only(right: 15.0),
+      width: 120.0,
+      height: 150.0,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15.0),
+        color: Colors.grey,
+      ),
+      child: Center(
+        child: IconButton(
+          onPressed: () => showOptionsPhoto(),
+          icon: Icon(Icons.camera, color: Colors.white, size: 40.0),
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _returnCardsImage() {
+    List<Widget> lista = [];
+    _assetsImages.asMap().forEach((index, element) {
+      lista.add(_buildCardImage(element, index));
+    });
+
+    lista.add(_addPhoto());
+
+    return lista;
   }
 
   GestureDetector _buildCardImage(String image, int index) {

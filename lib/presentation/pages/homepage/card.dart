@@ -139,7 +139,7 @@ class CardNoteState extends State<CardNote> {
         child: Transform.translate(
           offset: Offset(_offset, 0.0),
           child: OpenContainer(
-            transitionDuration: Duration(milliseconds: 800),
+            transitionDuration: Duration(milliseconds: 500),
             transitionType: ContainerTransitionType.fade,
             closedShape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(10.0))
