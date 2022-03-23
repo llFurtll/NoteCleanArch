@@ -23,7 +23,7 @@ class AppBarCreate extends StatefulWidget {
 
 class AppBarCreateState extends State<AppBarCreate> {
 
-  int? _imageSelected;
+  final _imageSelected = ValueNotifier<int>(-1);
 
   late CrudUseCases _useCases;
   late List<String> _assetsImages;
@@ -43,9 +43,13 @@ class AppBarCreateState extends State<AppBarCreate> {
     });
   }
 
+  @override
+  void dispose() {
+    _imageSelected.dispose();
+    super.dispose();
+  }
+
   PersistentBottomSheetController? _controller;
-  ScrollController _scrollController = ScrollController();
-  double _positionList = 0.0;
 
   void showOptionsPhoto() {
     showDialog(
@@ -82,9 +86,7 @@ class AppBarCreateState extends State<AppBarCreate> {
           onPressed: () {
             widget.updateImage("");
             if (_controller != null) {
-              _controller!.setState!(() {
-                _imageSelected = -1;
-              });
+                _imageSelected.value = -1;
             }
             ConfigApp.of(context).removeBackground = false;
           },
@@ -100,20 +102,16 @@ class AppBarCreateState extends State<AppBarCreate> {
             decoration: BoxDecoration(
               color: Colors.blueGrey[50],
             ),
-            child: NotificationListener(
-              child: ListView(
-                shrinkWrap: false,
-                controller: _scrollController,
-                scrollDirection: Axis.horizontal,
-                children: _returnCardsImage(),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  ..._returnCardsImage().map((item) {
+                    return item;
+                  })
+                ],
               ),
-              onNotification: (t) {
-                if (t is ScrollEndNotification) {
-                  _positionList = _scrollController.position.pixels;
-                }
-
-                return true;
-              },
             )
           ));
         },
@@ -195,17 +193,14 @@ class AppBarCreateState extends State<AppBarCreate> {
   GestureDetector _buildCardImage(String image, int index) {
     if (widget.pathImage!.isNotEmpty) {
       if (image == widget.pathImage) {
-        _imageSelected = index;
+        _imageSelected.value = index;
       }
     }
     return GestureDetector(
       onTap: () {
         if (image != widget.pathImage) {
           widget.updateImage(image);
-          _controller!.setState!(() {
-            _imageSelected = index;
-            _scrollController.jumpTo(_positionList);
-          });
+          _imageSelected.value = index;
           ConfigApp.of(context).removeBackground = true;
         }
       },
@@ -246,9 +241,7 @@ class AppBarCreateState extends State<AppBarCreate> {
                         ConfigApp.of(context).removeBackground = false;
                       }
 
-                      _controller!.setState!(() {
-                        _imageSelected = -1;
-                      });
+                      _imageSelected.value = -1;
                       
                       Navigator.of(context).pop();
                     },
@@ -266,21 +259,26 @@ class AppBarCreateState extends State<AppBarCreate> {
           );
         }
       },
-      child: Container(
-        margin: const EdgeInsets.only(right: 15.0),
-        width: 120.0,
-        height: 150.0,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: image.contains('lib') ? AssetImage(image) as ImageProvider : FileImage(File(image)),
-            fit: BoxFit.cover,
-          ),
-          borderRadius: BorderRadius.circular(15.0),
-          border: _imageSelected == index ? Border.all(
-            color: Colors.blueAccent, width: 10.0
-          ) : null
-        ),
-      ),
+      child: ValueListenableBuilder(
+        valueListenable: _imageSelected,
+        builder: (_, value, __) {
+          return Container(
+            margin: const EdgeInsets.only(right: 15.0),
+            width: 120.0,
+            height: 150.0,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: image.contains('lib') ? AssetImage(image) as ImageProvider : FileImage(File(image)),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.circular(15.0),
+              border: _imageSelected.value == index ? Border.all(
+                color: Colors.blueAccent, width: 10.0
+              ) : null
+            ),
+          );
+        },
+      )
     );
   }
 
