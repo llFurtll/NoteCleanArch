@@ -91,7 +91,7 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   void _collapsedOrScroll() {
-    if (_customController.offset.ceil() == 258) {
+    if (_customController.offset.ceil() > 255) {
       setState(() {
         _showTitle = true;
       });
@@ -264,6 +264,8 @@ class HomeState extends State<Home> with TickerProviderStateMixin {
       ),
       backgroundColor: Theme.of(context).primaryColor,
       expandedHeight: 300.0,
+      collapsedHeight: 50,
+      toolbarHeight: 50,
       floating: true,
       pinned: true,
       centerTitle: true,
