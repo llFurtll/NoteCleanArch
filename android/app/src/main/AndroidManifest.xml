@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.daniel.note">
    <application
-        android:label="note"
+        android:label="Note"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_rounded">
         <activity
