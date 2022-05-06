@@ -1,4 +1,7 @@
 # Note
+
+<a href="https://www.buymeacoffee.com/danielmelonari" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
+
 #### Note is a simple and efficient application to manage notes.<br> The idea of this application started as an incentive for a study project, but during its development, I realized that it could be something useful in people's daily lives.
 
 <h1 align="">
