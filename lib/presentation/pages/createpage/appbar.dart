@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:note/data/repositories/crud_repository.dart';
 import 'package:note/domain/usecases/crud_usecases.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -23,6 +23,8 @@ class AppBarCreate extends StatefulWidget {
 
 class AppBarCreateState extends State<AppBarCreate> {
 
+  final CompManagerInjector injector = CompManagerInjector();
+
   final _imageSelected = ValueNotifier<int>(-1);
 
   late CrudUseCases _useCases;
@@ -32,11 +34,9 @@ class AppBarCreateState extends State<AppBarCreate> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _useCases = CrudUseCases(
-        repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
-      );
+    _useCases = injector.getDependencie();
 
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       Future.sync(() async {
         _assetsImages = await _listAllAssetsImage();
       });

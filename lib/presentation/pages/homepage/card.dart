@@ -1,11 +1,10 @@
 import 'dart:io';
 
 import 'package:animations/animations.dart';
+import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:flutter/material.dart';
 import 'package:note/data/model/anotacao_model.dart';
-import 'package:note/data/repositories/crud_repository.dart';
 import 'package:note/domain/usecases/crud_usecases.dart';
-import 'package:note/core/config_app.dart';
 import 'package:note/presentation/pages/createpage/create.dart';
 
 class CardNote extends StatefulWidget {
@@ -25,15 +24,14 @@ class CardNote extends StatefulWidget {
 
 class CardNoteState extends State<CardNote> {
 
+  final CompManagerInjector injector = CompManagerInjector();
+
   late CrudUseCases useCases;
 
   @override
-  void didChangeDependencies() {
-    useCases = CrudUseCases(
-      repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
-    );
-
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
+    useCases = injector.getDependencie();
   }
 
   bool _visibilityButtons = false;
@@ -149,7 +147,7 @@ class CardNoteState extends State<CardNote> {
             closedElevation: 0.0,
             closedColor: Colors.transparent,
             openBuilder: (BuildContext context, VoidCallback _) => 
-              CreateNote(setState: widget.setState, id: widget.anotacaoModel.id!),
+              CreateNote(id: widget.anotacaoModel.id!),
             closedBuilder: (BuildContext context, VoidCallback _) {
               return Card(
                 clipBehavior: Clip.antiAlias,

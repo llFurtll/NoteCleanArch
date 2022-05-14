@@ -29,6 +29,10 @@ dependencies:
   animations: 2.0.2
   flutter_svg: 0.21.0
   image_picker: ^0.8.4+10
+  compmanager:
+    git:
+      url: https://github.com/llFurtll/compmanager.git
+      ref: main
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -37,9 +41,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  mockito: 5.0.15
   build_runner: 2.1.2
-  faker: 2.0.0
   sqflite_common_ffi: 2.1.0
   flutter_colorpicker: 0.6.0
 

@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:flutter/material.dart';
 import 'package:note/data/model/anotacao_model.dart';
-import 'package:note/data/repositories/crud_repository.dart';
 import 'package:note/domain/usecases/crud_usecases.dart';
 import 'package:note/presentation/pages/createpage/appbar.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
@@ -10,16 +10,17 @@ import 'package:note/core/config_app.dart';
 
 // ignore: must_be_immutable
 class CreateNote extends StatefulWidget {
-  final Function setState;
   int? id;
 
-  CreateNote({required this.setState, this.id});
+  CreateNote({this.id});
 
   @override
   CreateNoteState createState() => CreateNoteState();
 }
 
 class CreateNoteState extends State<CreateNote> {
+
+  final CompManagerInjector injector = CompManagerInjector();
 
   final _formKey = GlobalKey<FormState>();
   late AnotacaoModel? _anotacaoModel;
@@ -35,11 +36,9 @@ class CreateNoteState extends State<CreateNote> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      useCases = CrudUseCases(
-        repository: CrudRepository(datasourceBase: ConfigApp.of(context).datasourceBase)
-      );
+    useCases = injector.getDependencie();
 
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       if (widget.id != null) {
         Future.sync(() async {
 
@@ -144,8 +143,6 @@ class CreateNoteState extends State<CreateNote> {
             _anotacaoModel!.cor = _cor.text.isNotEmpty ? _cor.text : _anotacaoModel!.cor;
             _updateNote(_anotacaoModel!);
           }
-
-          widget.setState();
         }
       },
       child: Icon(Icons.save),
