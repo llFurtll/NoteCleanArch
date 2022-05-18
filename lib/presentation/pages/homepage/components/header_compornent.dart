@@ -208,11 +208,11 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
     }
   }
 
-  String? getUserName() {
+  String? get userName {
     return _userNameNotifier.value;
   }
 
-  void setUserName(String? name) {
+  set setUserName(String? name) {
     _userNameNotifier.value = name;
   }
 

@@ -1,9 +1,10 @@
+import 'package:flutter/material.dart';
+
+import 'package:flutter_svg/svg.dart';
+
 import 'package:compmanager/core/compmanager_notifier_list.dart';
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
 import '../../../../data/model/anotacao_model.dart';
 import '../../../../domain/usecases/crud_usecases.dart';

@@ -21,7 +21,6 @@ class AlterNameComponent implements IComponent<HomeState, Padding, void> {
   AlterNameComponent(this._screen) {
     init();
   }
-  
 
   @override
   void afterEvent() {
@@ -30,7 +29,7 @@ class AlterNameComponent implements IComponent<HomeState, Padding, void> {
 
   @override
   void beforeEvent() {
-    _name.text = _headerComponent.getUserName()!;
+    _name.text = _headerComponent.userName!;
   }
 
   @override
@@ -102,7 +101,7 @@ class AlterNameComponent implements IComponent<HomeState, Padding, void> {
                       Navigator.of(_screen.context).pop();
                     }
 
-                    _headerComponent.setUserName(await _configUserUseCases.getName());
+                    _headerComponent.setUserName = (await _configUserUseCases.getName());
                   }
                 },
                 child: Text("Salvar")

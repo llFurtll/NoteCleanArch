@@ -1,12 +1,15 @@
 import 'dart:io';
 
-import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:flutter/material.dart';
-import 'package:note/data/model/anotacao_model.dart';
-import 'package:note/domain/usecases/crud_usecases.dart';
-import 'package:note/presentation/pages/createpage/appbar.dart';
-import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:note/core/config_app.dart';
+
+import 'package:compmanager/core/compmanager_injector.dart';
+import 'package:compmanager/domain/interfaces/icomponent.dart';
+import 'package:compmanager/domain/interfaces/iscreen.dart';
+
+import '../../../data/model/anotacao_model.dart';
+import '../../../domain/usecases/crud_usecases.dart';
+import '../../../presentation/pages/createpage/components/app_bar_create_component.dart';
+import '../../../core/config_app.dart';
 
 // ignore: must_be_immutable
 class CreateNote extends StatefulWidget {
@@ -18,25 +21,31 @@ class CreateNote extends StatefulWidget {
   CreateNoteState createState() => CreateNoteState();
 }
 
-class CreateNoteState extends State<CreateNote> {
+class CreateNoteState extends State<CreateNote> implements IScreen {
+
+  @override
+  List<IComponent> listComponents = [];
 
   final CompManagerInjector injector = CompManagerInjector();
-
   final _formKey = GlobalKey<FormState>();
+  final ValueNotifier<String> _pathImageNotifier = ValueNotifier("");
+  final ValueNotifier<Color> _colorNotifier = ValueNotifier(Color(0xFF000000));
+  
   late AnotacaoModel? _anotacaoModel;
-
   late CrudUseCases useCases;
+  late AppBarCreateComponent appBarCreateComponent;
 
   TextEditingController _title = TextEditingController();
   TextEditingController _obs = TextEditingController();
   TextEditingController _cor = TextEditingController();
-  String _pathImage = "";
 
   @override
   void initState() {
     super.initState();
 
     useCases = injector.getDependencie();
+    appBarCreateComponent = AppBarCreateComponent(this);
+    addComponent(appBarCreateComponent);
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       if (widget.id != null) {
@@ -49,7 +58,7 @@ class CreateNoteState extends State<CreateNote> {
 
           setState(() {
             if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
-              _pathImage = _anotacaoModel!.imagemFundo!;
+              _pathImageNotifier.value = _anotacaoModel!.imagemFundo!;
               ConfigApp.of(context).removeBackground = true;
             }
 
@@ -74,16 +83,16 @@ class CreateNoteState extends State<CreateNote> {
       },
       decoration: InputDecoration(
         hintText: "Título",
-        errorStyle: TextStyle(color: ConfigApp.of(context).color),
+        errorStyle: TextStyle(color: _colorNotifier.value),
         hintStyle: TextStyle(
-          color: ConfigApp.of(context).color,
+          color: _colorNotifier.value,
           fontWeight: FontWeight.bold,
           fontSize: 20.0
         ),
         border: InputBorder.none, 
       ),
       style: TextStyle(
-        color: ConfigApp.of(context).color,
+        color: _colorNotifier.value,
         fontWeight: FontWeight.bold,
         fontSize: 20.0
       ),
@@ -97,11 +106,11 @@ class CreateNoteState extends State<CreateNote> {
     return TextFormField(
       controller: _obs,
       decoration: InputDecoration(
-        errorStyle: TextStyle(color: ConfigApp.of(context).color),
+        errorStyle: TextStyle(color: _colorNotifier.value),
         border: InputBorder.none,
       ),
       style: TextStyle(
-        color: ConfigApp.of(context).color,
+        color: _colorNotifier.value,
         fontSize: 18.0
       ),
       minLines: 10,
@@ -111,21 +120,26 @@ class CreateNoteState extends State<CreateNote> {
   }
 
   Widget _home() {
-    return Container(
-      padding: EdgeInsets.all(25.0),
-      child: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _titulo(),
-              _descricao(),
-            ],
+    return ValueListenableBuilder(
+      valueListenable: _colorNotifier,
+      builder: (BuildContext context, Color value, Widget? widget) {
+        return Container(
+          padding: EdgeInsets.all(25.0),
+          child: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _titulo(),
+                  _descricao(),
+                ],
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -139,53 +153,14 @@ class CreateNoteState extends State<CreateNote> {
           } else {
             _anotacaoModel!.titulo = _title.text;
             _anotacaoModel!.observacao = _obs.text;
-            _anotacaoModel!.imagemFundo = _pathImage;
+            _anotacaoModel!.imagemFundo = _pathImageNotifier.value;
             _anotacaoModel!.cor = _cor.text.isNotEmpty ? _cor.text : _anotacaoModel!.cor;
             _updateNote(_anotacaoModel!);
           }
         }
       },
-      child: Icon(Icons.save),
+      child: const Icon(Icons.save),
     );
-  }
-
-  void _showColorPicker() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        contentPadding: const EdgeInsets.all(10.0),
-        title: Text("Cor das letras"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ColorPicker(
-              pickerColor: ConfigApp.of(context).color,
-              onColorChanged: changeColor,
-              showLabel: false,
-              enableAlpha: false,
-              pickerAreaBorderRadius: BorderRadius.all(Radius.circular(15.0)),
-              pickerAreaHeightPercent: 0.7,
-              hexInputController: _cor,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text("Ok"),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void changeColor(Color color) {
-    setState(() {
-      ConfigApp.of(context).color = color;
-      _pathImage.isNotEmpty ?
-        ConfigApp.of(context).removeBackground = true :
-        ConfigApp.of(context).removeBackground = false;
-    });
   }
 
   void _insertNote() async {
@@ -193,7 +168,7 @@ class CreateNoteState extends State<CreateNote> {
       titulo: _title.text,
       observacao: _obs.text,
       data: DateTime.now().toIso8601String(),
-      imagemFundo: _pathImage,
+      imagemFundo: _pathImageNotifier.value,
       situacao: 1,
       cor: _cor.text
     );
@@ -237,26 +212,25 @@ class CreateNoteState extends State<CreateNote> {
     }
   }
 
-  void _updatePathImage(String path) {
-    setState(() {
-      _pathImage = path;
-    });
-  }
-
   Widget _body() {
     return Stack(
       children: [
-        Container(
-          decoration: _pathImage.isEmpty ? null : BoxDecoration(
-            image: DecorationImage(
-              image: _pathImage.contains('lib') ?
-                AssetImage(_pathImage) as ImageProvider :
-                FileImage(File(_pathImage)),
-              fit: BoxFit.cover,
-            ),
-          ),
-          width: double.infinity,
-          height: double.infinity,
+        ValueListenableBuilder(
+          valueListenable: _pathImageNotifier,
+          builder: (BuildContext context, String value, Widget? widget) {
+            return Container(
+              decoration: _pathImageNotifier.value.isEmpty ? null : BoxDecoration(
+                image: DecorationImage(
+                  image: _pathImageNotifier.value.contains('lib') ?
+                    AssetImage(_pathImageNotifier.value) as ImageProvider :
+                    FileImage(File(_pathImageNotifier.value)),
+                  fit: BoxFit.cover,
+                ),
+              ),
+              width: double.infinity,
+              height: double.infinity,
+            );
+          },
         ),
         Container(
           width: double.infinity,
@@ -274,24 +248,56 @@ class CreateNoteState extends State<CreateNote> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        ConfigApp.of(context).removeBackground = false;
-        ConfigApp.of(context).color = Color(0xFF000000);
+        _colorNotifier.value = Color(0xFF000000);
         return true;
       },
       child: Scaffold(
         extendBodyBehindAppBar: true,
         backgroundColor: Colors.white,
-        appBar: PreferredSize(
-          child: AppBarCreate(
-            updateImage: _updatePathImage,
-            showColorPicker: _showColorPicker,
-            pathImage: _pathImage,
-          ),
-          preferredSize: Size.fromHeight(56.0),
-        ),
+        appBar: appBarCreateComponent.constructor(),
         body: _body(),
         floatingActionButton: _button(),
       ),
     );
+  }
+
+  @override
+  void addComponent(IComponent component) {
+    listComponents.add(component);
+  }
+
+  @override
+  void emitScreen(IComponent component) {
+    component.event();
+  }
+
+  @override
+  IComponent getComponent(Type type) {
+    return listComponents.firstWhere((element) => element.runtimeType == type);
+  }
+
+  @override
+  void receive(String message, value, {IScreen? screen}) {
+    return;
+  }
+
+  String get pathImage {
+    return _pathImageNotifier.value;
+  }
+
+  set pathImage(String path) {
+    _pathImageNotifier.value = path;
+  }
+  
+  Color get color {
+    return _colorNotifier.value;
+  }
+
+  set color(Color color) {
+    _colorNotifier.value = color;
+  }
+
+  ValueNotifier<Color> get colorNotifier {
+    return _colorNotifier;
   }
 }

@@ -1,7 +1,8 @@
-import 'package:compmanager/domain/interfaces/icomponent.dart';
-
 import 'package:flutter/material.dart';
+
 import 'package:animations/animations.dart';
+
+import 'package:compmanager/domain/interfaces/icomponent.dart';
 
 import '../home.dart';
 import '../../createpage/create.dart';

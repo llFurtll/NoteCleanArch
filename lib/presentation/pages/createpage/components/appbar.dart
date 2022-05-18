@@ -8,7 +8,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:note/core/config_app.dart';
 
-import '../../../core/camera_gallery.dart';
+import '../../../../core/camera_gallery.dart';
 
 class AppBarCreate extends StatefulWidget {
   final Function(String pathImage) updateImage;
