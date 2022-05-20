@@ -10,6 +10,7 @@ import '../../../data/model/anotacao_model.dart';
 import '../../../domain/usecases/crud_usecases.dart';
 import '../../../presentation/pages/createpage/components/app_bar_create_component.dart';
 import '../../../core/config_app.dart';
+import 'components/button_save_noter.dart';
 
 // ignore: must_be_immutable
 class CreateNote extends StatefulWidget {
@@ -27,17 +28,17 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
   List<IComponent> listComponents = [];
 
   final CompManagerInjector injector = CompManagerInjector();
-  final _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey();
   final ValueNotifier<String> _pathImageNotifier = ValueNotifier("");
   final ValueNotifier<Color> _colorNotifier = ValueNotifier(Color(0xFF000000));
   
   late AnotacaoModel? _anotacaoModel;
   late CrudUseCases useCases;
   late AppBarCreateComponent appBarCreateComponent;
+  late ButtonSaveNoteComponent buttonSaveNoteComponent;
 
   TextEditingController _title = TextEditingController();
-  TextEditingController _obs = TextEditingController();
-  TextEditingController _cor = TextEditingController();
+  TextEditingController _desc = TextEditingController();
 
   @override
   void initState() {
@@ -45,6 +46,8 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
 
     useCases = injector.getDependencie();
     appBarCreateComponent = AppBarCreateComponent(this);
+    buttonSaveNoteComponent = ButtonSaveNoteComponent(this);
+
     addComponent(appBarCreateComponent);
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
@@ -54,7 +57,7 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
           _anotacaoModel = await useCases.getByIdUseCase(id: widget.id!);
 
           _title.text = _anotacaoModel!.titulo!;
-          _obs.text = _anotacaoModel!.observacao!;
+          _desc.text = _anotacaoModel!.observacao!;
 
           setState(() {
             if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
@@ -63,7 +66,7 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
             }
 
             if (_anotacaoModel!.cor != null && _anotacaoModel!.cor!.isNotEmpty) {
-              ConfigApp.of(context).color = Color(int.parse("0xFF${_anotacaoModel!.cor}"));
+              _colorNotifier.value = Color(int.parse("${_anotacaoModel!.cor}"));
             }
           });
         });
@@ -104,7 +107,7 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
 
   TextFormField _descricao() {
     return TextFormField(
-      controller: _obs,
+      controller: _desc,
       decoration: InputDecoration(
         errorStyle: TextStyle(color: _colorNotifier.value),
         border: InputBorder.none,
@@ -141,75 +144,6 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
         );
       },
     );
-  }
-
-  FloatingActionButton _button() {
-    return FloatingActionButton(
-      backgroundColor: Theme.of(context).floatingActionButtonTheme.backgroundColor,
-      onPressed: () async {
-        if (_formKey.currentState!.validate()) {
-          if (widget.id == null) {
-            _insertNote();
-          } else {
-            _anotacaoModel!.titulo = _title.text;
-            _anotacaoModel!.observacao = _obs.text;
-            _anotacaoModel!.imagemFundo = _pathImageNotifier.value;
-            _anotacaoModel!.cor = _cor.text.isNotEmpty ? _cor.text : _anotacaoModel!.cor;
-            _updateNote(_anotacaoModel!);
-          }
-        }
-      },
-      child: const Icon(Icons.save),
-    );
-  }
-
-  void _insertNote() async {
-    AnotacaoModel anotacaoModel = AnotacaoModel(
-      titulo: _title.text,
-      observacao: _obs.text,
-      data: DateTime.now().toIso8601String(),
-      imagemFundo: _pathImageNotifier.value,
-      situacao: 1,
-      cor: _cor.text
-    );
-
-    int? insert = await useCases.insertUseCase(anotacao: anotacaoModel);
-
-    if (insert != 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Theme.of(context).primaryColor,
-          content: Text("Anotacão cadastrada com sucesso!"),
-          action: SnackBarAction(
-            label: "Fechar",
-            textColor: Colors.white,
-            onPressed: () {},
-          ),
-        )
-      );
-      setState(() {
-        widget.id = insert;
-      });
-      _anotacaoModel = await useCases.getByIdUseCase(id: widget.id!);
-    }
-  }
-
-  void _updateNote(AnotacaoModel anotacao) async {
-    int? updated = await useCases.updateUseCase(anotacao: anotacao);
-
-    if (updated != 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Theme.of(context).primaryColor,
-          content: Text("Anotacão atualizada com sucesso!"),
-          action: SnackBarAction(
-            label: "Fechar",
-            textColor: Colors.white,
-            onPressed: () {},
-          ),
-        )
-      );
-    }
   }
 
   Widget _body() {
@@ -256,7 +190,7 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
         backgroundColor: Colors.white,
         appBar: appBarCreateComponent.constructor(),
         body: _body(),
-        floatingActionButton: _button(),
+        floatingActionButton: buttonSaveNoteComponent.constructor(),
       ),
     );
   }
@@ -299,5 +233,33 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
 
   ValueNotifier<Color> get colorNotifier {
     return _colorNotifier;
+  }
+
+  String get titulo {
+    return _title.text;
+  }
+
+  String get descricao {
+    return _desc.text;
+  }
+
+  GlobalKey<FormState> get formKey {
+    return _formKey;
+  }
+
+  AnotacaoModel? get anotacao {
+    return _anotacaoModel!;
+  }
+
+  set anotacao(AnotacaoModel? anotacao) {
+    _anotacaoModel = anotacao;
+  }
+
+  int? get id {
+    return widget.id;
+  }
+
+  set id(int? id) {
+    widget.id = id;
   }
 }

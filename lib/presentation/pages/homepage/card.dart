@@ -69,7 +69,7 @@ class CardNoteState extends State<CardNote> {
           child: Text(
             widget.anotacaoModel.titulo!,
             style: TextStyle(
-              color: widget.anotacaoModel.cor!.isNotEmpty ? Color(int.parse("0xFF${widget.anotacaoModel.cor}")) : Colors.black,
+              color: widget.anotacaoModel.cor!.isNotEmpty ? Color(int.parse("${widget.anotacaoModel.cor}")) : Colors.black,
               fontSize: 18.0,
               fontWeight: FontWeight.bold
             ),
