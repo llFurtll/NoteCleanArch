@@ -1,4 +1,4 @@
-import 'package:note/data/model/anotacao_model.dart';
+import '../../data/model/anotacao_model.dart';
 import '../repositories/irepository.dart';
 
 class CrudUseCases {

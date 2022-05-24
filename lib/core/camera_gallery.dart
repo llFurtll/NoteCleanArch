@@ -1,10 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+
 import 'package:image_picker/image_picker.dart';
-import 'package:note/domain/usecases/config_user_usecases.dart';
+
 import 'package:path_provider/path_provider.dart';
 
+import '../domain/usecases/config_user_usecases.dart';
+
+// ignore: must_be_immutable
 class CameraGallery extends StatelessWidget {
 
   final ConfigUserUseCases? useCase;

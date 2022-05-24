@@ -1,7 +1,8 @@
-import 'package:note/data/model/anotacao_model.dart';
-import 'package:note/domain/entities/anotacao.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+
+import 'package:note/data/model/anotacao_model.dart';
+import 'package:note/domain/entities/anotacao.dart';
 
 Future<Database> inicializeDatabase() async {
   sqfliteFfiInit();

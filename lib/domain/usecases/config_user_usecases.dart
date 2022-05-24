@@ -1,4 +1,4 @@
-import 'package:note/domain/repositories/iconfig_repository.dart';
+import '../../domain/repositories/iconfig_repository.dart';
 
 class ConfigUserUseCases {
   IConfigRepository configRepository;

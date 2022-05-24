@@ -9,8 +9,7 @@ import 'package:compmanager/domain/interfaces/iscreen.dart';
 import '../../../data/model/anotacao_model.dart';
 import '../../../domain/usecases/crud_usecases.dart';
 import '../../../presentation/pages/createpage/components/app_bar_create_component.dart';
-import '../../../core/config_app.dart';
-import 'components/button_save_noter.dart';
+import 'components/button_save_note.dart';
 
 // ignore: must_be_immutable
 class CreateNote extends StatefulWidget {
@@ -50,26 +49,20 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
 
     addComponent(appBarCreateComponent);
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (widget.id != null) {
-        Future.sync(() async {
+        _anotacaoModel = await useCases.getByIdUseCase(id: widget.id!);
 
-          _anotacaoModel = await useCases.getByIdUseCase(id: widget.id!);
+        _title.text = _anotacaoModel!.titulo!;
+        _desc.text = _anotacaoModel!.observacao!;
 
-          _title.text = _anotacaoModel!.titulo!;
-          _desc.text = _anotacaoModel!.observacao!;
+        if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
+          _pathImageNotifier.value = _anotacaoModel!.imagemFundo!;
+        }
 
-          setState(() {
-            if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
-              _pathImageNotifier.value = _anotacaoModel!.imagemFundo!;
-              ConfigApp.of(context).removeBackground = true;
-            }
-
-            if (_anotacaoModel!.cor != null && _anotacaoModel!.cor!.isNotEmpty) {
-              _colorNotifier.value = Color(int.parse("${_anotacaoModel!.cor}"));
-            }
-          });
-        });
+        if (_anotacaoModel!.cor != null && _anotacaoModel!.cor!.isNotEmpty) {
+          _colorNotifier.value = Color(int.parse("${_anotacaoModel!.cor}"));
+        }
       }
     });
   }

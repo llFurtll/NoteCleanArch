@@ -10,17 +10,18 @@ import '../../../../data/model/anotacao_model.dart';
 import '../../../../domain/usecases/crud_usecases.dart';
 import '../home.dart';
 import 'animated_list.dart';
-import '../card.dart';
+import 'card_component.dart';
 
 class ListComponent implements IComponent<HomeState, Widget, void> {
 
   final CompManagerInjector injector = CompManagerInjector();
   final ValueNotifier<bool> _carregandoNotifier = ValueNotifier(true);
   final CompManagerNotifierList<Widget> _listaCardNoteNotifier = CompManagerNotifierList([]);
+  final HomeState _screen;
 
   late CrudUseCases _useCases;
 
-  ListComponent() {
+  ListComponent(this._screen) {
     init();
   }
 
@@ -108,14 +109,10 @@ class ListComponent implements IComponent<HomeState, Widget, void> {
       _listaCardNoteNotifier.value.add(
         Align(child: AnimatedListItem(
           index,
-          CardNote(
-            anotacaoModel: anotacao!,
-            setState: () async {
-              _carregandoNotifier.value = true;
-              _carregandoNotifier.value = false;
-            },
-            focus: FocusNode(),
-          ),
+          CardComponent(
+            _screen,
+            anotacao!
+          ).constructor(),
         ))
       );
     });

@@ -1,9 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:note/presentation/pages/homepage/home.dart';
-import 'package:note/utils/init_database.dart';
-import 'package:note/utils/route_animation.dart';
+
+import '../../../presentation/pages/homepage/home.dart';
+import '../../../utils/init_database.dart';
+import '../../../utils/route_animation.dart';
 
 class SplashScreen extends StatefulWidget {
   @override

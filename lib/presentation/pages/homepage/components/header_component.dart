@@ -18,8 +18,7 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
   final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   final ValueNotifier<String?> _userNameNotifier = ValueNotifier("Digite seu nome aqui :)");
-  
-  bool _showTitle = false;
+
   String? _imagePath = "";
   Timer? _debounce;
   
@@ -45,7 +44,10 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
   SliverAppBar constructor() {
     return SliverAppBar(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50.0), bottomRight: Radius.circular(50.0))
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(50.0),
+          bottomRight: Radius.circular(50.0)
+        )
       ),
       backgroundColor: Theme.of(_screen.context).primaryColor,
       expandedHeight: 300.0,
@@ -59,9 +61,14 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
       elevation: 5.0,
       flexibleSpace: FlexibleSpaceBar(
         collapseMode: CollapseMode.parallax,
-        title: Visibility(
-          visible: _showTitle,
-          child: Text(_userNameNotifier.value!),
+        title: ValueListenableBuilder(
+          valueListenable: _screen.title,
+          builder: (BuildContext context, bool value, Widget? widget) {
+            return Visibility(
+              visible: _screen.title.value,
+              child: Text(_userNameNotifier.value!),
+            );
+          },
         ),
         centerTitle: true,
         background: Container(
@@ -218,5 +225,9 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
 
   void removeFocusNode() {
     _focusNode.unfocus();
+  }
+
+  void dispose() {
+    _focusNode.dispose();
   }
 }

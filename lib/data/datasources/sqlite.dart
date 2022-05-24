@@ -1,7 +1,9 @@
-import 'package:note/data/datasources/datasource.dart';
-import 'package:note/data/model/anotacao_model.dart';
 import 'package:path/path.dart';
+
 import 'package:sqflite/sqflite.dart';
+
+import '../../data/datasources/datasource.dart';
+import '../../data/model/anotacao_model.dart';
 
 class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
   

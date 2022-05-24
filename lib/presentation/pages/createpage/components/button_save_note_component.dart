@@ -2,15 +2,17 @@ import 'package:flutter/material.dart';
 
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/core/compmanager_injector.dart';
-import 'package:note/domain/usecases/crud_usecases.dart';
+import 'package:compmanager/core/conversable.dart';
 
 import '../../../../data/model/anotacao_model.dart';
 import '../create.dart';
+import '../../../../domain/usecases/crud_usecases.dart';
 
 class ButtonSaveNoteComponent implements IComponent<CreateNoteState, FloatingActionButton, void> {
 
   final CompManagerInjector _injector = CompManagerInjector();
   final CreateNoteState _screen;
+  final Conversable _conversable = Conversable();
 
   late final CrudUseCases _useCases;
 
@@ -46,9 +48,11 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, FloatingAct
         _screen.anotacao!.titulo = _screen.titulo;
         _screen.anotacao!.observacao = _screen.descricao;
         _screen.anotacao!.imagemFundo = _screen.pathImage;
-        _screen.anotacao!.cor = _screen.color.toString();
+        _screen.anotacao!.cor = _screen.color.value.toString();
         _updateNote(_screen.anotacao!);
       }
+
+      _conversable.callScreen("home")!.receive("refresh", "");
     }
   }
 

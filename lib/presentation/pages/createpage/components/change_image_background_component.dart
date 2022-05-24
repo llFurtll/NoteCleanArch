@@ -10,7 +10,6 @@ import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 
 import '../../createpage/create.dart';
-import '../../../../core/config_app.dart';
 import '../../../../domain/usecases/crud_usecases.dart';
 import 'app_bar_create_component.dart';
 
@@ -131,7 +130,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
             context: _screen.context,
             builder: (BuildContext context) {
               return AlertDialog(
-                title: Text("Deletar imagem?", style: TextStyle(color: ConfigApp.of(context).color)),
+                title: Text("Deletar imagem?", style: TextStyle(color: _screen.color)),
                 actions: [
                   TextButton(
                     onPressed: () {
@@ -140,7 +139,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
                     child: Text(
                       "Não",
                       style: TextStyle(
-                        color: ConfigApp.of(context).color,
+                        color: _screen.color,
                         fontWeight: FontWeight.bold
                       ),
                     )
@@ -154,12 +153,10 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
                       
                       if (update != 0) {
                         _screen.pathImage = "";
-                        ConfigApp.of(context).removeBackground = false;
                       }
 
                       if (update == 0 && !image.contains('lib')) {
                         _screen.pathImage = "";
-                        ConfigApp.of(context).removeBackground = false;
                       }
 
                       _imageSelected.value = -1;
@@ -169,7 +166,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
                     child: Text(
                       "Sim",
                       style: TextStyle(
-                        color: ConfigApp.of(context).color,
+                        color: _screen.color,
                         fontWeight: FontWeight.bold
                       ),
                     )

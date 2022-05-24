@@ -1,6 +1,6 @@
-import 'package:note/data/datasources/datasource.dart';
-import 'package:note/data/model/anotacao_model.dart';
-import 'package:note/domain/repositories/irepository.dart';
+import '../../data/datasources/datasource.dart';
+import '../../data/model/anotacao_model.dart';
+import '../../domain/repositories/irepository.dart';
 
 class CrudRepository implements IRepository<AnotacaoModel> {
 

@@ -1,7 +1,8 @@
+import 'package:flutter_test/flutter_test.dart';
+
 import 'package:note/test/data/datasource/datasourcetest.dart';
 import 'package:note/test/data/repository/config/repository_configtest.dart';
 import 'package:note/test/domain/usecase/config/test_usecaseconfig.dart';
-import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   late UseCaseConfigTest useCaseConfigTest;

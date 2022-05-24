@@ -1,14 +1,15 @@
+import 'package:compmanager/core/conversable.dart';
 import 'package:flutter/material.dart';
 
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/domain/interfaces/iscreen.dart';
-import 'package:note/presentation/pages/homepage/components/button_add_note_component.dart';
 
 import '../../../core/camera_gallery.dart';
 import '../../../domain/usecases/config_user_usecases.dart';
-import 'components/header_compornent.dart';
+import 'components/header_component.dart';
 import 'components/list_component.dart';
+import 'components/button_add_note_component.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -21,8 +22,10 @@ class HomeState extends State<Home> implements IScreen  {
   List<IComponent> listComponents = [];
 
   final CompManagerInjector injector = CompManagerInjector();
-  final ScrollController _customController = ScrollController();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  final Conversable _conversable = Conversable();
+  final ScrollController _customController = ScrollController();
+  final ValueNotifier<bool> _showTitle = ValueNotifier(false);
 
   late final ConfigUserUseCases _configUserUseCases;
   late final HeaderComponent _headerComponent;
@@ -35,20 +38,33 @@ class HomeState extends State<Home> implements IScreen  {
 
     _configUserUseCases = injector.getDependencie();
     _headerComponent = HeaderComponent(this);
-    _listComponent = ListComponent();
+    _listComponent = ListComponent(this);
     _buttonAddNoteComponent = ButtonAddNoteComponent(this);
+    
     addComponent(_headerComponent);
     addComponent(_listComponent);
     addComponent(_buttonAddNoteComponent);
-  
-    // _customController.addListener(_collapsedOrScroll);
+
+    _conversable.addScren("home", this);
+
+    _customController.addListener(_collapsedOrScroll);
   }
 
   @override
   void dispose() {
     _customController.dispose();
+    _headerComponent.dispose();
 
     super.dispose();
+  }
+
+  void _collapsedOrScroll() {
+    int _position = _customController.offset.ceil();
+    if (_position > 255) {
+        _showTitle.value = true;
+    } else {
+      _showTitle.value = false;
+    }
   }
 
   void showOptionsPhoto() {
@@ -96,7 +112,10 @@ class HomeState extends State<Home> implements IScreen  {
 
   @override
   void receive(String message, value, {IScreen? screen}) {
-    return;
+    switch (message) {
+      case 'refresh':
+        _listComponent.getNotes("");
+    }
   }
 
   @override
@@ -107,5 +126,9 @@ class HomeState extends State<Home> implements IScreen  {
   @override
   IComponent getComponent(Type type) {
     return listComponents.firstWhere((element) => element.runtimeType == type);
+  }
+
+  ValueNotifier<bool> get title {
+    return _showTitle;
   }
 }

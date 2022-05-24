@@ -82,16 +82,18 @@ class CardNoteState extends State<CardNote> {
             overflow: TextOverflow.ellipsis,
             maxLines: 3,
             style: TextStyle(
-              color: widget.anotacaoModel.cor!.isNotEmpty ? Color(int.parse("0xFF${widget.anotacaoModel.cor}")) : Colors.black,
-              fontSize: 15.0
+              color: widget.anotacaoModel.cor!.isNotEmpty ? Color(int.parse("${widget.anotacaoModel.cor}")) : Colors.black,
+              fontSize: 15.0,
+              fontWeight: FontWeight.normal
             ),
           ),
         ),
         Text(
           _formatDate(widget.anotacaoModel.data!),
           style: TextStyle(
-            color: widget.anotacaoModel.cor!.isNotEmpty ? Color(int.parse("0xFF${widget.anotacaoModel.cor}")) : Colors.black,
-            fontSize: 14.0
+            color: widget.anotacaoModel.cor!.isNotEmpty ? Color(int.parse("${widget.anotacaoModel.cor}")) : Colors.black,
+            fontSize: 14.0,
+            fontWeight: FontWeight.normal
           ),
         ),
       ],
@@ -254,8 +256,6 @@ class CardNoteState extends State<CardNote> {
           ),
         ),
       );
-
-      widget.setState();
     }
   }
 

@@ -1,7 +1,8 @@
+import 'package:sqflite/sqflite.dart';
+
 import 'package:note/data/datasources/datasource.dart';
 import 'package:note/data/model/anotacao_model.dart';
 import 'package:note/test/utils/utils.dart';
-import 'package:sqflite/sqflite.dart';
 
 class DatasourceTest implements DatasourceBase<AnotacaoModel> {
   
