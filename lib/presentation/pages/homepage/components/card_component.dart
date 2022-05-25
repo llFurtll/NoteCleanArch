@@ -89,6 +89,11 @@ class CardComponent extends IComponent<HomeState, ValueListenableBuilder, void> 
     _headerComponent = _screen.getComponent(HeaderComponent) as HeaderComponent;
   }
 
+  @override
+  void dispose() {
+    return;
+  }
+
   Positioned _buttonsActions() {
     return Positioned(
       right: 0.0,

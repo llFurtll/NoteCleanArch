@@ -57,6 +57,11 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
     _alterColorComponent = AlterColorComponent(_screen);
   }
 
+  @override
+  void dispose() {
+    return;
+  }
+
   bool get removeBackground {
     return _removeBackgroundNotifier.value;
   }

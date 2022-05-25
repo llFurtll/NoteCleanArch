@@ -65,6 +65,11 @@ class AlterColorComponent implements IComponent<CreateNoteState, Container, void
     return;
   }
 
+  @override
+  void dispose() {
+    return;
+  }
+
   void _changeColor(Color color) {
     _screen.color = color;
   }

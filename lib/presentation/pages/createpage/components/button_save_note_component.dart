@@ -61,6 +61,10 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, FloatingAct
     _useCases = _injector.getDependencie();
   }
 
+  void dispose() {
+    return;
+  }
+
   void _insertNote() async {
     AnotacaoModel anotacaoModel = AnotacaoModel(
       titulo: _screen.titulo,

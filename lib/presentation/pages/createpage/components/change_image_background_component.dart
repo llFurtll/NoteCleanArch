@@ -76,6 +76,11 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
     _appBarCreateComponent = _screen.getComponent(AppBarCreateComponent) as AppBarCreateComponent;
   }
 
+  @override
+  void dispose() {
+    return;
+  }
+
   Future<List<String>> _listAllAssetsImage() async {
     List<String> assetImages = [];
 

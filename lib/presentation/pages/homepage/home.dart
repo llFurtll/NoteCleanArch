@@ -27,7 +27,6 @@ class HomeState extends State<Home> implements IScreen  {
   final ScrollController _customController = ScrollController();
   final ValueNotifier<bool> _showTitle = ValueNotifier(false);
 
-  late final ConfigUserUseCases _configUserUseCases;
   late final HeaderComponent _headerComponent;
   late final ListComponent _listComponent;
   late final ButtonAddNoteComponent _buttonAddNoteComponent;
@@ -35,8 +34,7 @@ class HomeState extends State<Home> implements IScreen  {
   @override
   void initState() {
     super.initState();
-
-    _configUserUseCases = injector.getDependencie();
+    
     _headerComponent = HeaderComponent(this);
     _listComponent = ListComponent(this);
     _buttonAddNoteComponent = ButtonAddNoteComponent(this);
@@ -65,22 +63,6 @@ class HomeState extends State<Home> implements IScreen  {
     } else {
       _showTitle.value = false;
     }
-  }
-
-  void showOptionsPhoto() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CameraGallery(
-          useCase: _configUserUseCases,
-          setState: () async {
-            Navigator.of(context).pop();
-            setState(() {});
-          },
-          removerImagem: false
-        );
-      }
-    );
   }
 
   Widget _home() {

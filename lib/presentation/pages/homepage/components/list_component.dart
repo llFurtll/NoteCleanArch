@@ -8,8 +8,8 @@ import 'package:compmanager/domain/interfaces/icomponent.dart';
 
 import '../../../../data/model/anotacao_model.dart';
 import '../../../../domain/usecases/crud_usecases.dart';
+import '../../../components/animated_list.dart';
 import '../home.dart';
-import 'animated_list.dart';
 import 'card_component.dart';
 
 class ListComponent implements IComponent<HomeState, Widget, void> {
@@ -91,6 +91,11 @@ class ListComponent implements IComponent<HomeState, Widget, void> {
   void init() async {
     _useCases = injector.getDependencie<CrudUseCases>();
     getNotes("");
+  }
+
+  @override
+  void dispose() {
+    return;
   }
 
   Future<void> getNotes(String desc) async {

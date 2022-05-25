@@ -63,7 +63,7 @@ packages:
       name: build_daemon
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.0"
+    version: "3.1.0"
   build_resolvers:
     dependency: transitive
     description:
@@ -72,19 +72,19 @@ packages:
     source: hosted
     version: "2.0.4"
   build_runner:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: build_runner
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.1.2"
+    version: "2.1.11"
   build_runner_core:
     dependency: transitive
     description:
       name: build_runner_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "7.1.0"
+    version: "7.2.2"
   built_collection:
     dependency: transitive
     description:
@@ -153,7 +153,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: ef15b2930da021e0ad710158b024634845ad5021
+      resolved-ref: "21771fe79ce6fbdc0e34297489006325aeffd2f9"
       url: "https://github.com/llFurtll/compmanager.git"
     source: git
     version: "0.0.1"

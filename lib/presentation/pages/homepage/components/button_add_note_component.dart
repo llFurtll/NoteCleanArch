@@ -60,4 +60,9 @@ class ButtonAddNoteComponent implements IComponent<HomeState, OpenContainer, voi
   void init() {
     return;
   }
+
+  @override
+  void dispose() {
+    return;
+  }
 }

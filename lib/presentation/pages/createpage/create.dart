@@ -9,7 +9,7 @@ import 'package:compmanager/domain/interfaces/iscreen.dart';
 import '../../../data/model/anotacao_model.dart';
 import '../../../domain/usecases/crud_usecases.dart';
 import '../../../presentation/pages/createpage/components/app_bar_create_component.dart';
-import 'components/button_save_note.dart';
+import 'components/button_save_note_component.dart';
 
 // ignore: must_be_immutable
 class CreateNote extends StatefulWidget {

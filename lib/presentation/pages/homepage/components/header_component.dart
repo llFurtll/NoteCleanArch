@@ -10,6 +10,7 @@ import '../home.dart';
 import 'alter_name_component.dart';
 import '../../../../domain/usecases/config_user_usecases.dart';
 import 'list_component.dart';
+import 'alter_photo_profile_component.dart';
 
 class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
 
@@ -19,12 +20,13 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
   final FocusNode _focusNode = FocusNode();
   final ValueNotifier<String?> _userNameNotifier = ValueNotifier("Digite seu nome aqui :)");
 
-  String? _imagePath = "";
+  ValueNotifier<String?> _imagePath = ValueNotifier("");
   Timer? _debounce;
   
   late final ConfigUserUseCases _configUserUseCases;
   late final AlterNameComponent _alterNameComponent;
   late final ListComponent _listComponent;
+  late final AlterPhotoProfileComponent _alterPhotoProfileComponent;
 
   HeaderComponent(this._screen) {
     init();
@@ -80,38 +82,43 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
                   Padding(
                     padding: EdgeInsets.only(bottom: 20.0, top: 20.0),
                     child: GestureDetector(
-                      onTap: () => () {},
-                      child: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        backgroundImage: 
-                          _imagePath!.isNotEmpty ? FileImage(File(_imagePath!)) :
-                          null,
-                        radius: 50.0,
-                        child: Stack(
-                          children: [
-                            Align(
-                              alignment: Alignment.bottomRight,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.white
-                                ),
-                                child: Icon(Icons.camera, color: Theme.of(_screen.context).primaryColor, size: 30.0),
-                              ),
-                            ),
-                            _imagePath!.isEmpty ?
-                              Center(
-                                child: Text(
-                                  "SEM FOTO",
-                                  style: TextStyle(
-                                    color: Theme.of(_screen.context).primaryColor,
-                                    fontWeight: FontWeight.bold
+                      onTap: () => _screen.emitScreen(_alterPhotoProfileComponent),
+                      child: ValueListenableBuilder(
+                        valueListenable: _imagePath,
+                        builder: (BuildContext context, String? value, Widget? widget) {
+                          return CircleAvatar(
+                            backgroundColor: Colors.white,
+                            backgroundImage: 
+                              _imagePath.value!.isNotEmpty ? FileImage(File(_imagePath.value!)) :
+                              null,
+                            radius: 50.0,
+                            child: Stack(
+                              children: [
+                                Align(
+                                  alignment: Alignment.bottomRight,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.white
+                                    ),
+                                    child: Icon(Icons.camera, color: Theme.of(_screen.context).primaryColor, size: 30.0),
                                   ),
-                                )
-                              ) :
-                              Text("") 
-                          ]
-                        ),
+                                ),
+                                _imagePath.value!.isEmpty ?
+                                  Center(
+                                    child: Text(
+                                      "SEM FOTO",
+                                      style: TextStyle(
+                                        color: Theme.of(_screen.context).primaryColor,
+                                        fontWeight: FontWeight.bold
+                                      ),
+                                    )
+                                  ) :
+                                  Text("") 
+                              ]
+                            ),
+                          );
+                        },
                       ),
                     )
                   ),
@@ -137,9 +144,7 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
                           ),
                         ],
                       ),
-                      onPressed: () {
-                        _screen.emitScreen(_alterNameComponent);
-                      },
+                      onPressed: () => _screen.emitScreen(_alterNameComponent),
                     ),
                   ),
                   Container(
@@ -201,10 +206,16 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
   @override
   void init() async {
     _configUserUseCases = injector.getDependencie<ConfigUserUseCases>();
-    _imagePath = await _configUserUseCases.getImage();
+    _imagePath.value = await _configUserUseCases.getImage();
     _loadName();
     _alterNameComponent = AlterNameComponent(_screen);
+    _alterPhotoProfileComponent = AlterPhotoProfileComponent(_screen);
     _listComponent = _screen.getComponent(ListComponent) as ListComponent;
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
   }
 
   void _loadName() async {
@@ -219,7 +230,7 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
     return _userNameNotifier.value;
   }
 
-  set setUserName(String? name) {
+  set userName(String? name) {
     _userNameNotifier.value = name;
   }
 
@@ -227,7 +238,11 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
     _focusNode.unfocus();
   }
 
-  void dispose() {
-    _focusNode.dispose();
+  String? get imagePath {
+    return _imagePath.value;
+  }
+
+  set imagePath(String? path) {
+    _imagePath.value = path;
   }
 }
