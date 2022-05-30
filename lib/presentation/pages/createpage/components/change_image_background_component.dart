@@ -6,20 +6,24 @@ import 'package:flutter/services.dart';
 
 import 'package:path_provider/path_provider.dart';
 
+import 'package:image_picker/image_picker.dart';
+
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
+import 'package:compmanager/core/compmanager_notifier_list.dart';
 
 import '../../createpage/create.dart';
 import '../../../../domain/usecases/crud_usecases.dart';
 import 'app_bar_create_component.dart';
 
-class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Container, void> {
+class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Container, Future<bool>> {
 
   final CreateNoteState _screen;
   final _imageSelected = ValueNotifier<int>(-1);
   final CompManagerInjector injector = CompManagerInjector();
+  final  ImagePicker _imagePicker = ImagePicker();
+  final CompManagerNotifierList<String> _assetsImages = CompManagerNotifierList([]);
 
-  late List<String> _assetsImages;
   late final CrudUseCases _useCases;
   late final AppBarCreateComponent _appBarCreateComponent;
 
@@ -28,13 +32,15 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
   }
 
   @override
-  void afterEvent() {
-    return;
+  Future<bool> afterEvent() async {
+    Navigator.of(_screen.context).pop();
+
+    return true;
   }
 
   @override
-  void beforeEvent() {
-    return;
+  Future<bool> beforeEvent() async {
+    return true;
   }
 
   @override
@@ -43,7 +49,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
   }
 
   @override
-  void event() {
+  Future<bool> event() async {
     showModalBottomSheet(
       context: _screen.context,
       builder: (BuildContext context) {
@@ -55,24 +61,31 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
           ),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                ..._returnCardsImage().map((item) {
-                  return item;
-                })
-              ],
+            child: ValueListenableBuilder(
+              valueListenable: _assetsImages,
+              builder: (BuildContext context, List<String> value, Widget? widget) {
+                return Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    ..._returnCardsImage().map((item) {
+                      return item;
+                    })
+                  ],
+                );
+              },
             ),
           )
         );
       }
     );
+    
+    return true;
   }
 
   @override
   void init() async {
     _useCases = injector.getDependencie();
-    _assetsImages = await _listAllAssetsImage();
+    _assetsImages.value.addAll(await _listAllAssetsImage());
     _appBarCreateComponent = _screen.getComponent(AppBarCreateComponent) as AppBarCreateComponent;
   }
 
@@ -106,7 +119,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
 
   List<Widget> _returnCardsImage() {
     List<Widget> lista = [];
-    _assetsImages.asMap().forEach((index, element) {
+    _assetsImages.value.asMap().forEach((index, element) {
       lista.add(_buildCardImage(element, index));
     });
 
@@ -154,7 +167,8 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
                       File(image).delete();
 
                       int? update = await _useCases.removeBackgroundNote(image: image);
-                      _assetsImages = await _listAllAssetsImage();
+                      _assetsImages.value.removeAt(index);
+                      _appBarCreateComponent.removeBackground = false;
                       
                       if (update != 0) {
                         _screen.pathImage = "";
@@ -216,10 +230,90 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
       ),
       child: Center(
         child: IconButton(
-          onPressed: () => {},
+          onPressed: _showDialogPhoto,
           icon: Icon(Icons.camera, color: Colors.white, size: 40.0),
         ),
       ),
     );
+  }
+
+  void _showDialogPhoto() {
+    showDialog(
+      barrierDismissible: false,
+      context: _screen.context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Escolha uma das opções"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextButton(
+                onPressed: () async {
+                  _getFromGallery();
+                  await afterEvent();
+                },
+                child: Text(
+                  "Abrir da galeria",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black
+                  )
+                ),
+              ),
+              Container(height: 1.0, color: Colors.black),
+              TextButton(
+                onPressed: () async {
+                  _getFromCamera();
+                  await afterEvent();
+                },
+                child: Text(
+                  "Tirar foto",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black
+                  )
+                ),
+              )
+            ],
+          ),
+        );
+      }
+    );
+  }
+
+  void _getFromGallery() async {
+    XFile? file = await _imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (file != null) {
+      String path = (await getApplicationDocumentsDirectory()).path;
+
+      String pathCompleto = "$path/${DateTime.now().toIso8601String()}.jpg";
+
+      file.saveTo(pathCompleto);
+
+      _screen.pathImage = file.path;
+      
+      _assetsImages.value.add(file.path);
+
+      _appBarCreateComponent.removeBackground = true;
+    }
+  }
+
+  void _getFromCamera() async {
+    XFile? file = await _imagePicker.pickImage(source: ImageSource.camera);
+
+    if (file != null) {
+      String path = (await getApplicationDocumentsDirectory()).path;
+
+      String pathCompleto = "$path/${DateTime.now().toIso8601String()}.jpg";
+
+      file.saveTo(pathCompleto);
+
+      _screen.pathImage = file.path;
+
+      _assetsImages.value.add(file.path);
+
+      _appBarCreateComponent.removeBackground = true;
+    }
   }
 }
