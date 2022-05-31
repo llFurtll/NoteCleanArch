@@ -22,7 +22,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
   final _imageSelected = ValueNotifier<int>(-1);
   final CompManagerInjector injector = CompManagerInjector();
   final  ImagePicker _imagePicker = ImagePicker();
-  final CompManagerNotifierList<String> _assetsImages = CompManagerNotifierList([]);
+  final CompManagerNotifierList<Widget> _assetsImages = CompManagerNotifierList([]);
 
   late final CrudUseCases _useCases;
   late final AppBarCreateComponent _appBarCreateComponent;
@@ -63,14 +63,10 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
             scrollDirection: Axis.horizontal,
             child: ValueListenableBuilder(
               valueListenable: _assetsImages,
-              builder: (BuildContext context, List<String> value, Widget? widget) {
+              builder: (BuildContext context, List<Widget> value, Widget? widget) {
                 return Row(
                   mainAxisSize: MainAxisSize.max,
-                  children: [
-                    ..._returnCardsImage().map((item) {
-                      return item;
-                    })
-                  ],
+                  children: _assetsImages.value,
                 );
               },
             ),
@@ -85,7 +81,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
   @override
   void init() async {
     _useCases = injector.getDependencie();
-    _assetsImages.value.addAll(await _listAllAssetsImage());
+    _assetsImages.value.addAll(_returnCardsImage(await _listAllAssetsImage()));
     _appBarCreateComponent = _screen.getComponent(AppBarCreateComponent) as AppBarCreateComponent;
   }
 
@@ -117,10 +113,19 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
     return assetImages;
   }
 
-  List<Widget> _returnCardsImage() {
+  List<Widget> _returnCardsImage(List<String> pathImages) {
     List<Widget> lista = [];
-    _assetsImages.value.asMap().forEach((index, element) {
-      lista.add(_buildCardImage(element, index));
+    pathImages.asMap().forEach((index, element) {
+      Image image;
+      if (element.contains("lib")) {
+        image = Image.asset(element);
+        precacheImage(image.image, _screen.context);
+        lista.add(_buildCardImage(image, element, index));
+      } else {
+        image = Image.file(File(element));
+        precacheImage(image.image, _screen.context);
+        lista.add(_buildCardImage(image, element, index));
+      }
     });
 
     lista.add(_addPhoto());
@@ -128,22 +133,22 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
     return lista;
   }
 
-  GestureDetector _buildCardImage(String image, int index) {
+  GestureDetector _buildCardImage(Image image, String pathImage, int index,) {
     if (_screen.pathImage.isNotEmpty) {
-      if (image == _screen.pathImage) {
+      if (pathImage == _screen.pathImage) {
         _imageSelected.value = index;
       }
     }
     return GestureDetector(
       onTap: () {
-        if (image != _screen.pathImage) {
-          _screen.pathImage = image;
+        if (pathImage != _screen.pathImage) {
+          _screen.pathImage = pathImage;
           _imageSelected.value = index;
           _appBarCreateComponent.removeBackground = true;
         }
       },
       onLongPress: () {
-        if (!image.contains('lib')) {
+        if (!pathImage.contains('lib')) {
           showDialog(
             context: _screen.context,
             builder: (BuildContext context) {
@@ -164,9 +169,9 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
                   ),
                   TextButton(
                     onPressed: () async {
-                      File(image).delete();
+                      File(pathImage).delete();
 
-                      int? update = await _useCases.removeBackgroundNote(image: image);
+                      int? update = await _useCases.removeBackgroundNote(image: pathImage);
                       _assetsImages.value.removeAt(index);
                       _appBarCreateComponent.removeBackground = false;
                       
@@ -174,7 +179,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
                         _screen.pathImage = "";
                       }
 
-                      if (update == 0 && !image.contains('lib')) {
+                      if (update == 0 && !pathImage.contains('lib')) {
                         _screen.pathImage = "";
                       }
 
@@ -198,14 +203,15 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
       },
       child: ValueListenableBuilder(
         valueListenable: _imageSelected,
-        builder: (_, value, __) {
+        builder: (BuildContext context, int value, Widget? widget) {
+          print("show $index");
           return Container(
             margin: const EdgeInsets.only(right: 15.0),
             width: 120.0,
             height: 150.0,
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: image.contains('lib') ? AssetImage(image) as ImageProvider : FileImage(File(image)),
+                image: image.image,
                 fit: BoxFit.cover,
               ),
               borderRadius: BorderRadius.circular(15.0),
@@ -293,7 +299,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
 
       _screen.pathImage = file.path;
       
-      _assetsImages.value.add(file.path);
+      // _assetsImages.value.add(file.path);
 
       _appBarCreateComponent.removeBackground = true;
     }
@@ -311,7 +317,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
 
       _screen.pathImage = file.path;
 
-      _assetsImages.value.add(file.path);
+      // _assetsImages.value.add(file.path);
 
       _appBarCreateComponent.removeBackground = true;
     }
