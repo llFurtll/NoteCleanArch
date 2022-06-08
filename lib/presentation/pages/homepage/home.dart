@@ -5,8 +5,6 @@ import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/domain/interfaces/iscreen.dart';
 
-import '../../../core/camera_gallery.dart';
-import '../../../domain/usecases/config_user_usecases.dart';
 import 'components/header_component.dart';
 import 'components/list_component.dart';
 import 'components/button_add_note_component.dart';
@@ -57,10 +55,14 @@ class HomeState extends State<Home> implements IScreen  {
   }
 
   void _collapsedOrScroll() {
-    int _position = _customController.offset.ceil();
-    if (_position > 255) {
+    int _maxScrool = _customController.position.maxScrollExtent.ceil();
+    int _position = _customController.position.pixels.ceil();
+    int _margem = _maxScrool - ((20 / 100) * _maxScrool).ceil();
+    print(_position);
+    if (_position > 255 && _position > _margem) {
         _showTitle.value = true;
-    } else {
+    }
+    else {
       _showTitle.value = false;
     }
   }

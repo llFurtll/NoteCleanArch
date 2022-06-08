@@ -47,8 +47,6 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
     appBarCreateComponent = AppBarCreateComponent(this);
     buttonSaveNoteComponent = ButtonSaveNoteComponent(this);
 
-    addComponent(appBarCreateComponent);
-
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (widget.id != null) {
         _anotacaoModel = await useCases.getByIdUseCase(id: widget.id!);
@@ -58,6 +56,7 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
 
         if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
           _pathImageNotifier.value = _anotacaoModel!.imagemFundo!;
+          appBarCreateComponent.removeBackground = true;
         }
 
         if (_anotacaoModel!.cor != null && _anotacaoModel!.cor!.isNotEmpty) {
@@ -205,7 +204,9 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
 
   @override
   void receive(String message, value, {IScreen? screen}) {
-    return;
+    if (message == "addComponent") {
+      addComponent(value);
+    }
   }
 
   String get pathImage {

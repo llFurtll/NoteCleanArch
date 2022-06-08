@@ -53,6 +53,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
 
   @override
   void init() {
+    _screen.receive("addComponent", this);
     _changeImageBackgroundComponent = ChangeImageBackgroundComponent(_screen);
     _alterColorComponent = AlterColorComponent(_screen);
   }

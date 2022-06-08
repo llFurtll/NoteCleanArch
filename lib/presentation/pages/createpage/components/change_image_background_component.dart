@@ -50,6 +50,8 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
 
   @override
   Future<bool> event() async {
+    await _loadImages();
+
     showModalBottomSheet(
       context: _screen.context,
       builder: (BuildContext context) {
@@ -79,15 +81,19 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
   }
 
   @override
-  void init() async {
+  void init() {
     _useCases = injector.getDependencie();
-    _assetsImages.value.addAll(_returnCardsImage(await _listAllAssetsImage()));
     _appBarCreateComponent = _screen.getComponent(AppBarCreateComponent) as AppBarCreateComponent;
   }
 
   @override
   void dispose() {
     return;
+  }
+
+  Future<void> _loadImages() async {
+    _assetsImages.value.clear();
+    _assetsImages.value.addAll(_returnCardsImage(await _listAllAssetsImage()));
   }
 
   Future<List<String>> _listAllAssetsImage() async {
@@ -201,27 +207,32 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
           );
         }
       },
-      child: ValueListenableBuilder(
-        valueListenable: _imageSelected,
-        builder: (BuildContext context, int value, Widget? widget) {
-          print("show $index");
-          return Container(
-            margin: const EdgeInsets.only(right: 15.0),
-            width: 120.0,
-            height: 150.0,
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: image.image,
-                fit: BoxFit.cover,
+      child: Container(
+        margin: const EdgeInsets.only(right: 15.0),
+        width: 120.0,
+        height: 150.0,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: image.image,
+            fit: BoxFit.cover,
+          ),
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        child: ValueListenableBuilder(
+          valueListenable: _imageSelected,
+          builder: (BuildContext context, int value, Widget? widget) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(15.0),
+                border: _imageSelected.value == index ? Border.all(
+                  color: Colors.blueAccent, width: 10.0
+                ) : null
               ),
-              borderRadius: BorderRadius.circular(15.0),
-              border: _imageSelected.value == index ? Border.all(
-                color: Colors.blueAccent, width: 10.0
-              ) : null
-            ),
-          );
-        },
-      )
+            );
+          },
+        ),
+      ),
     );
   }
 
@@ -297,9 +308,9 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
 
       file.saveTo(pathCompleto);
 
-      _screen.pathImage = file.path;
+      _screen.pathImage = pathCompleto;
       
-      // _assetsImages.value.add(file.path);
+      await _loadImages();
 
       _appBarCreateComponent.removeBackground = true;
     }
@@ -315,9 +326,9 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
 
       file.saveTo(pathCompleto);
 
-      _screen.pathImage = file.path;
+      _screen.pathImage = pathCompleto;
 
-      // _assetsImages.value.add(file.path);
+      await _loadImages();
 
       _appBarCreateComponent.removeBackground = true;
     }
