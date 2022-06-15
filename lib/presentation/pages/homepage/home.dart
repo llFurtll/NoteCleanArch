@@ -29,8 +29,6 @@ class HomeState extends State<Home> implements IScreen  {
   late final ListComponent _listComponent;
   late final ButtonAddNoteComponent _buttonAddNoteComponent;
 
-  int _aux = 255;
-
   @override
   void initState() {
     super.initState();
@@ -44,8 +42,6 @@ class HomeState extends State<Home> implements IScreen  {
     addComponent(_buttonAddNoteComponent);
 
     _conversable.addScren("home", this);
-
-    _customController.addListener(_collapsedOrScroll);
   }
 
   @override
@@ -56,25 +52,8 @@ class HomeState extends State<Home> implements IScreen  {
     super.dispose();
   }
 
-  void _collapsedOrScroll() {
-    int _position = _customController.position.pixels.ceil();
-    int _maxScroll = _customController.position.maxScrollExtent.ceil();
-    int _margem = (_maxScroll - ((15 / 100) * _maxScroll)).ceil();
-    if (
-      (
-        _position > _aux && _customController.position.userScrollDirection.index == 2) ||
-        (_customController.position.atEdge && _position != 0)
-      ) {
-        _showTitle.value = true;
-    } else if (_position < _margem && _customController.position.userScrollDirection.index == 1) {
-      _aux = _position + (_position > 255 ? _position - 255 : 255 - _position);
-      _showTitle.value = false;
-    }
-  }
-
   Widget _home() {
     return CustomScrollView(
-      controller: _customController,
       slivers: <Widget>[
         _headerComponent.constructor(),
         _listComponent.constructor()

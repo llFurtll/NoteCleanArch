@@ -19,6 +19,7 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
   final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   final ValueNotifier<String?> _userNameNotifier = ValueNotifier("Digite seu nome aqui :)");
+  final ValueNotifier<bool> _showInfo = ValueNotifier(true);
 
   ValueNotifier<String?> _imagePath = ValueNotifier("");
   Timer? _debounce;
@@ -27,6 +28,8 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
   late final AlterNameComponent _alterNameComponent;
   late final ListComponent _listComponent;
   late final AlterPhotoProfileComponent _alterPhotoProfileComponent;
+
+  bool _showName = false;
 
   HeaderComponent(this._screen) {
     init();
@@ -45,6 +48,7 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
   @override
   SliverAppBar constructor() {
     return SliverAppBar(
+      actions: _actions(),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(50.0),
@@ -53,7 +57,6 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
       ),
       backgroundColor: Theme.of(_screen.context).primaryColor,
       expandedHeight: 300.0,
-      collapsedHeight: 50,
       toolbarHeight: 50,
       floating: true,
       pinned: true,
@@ -61,137 +64,44 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
       snap: false,
       forceElevated: true,
       elevation: 5.0,
-      flexibleSpace: FlexibleSpaceBar(
-        collapseMode: CollapseMode.parallax,
-        title: ValueListenableBuilder(
-          valueListenable: _screen.title,
-          builder: (BuildContext context, bool value, Widget? widget) {
-            return Visibility(
-              visible: _screen.title.value,
+      flexibleSpace: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          _verifySize(constraints);
+
+          return FlexibleSpaceBar(
+            collapseMode: CollapseMode.parallax,
+            title: Visibility(
+              visible: _showName,
               child: Text(_userNameNotifier.value!),
-            );
-          },
-        ),
-        centerTitle: true,
-        background: Container(
-          child: Center(
-            child: SafeArea(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 20.0, top: 20.0),
-                    child: GestureDetector(
-                      onTap: () => _screen.emitScreen(_alterPhotoProfileComponent),
-                      child: ValueListenableBuilder(
-                        valueListenable: _imagePath,
-                        builder: (BuildContext context, String? value, Widget? widget) {
-                          return CircleAvatar(
-                            backgroundColor: Colors.white,
-                            backgroundImage: 
-                              _imagePath.value!.isNotEmpty ? FileImage(File(_imagePath.value!)) :
-                              null,
-                            radius: 50.0,
-                            child: Stack(
-                              children: [
-                                Align(
-                                  alignment: Alignment.bottomRight,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.white
-                                    ),
-                                    child: Icon(Icons.camera, color: Theme.of(_screen.context).primaryColor, size: 30.0),
-                                  ),
-                                ),
-                                _imagePath.value!.isEmpty ?
-                                  Center(
-                                    child: Text(
-                                      "SEM FOTO",
-                                      style: TextStyle(
-                                        color: Theme.of(_screen.context).primaryColor,
-                                        fontWeight: FontWeight.bold
-                                      ),
-                                    )
-                                  ) :
-                                  Text("") 
-                              ]
-                            ),
-                          );
-                        },
+            ),
+            centerTitle: true,
+            background: Container(
+              child: Center(
+                child: SafeArea(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 20.0, top: 20.0),
+                        child: _profile()
                       ),
-                    )
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 20.0),
+                        child: _nameUser()
+                      ),
+                      _search()
+                    ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 20.0),
-                    child: TextButton(
-                      autofocus: false,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ValueListenableBuilder(
-                            valueListenable: _userNameNotifier,
-                            builder: (BuildContext context, String? value, Widget? widget) {
-                              return Text(
-                                _userNameNotifier.value!,
-                                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0)
-                              );
-                            }
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 10.0),
-                            child: Icon(Icons.edit, color: Colors.white),
-                          ),
-                        ],
-                      ),
-                      onPressed: () => _screen.emitScreen(_alterNameComponent),
-                    ),
-                  ),
-                  Container(
-                    width: MediaQuery.of(_screen.context).size.width * 0.7,
-                    child: TextFormField(
-                      focusNode: _focusNode,
-                      controller: _textController,
-                      onChanged: (String value) => _screen.emitScreen(this),
-                      decoration: InputDecoration(
-                        hintText: "Pesquisar anotação",
-                        suffixIcon: Icon(Icons.search, color: Colors.white),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                          borderSide: BorderSide(
-                            color: Colors.white
-                          )
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.white
-                          )
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.white
-                          )
-                        ),
-                        hintStyle: TextStyle(
-                          color: Colors.white54
-                        ),
-                      ),
-                      cursorColor: Colors.white,
-                      style: TextStyle(
-                        color: Colors.white
-                      ),
-                    ),
-                  )
-                ],
+                ),
+              ),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50.0), bottomRight: Radius.circular(50.0)),
+                color: Theme.of(_screen.context).primaryColor,
               ),
             ),
-          ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50.0), bottomRight: Radius.circular(50.0)),
-            color: Theme.of(_screen.context).primaryColor,
-          ),
-        ),
-      )
+          );
+        },
+      ),
     );
   }
 
@@ -218,14 +128,6 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
     _focusNode.dispose();
   }
 
-  void _loadName() async {
-    String? nomeUser = await _configUserUseCases.getName();
-
-    if (nomeUser!.isNotEmpty) {
-      _userNameNotifier.value = nomeUser;
-    }
-  }
-
   String? get userName {
     return _userNameNotifier.value;
   }
@@ -244,5 +146,149 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
 
   set imagePath(String? path) {
     _imagePath.value = path;
+  }
+
+  void _loadName() async {
+    String? nomeUser = await _configUserUseCases.getName();
+
+    if (nomeUser!.isNotEmpty) {
+      _userNameNotifier.value = nomeUser;
+    }
+  }
+
+  List<Widget> _actions() {
+    return [
+      ValueListenableBuilder(
+        valueListenable: _showInfo,
+        builder: (BuildContext context, bool value, Widget? widget)  {
+          return Visibility(
+              visible: _showInfo.value,
+              child: IconButton(
+              icon: Icon(Icons.info_outline),
+              onPressed: () => {},
+              color: Colors.white
+            ),
+          );
+        },
+      ),
+    ];
+  }
+
+  void _verifySize(BoxConstraints constraints) {
+    var _height = MediaQuery.of(_screen.context).padding.top;
+    var _top = constraints.biggest.height;
+    if (_top == _height + 50) {
+      _showName = true;
+      Future.delayed(Duration(milliseconds: 50), () => _showInfo.value = false);
+    } else {
+      _showName = false;
+      Future.delayed(Duration(milliseconds: 50), () => _showInfo.value = true);
+    }
+  }
+
+  GestureDetector _profile() {
+    return GestureDetector(
+      onTap: () => _screen.emitScreen(_alterPhotoProfileComponent),
+      child: ValueListenableBuilder(
+        valueListenable: _imagePath,
+        builder: (BuildContext context, String? value, Widget? widget) {
+          return CircleAvatar(
+            backgroundColor: Colors.white,
+            backgroundImage: 
+              _imagePath.value!.isNotEmpty ? FileImage(File(_imagePath.value!)) :
+              null,
+            radius: 50.0,
+            child: Stack(
+              children: [
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Colors.white
+                    ),
+                    child: Icon(Icons.camera, color: Theme.of(_screen.context).primaryColor, size: 30.0),
+                  ),
+                ),
+                _imagePath.value!.isEmpty ?
+                  Center(
+                    child: Text(
+                      "SEM FOTO",
+                      style: TextStyle(
+                        color: Theme.of(_screen.context).primaryColor,
+                        fontWeight: FontWeight.bold
+                      ),
+                    )
+                  ) :
+                  Text("") 
+              ]
+            ),
+          );
+        },
+      ),
+    ); 
+  }
+
+  TextButton _nameUser() {
+    return TextButton(
+      autofocus: false,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          ValueListenableBuilder(
+            valueListenable: _userNameNotifier,
+            builder: (BuildContext context, String? value, Widget? widget) {
+              return Text(
+                _userNameNotifier.value!,
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 20.0)
+              );
+            }
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 10.0),
+            child: Icon(Icons.edit, color: Colors.white),
+          ),
+        ],
+      ),
+      onPressed: () => _screen.emitScreen(_alterNameComponent),
+    );
+  }
+
+  Container _search() {
+    return Container(
+      width: MediaQuery.of(_screen.context).size.width * 0.7,
+      child: TextFormField(
+        focusNode: _focusNode,
+        controller: _textController,
+        onChanged: (String value) => _screen.emitScreen(this),
+        decoration: InputDecoration(
+          hintText: "Pesquisar anotação",
+          suffixIcon: Icon(Icons.search, color: Colors.white),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            borderSide: BorderSide(
+              color: Colors.white
+            )
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.white
+            )
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.white
+            )
+          ),
+          hintStyle: TextStyle(
+            color: Colors.white54
+          ),
+        ),
+        cursorColor: Colors.white,
+        style: TextStyle(
+          color: Colors.white
+        ),
+      ),
+    );
   }
 }
