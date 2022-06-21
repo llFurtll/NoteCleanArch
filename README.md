@@ -28,7 +28,7 @@
 </table>
 
 ## :warning:  Issues
-- [ ] Refactor code
+- [x] Refactor code
 - [ ] Register annotation using device microphone
 - [ ] Annotation sharing. (PDF and Image)
 - [ ] Encryption backup service
