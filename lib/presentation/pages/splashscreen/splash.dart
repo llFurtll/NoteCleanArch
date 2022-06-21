@@ -2,9 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../../presentation/pages/homepage/home.dart';
 import '../../../utils/init_database.dart';
-import '../../../utils/route_animation.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -18,7 +16,7 @@ class SplashScreenState extends State<SplashScreen> {
     super.initState();
     Future.delayed(Duration(seconds: 3), () async {
       await initDatabase();
-      Navigator.of(context).pushReplacement(createRoute(Home()));
+      Navigator.pushNamed(context, "/home");
     });
   }
 

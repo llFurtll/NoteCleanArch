@@ -48,6 +48,7 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
   @override
   SliverAppBar constructor() {
     return SliverAppBar(
+      automaticallyImplyLeading: false,
       actions: _actions(),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
@@ -165,7 +166,7 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
               visible: _showInfo.value,
               child: IconButton(
               icon: Icon(Icons.info_outline),
-              onPressed: () => {},
+              onPressed: () => Navigator.pushNamed(context, "/info"),
               color: Colors.white
             ),
           );

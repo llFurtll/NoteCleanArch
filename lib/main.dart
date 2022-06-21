@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../injector.dart';
-import '../presentation/pages/splashscreen/splash.dart';
+import './injector.dart';
+import './presentation/pages/splashscreen/splash.dart';
+import './routes.dart';
 
 void main() {
   registerDependencies();
@@ -12,15 +13,6 @@ void main() {
       home: Application(),
       theme: ThemeData(
         primaryColor: Color(0xFFA50044),
-        appBarTheme: AppBarTheme(
-          backgroundColor: Color(0xFFE6E6E6),
-          titleTextStyle: TextStyle(
-            color: Color(0xFF004D98)
-          ),
-          iconTheme: IconThemeData(
-            color: Color(0xFF004D98)
-          )
-        ),
         scaffoldBackgroundColor: Colors.white,
         floatingActionButtonTheme: FloatingActionButtonThemeData(
           backgroundColor: Color(0XFFA50044)
@@ -31,6 +23,7 @@ void main() {
         ),
         colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Color(0xFFA50044)),
       ),
+      routes: routes(),
     )
   );
 }
