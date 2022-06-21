@@ -108,6 +108,8 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
         assetImages.add(element.path);
       }
     });
+
+    assetImages.sort(((b, a) => a.compareTo(b)));
     
     assetImages.addAll(
       manifestMap.keys
@@ -115,7 +117,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
       .where((String key) => key.contains('.jpg'))
       .toList()
     );
-
+    
     return assetImages;
   }
 
@@ -178,7 +180,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
                       File(pathImage).delete();
 
                       int? update = await _useCases.removeBackgroundNote(image: pathImage);
-                      _assetsImages.value.removeAt(index);
+                      await _loadImages();
                       _appBarCreateComponent.removeBackground = false;
                       
                       if (update != 0) {
