@@ -4,6 +4,7 @@ import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/core/conversable.dart';
 
+import '../../../components/show_message.dart';
 import '../../../../data/model/anotacao_model.dart';
 import '../create.dart';
 import '../../../../domain/usecases/crud_usecases.dart';
@@ -78,16 +79,9 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, FloatingAct
     int? insert = await _useCases.insertUseCase(anotacao: anotacaoModel);
 
     if (insert != 0) {
-      ScaffoldMessenger.of(_screen.context).showSnackBar(
-        SnackBar(
-          backgroundColor: Theme.of(_screen.context).primaryColor,
-          content: Text("Anotacão cadastrada com sucesso!"),
-          action: SnackBarAction(
-            label: "Fechar",
-            textColor: Colors.white,
-            onPressed: () {},
-          ),
-        )
+      MessageDefaultSystem.showMessage(
+        _screen.context,
+        "Anotacão cadastrada com sucesso!"
       );
 
       _screen.id = insert!;
@@ -100,16 +94,9 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, FloatingAct
     int? updated = await _useCases.updateUseCase(anotacao: anotacao);
 
     if (updated != 0) {
-      ScaffoldMessenger.of(_screen.context).showSnackBar(
-        SnackBar(
-          backgroundColor: Theme.of(_screen.context).primaryColor,
-          content: Text("Anotacão atualizada com sucesso!"),
-          action: SnackBarAction(
-            label: "Fechar",
-            textColor: Colors.white,
-            onPressed: () {},
-          ),
-        )
+      MessageDefaultSystem.showMessage(
+        _screen.context,
+        "Anotacão atualizada com sucesso!"
       );
     }
   }

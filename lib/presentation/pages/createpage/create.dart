@@ -39,6 +39,9 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
   TextEditingController _title = TextEditingController();
   TextEditingController _desc = TextEditingController();
 
+  final FocusNode _focusTitle = FocusNode();
+  final FocusNode _focusDesc = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -84,7 +87,7 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
           fontWeight: FontWeight.bold,
           fontSize: 20.0
         ),
-        border: InputBorder.none, 
+        border: InputBorder.none,
       ),
       style: TextStyle(
         color: _colorNotifier.value,
@@ -94,6 +97,7 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
       minLines: 1,
       maxLines: null,
       keyboardType: TextInputType.multiline,
+      focusNode: _focusTitle,
     );
   }
 
@@ -111,6 +115,7 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
       minLines: 10,
       maxLines: null,
       keyboardType: TextInputType.multiline,
+      focusNode: _focusDesc,
     );
   }
 
@@ -255,5 +260,13 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
 
   set id(int? id) {
     widget.id = id;
+  }
+
+  FocusNode get focusTitle {
+    return _focusTitle;
+  }
+
+  FocusNode get focusDesc {
+    return _focusDesc;
   }
 }

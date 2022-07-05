@@ -3,6 +3,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../../components/show_message.dart';
+
 class Info extends StatelessWidget {
 
   AppBar _appBar(BuildContext context) {
@@ -136,16 +138,9 @@ class Info extends StatelessWidget {
     if (await canLaunch(url)) {
       await launch(url);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Theme.of(context).primaryColor,
-          content: Text("Não foi possível abrir o link!"),
-          action: SnackBarAction(
-            label: "Fechar",
-            textColor: Colors.white,
-            onPressed: () {},
-          ),
-        )
+      MessageDefaultSystem.showMessage(
+        context,
+        "Não foi possível abrir o link!"
       );
     }
   }

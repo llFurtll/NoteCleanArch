@@ -5,6 +5,7 @@ import 'package:compmanager/domain/interfaces/icomponent.dart';
 import '../create.dart';
 import 'change_image_background_component.dart';
 import 'alter_color_component.dart';
+import 'speak_mic_component.dart';
 
 class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize, void> {
 
@@ -13,6 +14,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
 
   late final ChangeImageBackgroundComponent _changeImageBackgroundComponent;
   late final AlterColorComponent _alterColorComponent;
+  late final SpeakMicComponent _speakMicComponent;
 
   AppBarCreateComponent(this._screen) {
     init();
@@ -56,6 +58,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
     _screen.receive("addComponent", this);
     _changeImageBackgroundComponent = ChangeImageBackgroundComponent(_screen);
     _alterColorComponent = AlterColorComponent(_screen);
+    _speakMicComponent = SpeakMicComponent(_screen);
   }
 
   @override
@@ -73,6 +76,14 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
 
   List<Widget> _actions() {
     return [
+      IconButton(
+        padding: const EdgeInsets.fromLTRB(0, 25, 0, 25),
+        onPressed: () => _screen.emitScreen(_speakMicComponent),
+        icon: Icon(
+          Icons.mic,
+          color: _screen.color
+        ),
+      ),
       IconButton(
         icon: Icon(Icons.color_lens),
         padding: const EdgeInsets.fromLTRB(0, 25, 0, 25),
@@ -103,7 +114,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
           Icons.photo,
           color: _screen.color,
         ),
-      ),
+      )
     ];
   }
 

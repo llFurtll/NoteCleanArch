@@ -8,6 +8,7 @@ import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/core/conversable.dart';
 
+import '../../../components/show_message.dart';
 import '../home.dart';
 import '../../../../domain/usecases/crud_usecases.dart';
 import '../../createpage/create.dart';
@@ -228,16 +229,9 @@ class CardComponent extends IComponent<HomeState, ValueListenableBuilder, void> 
     int? delete = await _useCases.deleteUseCase(id: _anotacao.id!);
     
     if (delete == 1) {
-      ScaffoldMessenger.of(_screen.context).showSnackBar(
-        SnackBar(
-          backgroundColor: Theme.of(_screen.context).primaryColor,
-          content: Text("Anotacão deletada com sucesso!"),
-          action: SnackBarAction(
-            label: "Fechar",
-            textColor: Colors.white,
-            onPressed: () {},
-          ),
-        ),
+      MessageDefaultSystem.showMessage(
+        _screen.context,
+        "Anotacão deletada com sucesso!"
       );
 
       _conversable.callScreen("home")!.receive("refresh", "");
