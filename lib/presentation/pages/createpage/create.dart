@@ -30,17 +30,15 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final ValueNotifier<String> _pathImageNotifier = ValueNotifier("");
   final ValueNotifier<Color> _colorNotifier = ValueNotifier(Color(0xFF000000));
+  final TextEditingController _title = TextEditingController();
+  final TextEditingController _desc = TextEditingController();
+  final FocusNode _focusTitle = FocusNode();
+  final FocusNode _focusDesc = FocusNode();
   
   late AnotacaoModel? _anotacaoModel;
   late CrudUseCases useCases;
   late AppBarCreateComponent appBarCreateComponent;
   late ButtonSaveNoteComponent buttonSaveNoteComponent;
-
-  TextEditingController _title = TextEditingController();
-  TextEditingController _desc = TextEditingController();
-
-  final FocusNode _focusTitle = FocusNode();
-  final FocusNode _focusDesc = FocusNode();
 
   @override
   void initState() {
@@ -67,6 +65,12 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
         }
       }
     });
+  }
+
+  @override
+  void dispose() {
+    appBarCreateComponent.dispose();
+    super.dispose();
   }
 
   TextFormField _titulo() {
@@ -268,5 +272,13 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
 
   FocusNode get focusDesc {
     return _focusDesc;
+  }
+
+  TextEditingController get controllerTitle {
+    return _title;
+  }
+
+  TextEditingController get controllerDesc {
+    return _desc;
   }
 }
