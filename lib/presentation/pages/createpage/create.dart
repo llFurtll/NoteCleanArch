@@ -109,19 +109,18 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
         return null;
       },
       decoration: InputDecoration(
-        hintText: "Título...",
+        hintText: "Título",
         errorStyle: TextStyle(color: _colorNotifier.value),
         hintStyle: TextStyle(
-          color: Colors.grey[500],
+          color: _colorNotifier.value.withOpacity(0.5),
           fontWeight: FontWeight.normal,
-          fontSize: 20.0
         ),
         border: InputBorder.none,
       ),
       style: TextStyle(
         color: _colorNotifier.value,
         fontWeight: FontWeight.bold,
-        fontSize: 20.0
+        fontSize: 25.0
       ),
       minLines: 1,
       maxLines: null,
@@ -134,10 +133,9 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
     return TextFormField(
       controller: _desc,
       decoration: InputDecoration(
-        hintText: "Escreva aqui...",
+        hintText: "Comece a escrever",
         hintStyle: TextStyle(
-          color: Colors.grey[500],
-          fontSize: 18.0
+          color:  _colorNotifier.value.withOpacity(0.5)
         ),
         border: InputBorder.none,
       ),

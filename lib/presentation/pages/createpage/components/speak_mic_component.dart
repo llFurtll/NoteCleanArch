@@ -82,7 +82,12 @@ class SpeakMicComponent implements IComponent<CreateNoteState, ValueListenableBu
   }
 
   void _initSpeech() async {
-    _speechEnable = await _speechToText.initialize();
+    try {
+      _speechEnable = await _speechToText.initialize();
+    } on Exception {
+      _speechEnable = false;
+    }
+
     _appBarCreateComponent.disableSpeak = !_speechEnable;
   }
 
@@ -134,10 +139,10 @@ class SpeakMicComponent implements IComponent<CreateNoteState, ValueListenableBu
               height: _isListen.value ? 100.0 : 70.0,
               curve: Curves.ease,
               duration: Duration(milliseconds: 500),
-              child: Icon(Icons.mic, color: Colors.black, size: 30.0),
+              child: Icon(Icons.mic, color: Colors.white, size: 30.0),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Colors.greenAccent
+                color: Theme.of(_screen.context).primaryColor
               ),
             ),
           ),

@@ -73,8 +73,8 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
         onPressed: _disableSpeak.value ? null : () => _screen.emitScreen(_speakMicComponent),
         icon: Icon(
           Icons.mic,
-          color: _screen.color
         ),
+        color: _screen.color,
         disabledColor: Colors.grey,
       ),
       IconButton(
