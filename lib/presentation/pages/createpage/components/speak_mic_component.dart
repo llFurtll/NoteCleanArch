@@ -9,57 +9,69 @@ import '../../../components/show_message.dart';
 import '../create.dart';
 import '../components/app_bar_create_component.dart';
 
-class SpeakMicComponent implements IComponent<CreateNoteState, Container, void> {
+class SpeakMicComponent implements IComponent<CreateNoteState, ValueListenableBuilder, void> {
 
   final CreateNoteState _screen;
   final SpeechToText _speechToText = SpeechToText();
+  final ValueNotifier<bool> _isListen = ValueNotifier<bool>(false);
 
   late final AppBarCreateComponent _appBarCreateComponent;
 
   bool _speechEnable = false;
-  Timer? _debounce;
+  String _textSpeak = "";
+  String _info = "Segure o botão para falar!";
 
   SpeakMicComponent(this._screen) {
     init();
   }
-
+ 
   @override
   void afterEvent() {
-    return;
+    _textSpeak = "";
+    _info = "Segure o botão para falar!";
   }
 
   @override
   void beforeEvent() {
-    if (_speechToText.isListening) {
-      _stopListening();
-    }
+    return;
   }
 
   @override
-  Container constructor() {
-    return Container();
+  ValueListenableBuilder constructor() {
+    return ValueListenableBuilder(
+      valueListenable: _isListen,
+      builder: (BuildContext context, dynamic value, Widget? widget) {
+        return _buildDialog();
+      }
+    );
   }
 
   @override
   void dispose() {
-    if (_debounce != null) {
-      _debounce!.cancel();
-    }
+    return;
   }
 
   @override
-  void event() {
-    beforeEvent();
+  void event() async {
+    bool response = false;
 
     if (_screen.focusTitle.hasFocus) {
-      _startListening(_screen.controllerTitle);
+      response = await _showDialogListen();
+      _screen.controllerTitle.text += _textSpeak;
+      _screen.focusTitle.requestFocus();
     } else if (_screen.focusDesc.hasFocus) {
-      _startListening(_screen.controllerDesc);
+      response = await _showDialogListen();
+      _screen.controllerDesc.text += _textSpeak;
+      _screen.focusDesc.requestFocus();
     } else {
       MessageDefaultSystem.showMessage(
         _screen.context,
         "Selecione algum campo para utilizar o microfone!"
       );
+    }
+
+    if (response) {
+      afterEvent();
     }
   }
 
@@ -74,28 +86,63 @@ class SpeakMicComponent implements IComponent<CreateNoteState, Container, void> 
     _appBarCreateComponent.disableSpeak = !_speechEnable;
   }
 
-  void _startListening(TextEditingController controller) async {
-    _appBarCreateComponent.listening = true;
+  void _startListening() async {
     await _speechToText.listen(
-      onResult: (SpeechRecognitionResult result) => _onSpeechResult(result, controller)
+      onResult: (SpeechRecognitionResult result) => _onSpeechResult(result)
     );
   }
 
-  void _stopListening() async {
-    await _speechToText.stop();
-    _appBarCreateComponent.listening = false;
+  void _stopListening() {
+    Future.delayed(Duration(seconds: 1), () async {
+      await _speechToText.stop();
+      Navigator.of(_screen.context).pop(false);
+    });
   }
 
-  void _onSpeechResult(SpeechRecognitionResult result, TextEditingController controller) {
-    if (_debounce?.isActive ?? false) _debounce!.cancel();
-    _debounce = Timer(const Duration(milliseconds: 800), () {
-        if (controller.text.isEmpty) {
-          controller.text = result.recognizedWords;
-        } else {
-          controller.text += " " + result.recognizedWords;
-        }
+  void _onSpeechResult(SpeechRecognitionResult result) {
+    _textSpeak = result.recognizedWords;
+  }
 
-        _appBarCreateComponent.listening = false;
-    });
+  Future<bool> _showDialogListen() async {
+    return await showDialog(
+      context: _screen.context,
+      builder: (BuildContext context) {
+        return constructor();
+      }
+    ) == null || false ? false : true;
+  }
+
+  AlertDialog _buildDialog() {
+    return AlertDialog(
+      title: Text(_info),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onLongPress: () {
+              _info = "Ouvindo...";
+              _isListen.value = true;
+              _startListening();
+            },
+            onLongPressUp: () {
+              _info = "Carregando...";
+              _isListen.value = false;
+              _stopListening();
+            },
+            child: AnimatedContainer(
+              width: _isListen.value ? 100.0 : 70.0,
+              height: _isListen.value ? 100.0 : 70.0,
+              curve: Curves.ease,
+              duration: Duration(milliseconds: 500),
+              child: Icon(Icons.mic, color: Colors.black, size: 30.0),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.greenAccent
+              ),
+            ),
+          ),
+        ]
+      )
+    );
   }
 }

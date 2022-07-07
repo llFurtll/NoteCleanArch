@@ -30,6 +30,7 @@ class Info extends StatelessWidget {
           "https://avatars.githubusercontent.com/llFurtll"
         ),
         radius: 70.0,
+        backgroundColor: Colors.grey[200],
       ),
       radius: 75.0,
     );
@@ -38,7 +39,6 @@ class Info extends StatelessWidget {
   IconButton _btnSocial(String url, BuildContext context, IconData icon, Color color, bool isFinal) {
     return
       IconButton(
-        padding: isFinal ? EdgeInsets.only(right: 0) : EdgeInsets.only(right: 30.0),
         onPressed: () {
           _launchUrl(url, context);
         },
@@ -51,8 +51,8 @@ class Info extends StatelessWidget {
   Padding _social(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(top: 20.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Wrap(
+        spacing: 10.0,
         children: [
           _btnSocial(
             "https://github.com/llFurtll",
@@ -156,10 +156,10 @@ class Info extends StatelessWidget {
             mainAxisSize: MainAxisSize.max,
             children: [
               _avatar(),
-            _social(context),
-            _name(),
-            _content(),
-            _iconCoffee(context)
+              _social(context),
+              _name(),
+              _content(),
+              _iconCoffee(context)
             ],
           ),
         ),

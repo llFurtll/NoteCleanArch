@@ -21,7 +21,7 @@ class CreateNote extends StatefulWidget {
   CreateNoteState createState() => CreateNoteState();
 }
 
-class CreateNoteState extends State<CreateNote> implements IScreen {
+class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver implements IScreen {
 
   @override
   List<IComponent> listComponents = [];
@@ -43,6 +43,8 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance!.addObserver(this);
 
     useCases = injector.getDependencie();
     appBarCreateComponent = AppBarCreateComponent(this);
@@ -70,7 +72,30 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
   @override
   void dispose() {
     appBarCreateComponent.dispose();
+    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeMetrics() {
+    keyboardHidden.then((value) => value ? FocusManager.instance.primaryFocus?.unfocus() : null);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        _colorNotifier.value = Color(0xFF000000);
+        return true;
+      },
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        backgroundColor: Colors.white,
+        appBar: appBarCreateComponent.constructor(),
+        body: _body(),
+        floatingActionButton: buttonSaveNoteComponent.constructor(),
+      ),
+    );
   }
 
   TextFormField _titulo() {
@@ -84,11 +109,11 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
         return null;
       },
       decoration: InputDecoration(
-        hintText: "Título",
+        hintText: "Título...",
         errorStyle: TextStyle(color: _colorNotifier.value),
         hintStyle: TextStyle(
-          color: _colorNotifier.value,
-          fontWeight: FontWeight.bold,
+          color: Colors.grey[500],
+          fontWeight: FontWeight.normal,
           fontSize: 20.0
         ),
         border: InputBorder.none,
@@ -109,7 +134,11 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
     return TextFormField(
       controller: _desc,
       decoration: InputDecoration(
-        errorStyle: TextStyle(color: _colorNotifier.value),
+        hintText: "Escreva aqui...",
+        hintStyle: TextStyle(
+          color: Colors.grey[500],
+          fontSize: 18.0
+        ),
         border: InputBorder.none,
       ),
       style: TextStyle(
@@ -180,23 +209,6 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        _colorNotifier.value = Color(0xFF000000);
-        return true;
-      },
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
-        backgroundColor: Colors.white,
-        appBar: appBarCreateComponent.constructor(),
-        body: _body(),
-        floatingActionButton: buttonSaveNoteComponent.constructor(),
-      ),
-    );
-  }
-
-  @override
   void addComponent(IComponent component) {
     listComponents.add(component);
   }
@@ -216,6 +228,14 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
     if (message == "addComponent") {
       addComponent(value);
     }
+  }
+
+  Future<bool> get keyboardHidden async {
+    final verify = () => (WidgetsBinding.instance?.window.viewInsets.bottom ?? 0) <= 0;
+
+    if (!verify()) return false;
+
+    return await Future.delayed(Duration(milliseconds: 100), () => verify());
   }
 
   String get pathImage {

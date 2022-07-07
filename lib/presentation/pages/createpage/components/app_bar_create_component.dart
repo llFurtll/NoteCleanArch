@@ -1,4 +1,3 @@
-import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 
 import 'package:compmanager/domain/interfaces/icomponent.dart';
@@ -13,7 +12,6 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
   final CreateNoteState _screen;
   final ValueNotifier<bool> _removeBackgroundNotifier = ValueNotifier(false);
   final ValueNotifier<bool> _disableSpeak = ValueNotifier(true);
-  final ValueNotifier<bool> _listening = ValueNotifier(false);
 
   late final ChangeImageBackgroundComponent _changeImageBackgroundComponent;
   late final AlterColorComponent _alterColorComponent;
@@ -71,30 +69,13 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
 
   List<Widget> _actions() {
     return [
-      ValueListenableBuilder(
-        valueListenable: _disableSpeak,
-        builder: (BuildContext context, bool value, Widget? widget) {
-          return ValueListenableBuilder(
-            valueListenable: _listening,
-            builder: (BuildContext context, bool value, Widget? widget) {
-              return AvatarGlow(
-                glowColor: Colors.red,
-                animate: _listening.value,
-                repeatPauseDuration: Duration(milliseconds: 50),
-                repeat: true,
-                endRadius: 30.0,
-                child: IconButton(
-                  onPressed: _disableSpeak.value ? null : () => _screen.emitScreen(_speakMicComponent),
-                  icon: Icon(
-                    Icons.mic,
-                    color: _screen.color
-                  ),
-                  disabledColor: Colors.grey,
-                )
-              );
-            },
-          );
-        },
+      IconButton(
+        onPressed: _disableSpeak.value ? null : () => _screen.emitScreen(_speakMicComponent),
+        icon: Icon(
+          Icons.mic,
+          color: _screen.color
+        ),
+        disabledColor: Colors.grey,
       ),
       IconButton(
         icon: Icon(Icons.color_lens),
@@ -149,9 +130,5 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
 
   set disableSpeak(bool disable) {
     _disableSpeak.value = disable;
-  }
-
-  set listening(bool listening) {
-    _listening.value = listening;
   }
 }
