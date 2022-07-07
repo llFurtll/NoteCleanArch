@@ -29,7 +29,7 @@
 
 ## :warning:  Issues
 - [x] Refactor code
-- [ ] Register annotation using device microphone
+- [x] Register annotation using device microphone
 - [ ] Annotation sharing. (PDF and Image)
 - [ ] Encryption backup service
 - [ ] Application internationalization
