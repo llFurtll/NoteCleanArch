@@ -91,6 +91,10 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
     return;
   }
 
+  set imageSelected(int selected) {
+    _imageSelected.value = selected;
+  }
+
   Future<void> _loadImages() async {
     _assetsImages.value.clear();
     _assetsImages.value.addAll(_returnCardsImage(await _listAllAssetsImage()));
@@ -141,7 +145,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
     return lista;
   }
 
-  GestureDetector _buildCardImage(Image image, String pathImage, int index,) {
+  GestureDetector _buildCardImage(Image image, String pathImage, int index) {
     if (_screen.pathImage.isNotEmpty) {
       if (pathImage == _screen.pathImage) {
         _imageSelected.value = index;
@@ -153,6 +157,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
           _screen.pathImage = pathImage;
           _imageSelected.value = index;
           _appBarCreateComponent.removeBackground = true;
+          _appBarCreateComponent.changeMenuItens();
         }
       },
       onLongPress: () {
@@ -182,6 +187,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
                       int? update = await _useCases.removeBackgroundNote(image: pathImage);
                       await _loadImages();
                       _appBarCreateComponent.removeBackground = false;
+                      _appBarCreateComponent.changeMenuItens();
                       
                       if (update != 0) {
                         _screen.pathImage = "";

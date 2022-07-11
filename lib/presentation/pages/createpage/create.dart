@@ -21,7 +21,7 @@ class CreateNote extends StatefulWidget {
   CreateNoteState createState() => CreateNoteState();
 }
 
-class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver implements IScreen {
+class CreateNoteState extends State<CreateNote> implements IScreen {
 
   @override
   List<IComponent> listComponents = [];
@@ -43,8 +43,6 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance!.addObserver(this);
 
     useCases = injector.getDependencie();
     appBarCreateComponent = AppBarCreateComponent(this);
@@ -72,13 +70,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   @override
   void dispose() {
     appBarCreateComponent.dispose();
-    WidgetsBinding.instance!.removeObserver(this);
     super.dispose();
-  }
-
-  @override
-  void didChangeMetrics() {
-    keyboardHidden.then((value) => value ? FocusManager.instance.primaryFocus?.unfocus() : null);
   }
 
   @override
