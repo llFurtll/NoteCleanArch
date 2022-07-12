@@ -220,14 +220,6 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
     }
   }
 
-  Future<bool> get keyboardHidden async {
-    final verify = () => (WidgetsBinding.instance?.window.viewInsets.bottom ?? 0) <= 0;
-
-    if (!verify()) return false;
-
-    return await Future.delayed(Duration(milliseconds: 100), () => verify());
-  }
-
   String get pathImage {
     return _pathImageNotifier.value;
   }
