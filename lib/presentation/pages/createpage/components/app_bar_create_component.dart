@@ -11,9 +11,10 @@ import '../../../../core/change_notifier_global.dart';
 class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize, void> {
 
   final CreateNoteState _screen;
-  final ValueNotifier<bool> _removeBackgroundNotifier = ValueNotifier(false);
-  final ValueNotifier<bool> _disableSpeak = ValueNotifier(true);
+  final ChangeNotifierGlobal<bool> _removeBackgroundNotifier = ChangeNotifierGlobal(false);
+  final ChangeNotifierGlobal<bool> _disableSpeak = ChangeNotifierGlobal(true);
   final ChangeNotifierGlobal<bool> _showContainer = ChangeNotifierGlobal(false);
+  final ChangeNotifierGlobal<bool> _showShare = ChangeNotifierGlobal(false);
 
   late final ChangeImageBackgroundComponent _changeImageBackgroundComponent;
   late final AlterColorComponent _alterColorComponent;
@@ -72,7 +73,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
   List<Widget> _actions() {
     return [
       Container(
-        child: Row(
+        child: Wrap(
           children: [
             ValueListenableBuilder(
               valueListenable: _showContainer,
@@ -85,10 +86,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
                     elevation: 3.0,
                     child: AnimatedContainer(
                       height: 50.0,
-                      width:
-                        _showContainer.value &&
-                        _removeBackgroundNotifier.value ? 240.0  :
-                        _showContainer.value && !_removeBackgroundNotifier.value ? 200.0 : 48.0,
+                      width: _returnSizeContainer(),
                       curve: Curves.ease,
                       child: Wrap(
                         children: [
@@ -110,12 +108,9 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
 
   IconButton _iconOpenItens(bool close) {
     return IconButton(
-      onPressed: () {
-        close ? _showContainer.value = false : _showContainer.value = true;
-      },
-      icon: Icon(close ? Icons.keyboard_arrow_right : Icons.keyboard_arrow_left),
+      onPressed: () => close ? _showContainer.value = false : _showContainer.value = true,
+      icon: Icon(close ? Icons.arrow_forward_outlined : Icons.arrow_back_outlined),
       color: _screen.color,
-      iconSize: 30.0,
       padding: EdgeInsets.zero,
       splashRadius: 25.0,
     );
@@ -123,6 +118,24 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
 
   List<Widget> _iconsActions() {
     return [
+      ValueListenableBuilder(
+        valueListenable: _showShare,
+        builder: (BuildContext context, bool value, Widget? widget) {
+          return Visibility(
+            visible: _showShare.value,
+            child: IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.share,
+              ),
+              color: _screen.color,
+              disabledColor: Colors.grey,
+              padding: EdgeInsets.zero,
+              splashRadius: 25.0,
+            ),
+          );  
+        }
+      ),
       IconButton(
         onPressed: _disableSpeak.value ? null : () => _screen.emitScreen(_speakMicComponent),
         icon: Icon(
@@ -184,6 +197,25 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
     );
   }
 
+  double _returnSizeContainer() {
+    double baseSize = 48.0;
+    int qtdIcones =  4;
+
+    if (!_showContainer.value) {
+      return baseSize;
+    }
+
+    if (_removeBackgroundNotifier.value) {
+      qtdIcones++;
+    }
+
+    if (_screen.id != null) {
+      qtdIcones++;
+    }
+
+    return baseSize * qtdIcones;
+  }
+
   bool get removeBackground {
     return _removeBackgroundNotifier.value;
   }
@@ -198,5 +230,9 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
 
   void changeMenuItens() {
     _showContainer.emitChange();
+  }
+
+  set showShare(bool show) {
+    _showShare.value = show;
   }
 }

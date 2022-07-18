@@ -14,6 +14,7 @@ import '../../../../domain/usecases/crud_usecases.dart';
 import '../../createpage/create.dart';
 import '../../../../data/model/anotacao_model.dart';
 import 'header_component.dart';
+import '../../../../core/change_notifier_global.dart';
 
 class CardComponent extends IComponent<HomeState, ValueListenableBuilder, void> {
 
@@ -21,7 +22,7 @@ class CardComponent extends IComponent<HomeState, ValueListenableBuilder, void> 
   final Conversable _conversable = Conversable();
   final HomeState _screen;
   final AnotacaoModel _anotacao;
-  final ValueNotifier<double> _offset = ValueNotifier(0.0);
+  final ChangeNotifierGlobal<double> _offset = ChangeNotifierGlobal(0.0);
 
   late final CrudUseCases _useCases;
   late final HeaderComponent _headerComponent;

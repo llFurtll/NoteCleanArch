@@ -10,6 +10,7 @@ import '../../../data/model/anotacao_model.dart';
 import '../../../domain/usecases/crud_usecases.dart';
 import '../../../presentation/pages/createpage/components/app_bar_create_component.dart';
 import 'components/button_save_note_component.dart';
+import '../../../../core/change_notifier_global.dart';
 
 // ignore: must_be_immutable
 class CreateNote extends StatefulWidget {
@@ -28,8 +29,8 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
 
   final CompManagerInjector injector = CompManagerInjector();
   final GlobalKey<FormState> _formKey = GlobalKey();
-  final ValueNotifier<String> _pathImageNotifier = ValueNotifier("");
-  final ValueNotifier<Color> _colorNotifier = ValueNotifier(Color(0xFF000000));
+  final ChangeNotifierGlobal<String> _pathImageNotifier = ChangeNotifierGlobal("");
+  final ChangeNotifierGlobal<Color> _colorNotifier = ChangeNotifierGlobal(Color(0xFF000000));
   final TextEditingController _title = TextEditingController();
   final TextEditingController _desc = TextEditingController();
   final FocusNode _focusTitle = FocusNode();
@@ -37,16 +38,16 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
   
   late AnotacaoModel? _anotacaoModel;
   late CrudUseCases useCases;
-  late AppBarCreateComponent appBarCreateComponent;
-  late ButtonSaveNoteComponent buttonSaveNoteComponent;
+  late AppBarCreateComponent _appBarCreateComponent;
+  late ButtonSaveNoteComponent _buttonSaveNoteComponent;
 
   @override
   void initState() {
     super.initState();
 
     useCases = injector.getDependencie();
-    appBarCreateComponent = AppBarCreateComponent(this);
-    buttonSaveNoteComponent = ButtonSaveNoteComponent(this);
+    _appBarCreateComponent = AppBarCreateComponent(this);
+    _buttonSaveNoteComponent = ButtonSaveNoteComponent(this);
 
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (widget.id != null) {
@@ -57,19 +58,21 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
 
         if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
           _pathImageNotifier.value = _anotacaoModel!.imagemFundo!;
-          appBarCreateComponent.removeBackground = true;
+          _appBarCreateComponent.removeBackground = true;
         }
 
         if (_anotacaoModel!.cor != null && _anotacaoModel!.cor!.isNotEmpty) {
           _colorNotifier.value = Color(int.parse("${_anotacaoModel!.cor}"));
         }
+
+        _appBarCreateComponent.showShare = true;
       }
     });
   }
 
   @override
   void dispose() {
-    appBarCreateComponent.dispose();
+    _appBarCreateComponent.dispose();
     super.dispose();
   }
 
@@ -83,9 +86,9 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
       child: Scaffold(
         extendBodyBehindAppBar: true,
         backgroundColor: Colors.white,
-        appBar: appBarCreateComponent.constructor(),
+        appBar: _appBarCreateComponent.constructor(),
         body: _body(),
-        floatingActionButton: buttonSaveNoteComponent.constructor(),
+        floatingActionButton: _buttonSaveNoteComponent.constructor(),
       ),
     );
   }
@@ -102,7 +105,7 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
       },
       decoration: InputDecoration(
         hintText: "Título",
-        errorStyle: TextStyle(color: _colorNotifier.value),
+        errorStyle: TextStyle(color: _colorNotifier.value.withOpacity(0.5)),
         hintStyle: TextStyle(
           color: _colorNotifier.value.withOpacity(0.5),
           fontWeight: FontWeight.normal,
@@ -236,7 +239,7 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
     _colorNotifier.value = color;
   }
 
-  ValueNotifier<Color> get colorNotifier {
+  ChangeNotifierGlobal<Color> get colorNotifier {
     return _colorNotifier;
   }
 

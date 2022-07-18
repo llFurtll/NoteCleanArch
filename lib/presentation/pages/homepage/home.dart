@@ -8,6 +8,7 @@ import 'package:compmanager/domain/interfaces/iscreen.dart';
 import 'components/header_component.dart';
 import 'components/list_component.dart';
 import 'components/button_add_note_component.dart';
+import '../../../../core/change_notifier_global.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -23,7 +24,7 @@ class HomeState extends State<Home> implements IScreen  {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   final Conversable _conversable = Conversable();
   final ScrollController _customController = ScrollController();
-  final ValueNotifier<bool> _showTitle = ValueNotifier(false);
+  final ChangeNotifierGlobal<bool> _showTitle = ChangeNotifierGlobal(false);
 
   late final HeaderComponent _headerComponent;
   late final ListComponent _listComponent;
@@ -96,7 +97,7 @@ class HomeState extends State<Home> implements IScreen  {
     return listComponents.firstWhere((element) => element.runtimeType == type);
   }
 
-  ValueNotifier<bool> get title {
+  ChangeNotifierGlobal<bool> get title {
     return _showTitle;
   }
 }

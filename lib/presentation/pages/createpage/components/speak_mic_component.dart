@@ -8,12 +8,13 @@ import 'package:speech_to_text/speech_to_text.dart';
 import '../../../components/show_message.dart';
 import '../create.dart';
 import '../components/app_bar_create_component.dart';
+import '../../../../core/change_notifier_global.dart';
 
 class SpeakMicComponent implements IComponent<CreateNoteState, ValueListenableBuilder, void> {
 
   final CreateNoteState _screen;
   final SpeechToText _speechToText = SpeechToText();
-  final ValueNotifier<bool> _isListen = ValueNotifier<bool>(false);
+  final ChangeNotifierGlobal<bool> _isListen = ChangeNotifierGlobal<bool>(false);
 
   late final AppBarCreateComponent _appBarCreateComponent;
 

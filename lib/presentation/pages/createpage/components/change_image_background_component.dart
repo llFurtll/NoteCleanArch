@@ -15,13 +15,14 @@ import 'package:compmanager/core/compmanager_notifier_list.dart';
 import '../../createpage/create.dart';
 import '../../../../domain/usecases/crud_usecases.dart';
 import 'app_bar_create_component.dart';
+import '../../../../core/change_notifier_global.dart';
 
 class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Container, Future<bool>> {
 
   final CreateNoteState _screen;
-  final _imageSelected = ValueNotifier<int>(-1);
+  final _imageSelected = ChangeNotifierGlobal<int>(-1);
   final CompManagerInjector injector = CompManagerInjector();
-  final  ImagePicker _imagePicker = ImagePicker();
+  final ImagePicker _imagePicker = ImagePicker();
   final CompManagerNotifierList<Widget> _assetsImages = CompManagerNotifierList([]);
 
   late final CrudUseCases _useCases;

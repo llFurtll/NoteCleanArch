@@ -36,7 +36,7 @@ class Info extends StatelessWidget {
     );
   }
 
-  IconButton _btnSocial(String url, BuildContext context, IconData icon, Color color, bool isFinal) {
+  IconButton _btnSocial(String url, BuildContext context, IconData icon, Color color) {
     return
       IconButton(
         onPressed: () {
@@ -57,22 +57,19 @@ class Info extends StatelessWidget {
           _btnSocial(
             "https://github.com/llFurtll",
             context, FontAwesomeIcons.github,
-            Colors.black,
-            false
+            Colors.black
           ),
           _btnSocial(
             "https://www.facebook.com/daniel.melonari/",
             context,
             FontAwesomeIcons.facebook,
-            Color(0xFF3b5998),
-            false
+            Color(0xFF3b5998)
           ),
           _btnSocial(
             "https://www.linkedin.com/in/daniel-melonari/",
             context,
             FontAwesomeIcons.linkedin,
-            Color(0xFF0e76a8),
-            true
+            Color(0xFF0e76a8)
           )
         ],
       ),

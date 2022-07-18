@@ -11,6 +11,7 @@ import 'alter_name_component.dart';
 import '../../../../domain/usecases/config_user_usecases.dart';
 import 'list_component.dart';
 import 'alter_photo_profile_component.dart';
+import '../../../../core/change_notifier_global.dart';
 
 class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
 
@@ -18,10 +19,10 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
   final HomeState _screen;
   final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  final ValueNotifier<String?> _userNameNotifier = ValueNotifier("Digite seu nome aqui :)");
-  final ValueNotifier<bool> _showInfo = ValueNotifier(true);
+  final ChangeNotifierGlobal<String?> _userNameNotifier = ChangeNotifierGlobal("Digite seu nome aqui :)");
+  final ChangeNotifierGlobal<bool> _showInfo = ChangeNotifierGlobal(true);
 
-  ValueNotifier<String?> _imagePath = ValueNotifier("");
+  ChangeNotifierGlobal<String?> _imagePath = ChangeNotifierGlobal("");
   Timer? _debounce;
   
   late final ConfigUserUseCases _configUserUseCases;

@@ -11,11 +11,12 @@ import '../../../../domain/usecases/crud_usecases.dart';
 import '../../../components/animated_list.dart';
 import '../home.dart';
 import 'card_component.dart';
+import '../../../../core/change_notifier_global.dart';
 
 class ListComponent implements IComponent<HomeState, Widget, void> {
 
   final CompManagerInjector injector = CompManagerInjector();
-  final ValueNotifier<bool> _carregandoNotifier = ValueNotifier(true);
+  final ChangeNotifierGlobal<bool> _carregandoNotifier = ChangeNotifierGlobal(true);
   final CompManagerNotifierList<Widget> _listaCardNoteNotifier = CompManagerNotifierList([]);
   final HomeState _screen;
 

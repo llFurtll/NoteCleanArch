@@ -8,6 +8,7 @@ import '../../../components/show_message.dart';
 import '../../../../data/model/anotacao_model.dart';
 import '../create.dart';
 import '../../../../domain/usecases/crud_usecases.dart';
+import '../components/app_bar_create_component.dart';
 
 class ButtonSaveNoteComponent implements IComponent<CreateNoteState, FloatingActionButton, void> {
 
@@ -16,6 +17,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, FloatingAct
   final Conversable _conversable = Conversable();
 
   late final CrudUseCases _useCases;
+  late final AppBarCreateComponent _appBarCreateComponent;
 
   ButtonSaveNoteComponent(this._screen) {
     init();
@@ -60,6 +62,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, FloatingAct
   @override
   void init() {
     _useCases = _injector.getDependencie();
+    _appBarCreateComponent = _screen.getComponent(AppBarCreateComponent) as AppBarCreateComponent;
   }
 
   void dispose() {
@@ -85,6 +88,9 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, FloatingAct
       );
 
       _screen.id = insert!;
+
+      _appBarCreateComponent.showShare = true;
+      _appBarCreateComponent.changeMenuItens();
 
       _screen.anotacao = await _useCases.getByIdUseCase(id: _screen.id!);
     }
