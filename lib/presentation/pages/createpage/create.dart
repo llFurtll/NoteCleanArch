@@ -35,6 +35,7 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
   final TextEditingController _desc = TextEditingController();
   final FocusNode _focusTitle = FocusNode();
   final FocusNode _focusDesc = FocusNode();
+  final GlobalKey _boundary = GlobalKey();
   
   late AnotacaoModel? _anotacaoModel;
   late CrudUseCases useCases;
@@ -170,34 +171,37 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
   }
 
   Widget _body() {
-    return Stack(
-      children: [
-        ValueListenableBuilder(
-          valueListenable: _pathImageNotifier,
-          builder: (BuildContext context, String value, Widget? widget) {
-            return Container(
-              decoration: _pathImageNotifier.value.isEmpty ? null : BoxDecoration(
-                image: DecorationImage(
-                  image: _pathImageNotifier.value.contains('lib') ?
-                    AssetImage(_pathImageNotifier.value) as ImageProvider :
-                    FileImage(File(_pathImageNotifier.value)),
-                  fit: BoxFit.cover,
+    return RepaintBoundary(
+      key: _boundary,
+      child: Stack(
+        children: [
+          ValueListenableBuilder(
+            valueListenable: _pathImageNotifier,
+            builder: (BuildContext context, String value, Widget? widget) {
+              return Container(
+                decoration: _pathImageNotifier.value.isEmpty ? null : BoxDecoration(
+                  image: DecorationImage(
+                    image: _pathImageNotifier.value.contains('lib') ?
+                      AssetImage(_pathImageNotifier.value) as ImageProvider :
+                      FileImage(File(_pathImageNotifier.value)),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              width: double.infinity,
-              height: double.infinity,
-            );
-          },
-        ),
-        Container(
-          width: double.infinity,
-          height: double.infinity,
-          color: Colors.white.withOpacity(0.5),
-          child: SafeArea(
-            child: _home(),
+                width: double.infinity,
+                height: double.infinity,
+              );
+            },
           ),
-        ),
-      ],
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.white.withOpacity(0.5),
+            child: SafeArea(
+              child: _home(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -218,9 +222,7 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
 
   @override
   void receive(String message, value, {IScreen? screen}) {
-    if (message == "addComponent") {
-      addComponent(value);
-    }
+    return;
   }
 
   String get pathImage {
@@ -285,5 +287,9 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
 
   TextEditingController get controllerDesc {
     return _desc;
+  }
+
+  GlobalKey get boundary {
+    return _boundary;
   }
 }

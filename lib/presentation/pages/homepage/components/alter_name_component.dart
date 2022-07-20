@@ -100,7 +100,7 @@ class AlterNameComponent implements IComponent<HomeState, Padding, void> {
                       Navigator.of(_screen.context).pop();
                     }
 
-                    _headerComponent.userName = await _configUserUseCases.getName();
+                    _headerComponent.userName = _name.text;
                   }
                 },
                 child: Text("Salvar")

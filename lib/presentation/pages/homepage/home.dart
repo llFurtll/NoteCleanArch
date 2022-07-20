@@ -37,10 +37,6 @@ class HomeState extends State<Home> implements IScreen  {
     _headerComponent = HeaderComponent(this);
     _listComponent = ListComponent(this);
     _buttonAddNoteComponent = ButtonAddNoteComponent(this);
-    
-    addComponent(_headerComponent);
-    addComponent(_listComponent);
-    addComponent(_buttonAddNoteComponent);
 
     _conversable.addScren("home", this);
   }

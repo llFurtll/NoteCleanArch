@@ -117,6 +117,7 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
 
   @override
   void init() async {
+    _screen.addComponent(this);
     _configUserUseCases = injector.getDependencie<ConfigUserUseCases>();
     _imagePath.value = await _configUserUseCases.getImage();
     _loadName();

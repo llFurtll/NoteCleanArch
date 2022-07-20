@@ -1,12 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/core/compmanager_injector.dart';
-
 import 'package:path_provider/path_provider.dart';
-
 import 'package:image_picker/image_picker.dart';
 
 import '../home.dart';
@@ -105,7 +102,6 @@ class AlterPhotoProfileComponent implements IComponent<HomeState, AlertDialog, F
     await beforeEvent();
 
     showDialog<bool>(
-      barrierDismissible: false,
       context: _screen.context,
       builder: (BuildContext context) {
         return constructor();

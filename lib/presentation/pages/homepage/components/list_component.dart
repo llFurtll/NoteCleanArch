@@ -90,6 +90,7 @@ class ListComponent implements IComponent<HomeState, Widget, void> {
 
   @override
   void init() async {
+    _screen.addComponent(this);
     _useCases = injector.getDependencie<CrudUseCases>();
     getNotes("");
   }

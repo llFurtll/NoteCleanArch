@@ -46,7 +46,25 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
 
   @override
   Container constructor() {
-    return Container();
+    return Container(
+      padding: const EdgeInsets.all(15.0),
+      height: 200.0,
+      decoration: BoxDecoration(
+        color: Colors.blueGrey[50],
+      ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: ValueListenableBuilder(
+          valueListenable: _assetsImages,
+          builder: (BuildContext context, List<Widget> value, Widget? widget) {
+            return Row(
+              mainAxisSize: MainAxisSize.max,
+              children: _assetsImages.value,
+            );
+          },
+        ),
+      )
+    );
   }
 
   @override
@@ -56,25 +74,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
     showModalBottomSheet(
       context: _screen.context,
       builder: (BuildContext context) {
-        return Container(
-          padding: const EdgeInsets.all(15.0),
-          height: 200.0,
-          decoration: BoxDecoration(
-            color: Colors.blueGrey[50],
-          ),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: ValueListenableBuilder(
-              valueListenable: _assetsImages,
-              builder: (BuildContext context, List<Widget> value, Widget? widget) {
-                return Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: _assetsImages.value,
-                );
-              },
-            ),
-          )
-        );
+        return constructor();
       }
     );
     
@@ -152,6 +152,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
         _imageSelected.value = index;
       }
     }
+
     return GestureDetector(
       onTap: () {
         if (pathImage != _screen.pathImage) {
@@ -163,57 +164,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
       },
       onLongPress: () {
         if (!pathImage.contains('lib')) {
-          showDialog(
-            context: _screen.context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text("Deletar imagem?", style: TextStyle(color: _screen.color)),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      "Não",
-                      style: TextStyle(
-                        color: _screen.color,
-                        fontWeight: FontWeight.bold
-                      ),
-                    )
-                  ),
-                  TextButton(
-                    onPressed: () async {
-                      File(pathImage).delete();
-
-                      int? update = await _useCases.removeBackgroundNote(image: pathImage);
-                      await _loadImages();
-                      _appBarCreateComponent.removeBackground = false;
-                      _appBarCreateComponent.changeMenuItens();
-                      
-                      if (update != 0) {
-                        _screen.pathImage = "";
-                      }
-
-                      if (update == 0 && !pathImage.contains('lib')) {
-                        _screen.pathImage = "";
-                      }
-
-                      _imageSelected.value = -1;
-                      
-                      Navigator.of(context).pop();
-                    },
-                    child: Text(
-                      "Sim",
-                      style: TextStyle(
-                        color: _screen.color,
-                        fontWeight: FontWeight.bold
-                      ),
-                    )
-                  )
-                ],
-              );
-            }
-          );
+          _showDialogDeletePhoto(pathImage);
         }
       },
       child: Container(
@@ -302,6 +253,60 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
               )
             ],
           ),
+        );
+      }
+    );
+  }
+
+  void _showDialogDeletePhoto(String pathImage) {
+    showDialog(
+      context: _screen.context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Deletar imagem?", style: TextStyle(color: _screen.color)),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "Não",
+                style: TextStyle(
+                  color: _screen.color,
+                  fontWeight: FontWeight.bold
+                ),
+              )
+            ),
+            TextButton(
+              onPressed: () async {
+                File(pathImage).delete();
+
+                int? update = await _useCases.removeBackgroundNote(image: pathImage);
+                await _loadImages();
+                _appBarCreateComponent.removeBackground = false;
+                _appBarCreateComponent.changeMenuItens();
+                
+                if (update != 0) {
+                  _screen.pathImage = "";
+                }
+
+                if (update == 0 && !pathImage.contains('lib')) {
+                  _screen.pathImage = "";
+                }
+
+                _imageSelected.value = -1;
+                
+                Navigator.of(context).pop();
+              },
+              child: Text(
+                "Sim",
+                style: TextStyle(
+                  color: _screen.color,
+                  fontWeight: FontWeight.bold
+                ),
+              )
+            )
+          ],
         );
       }
     );

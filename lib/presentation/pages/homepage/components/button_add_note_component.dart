@@ -13,7 +13,9 @@ class ButtonAddNoteComponent implements IComponent<HomeState, OpenContainer, voi
   final double _fabDimension = 56.0;
   final ContainerTransitionType _transitionType = ContainerTransitionType.fadeThrough;
 
-  ButtonAddNoteComponent(this._screen);
+  ButtonAddNoteComponent(this._screen) {
+    init();
+  }
 
   @override
   void afterEvent() {
@@ -58,7 +60,7 @@ class ButtonAddNoteComponent implements IComponent<HomeState, OpenContainer, voi
 
   @override
   void init() {
-    return;
+    _screen.addComponent(this);
   }
 
   @override

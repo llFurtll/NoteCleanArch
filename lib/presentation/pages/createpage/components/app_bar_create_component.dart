@@ -7,6 +7,7 @@ import 'change_image_background_component.dart';
 import 'alter_color_component.dart';
 import 'speak_mic_component.dart';
 import '../../../../core/change_notifier_global.dart';
+import 'share_component.dart';
 
 class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize, void> {
 
@@ -19,6 +20,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
   late final ChangeImageBackgroundComponent _changeImageBackgroundComponent;
   late final AlterColorComponent _alterColorComponent;
   late final SpeakMicComponent _speakMicComponent;
+  late final ShareComponent _shareComponent;
 
   AppBarCreateComponent(this._screen) {
     init();
@@ -59,10 +61,11 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
 
   @override
   void init() {
-    _screen.receive("addComponent", this);
+    _screen.addComponent(this);
     _changeImageBackgroundComponent = ChangeImageBackgroundComponent(_screen);
     _alterColorComponent = AlterColorComponent(_screen);
     _speakMicComponent = SpeakMicComponent(_screen);
+    _shareComponent = ShareComponent(_screen);
   }
 
   @override
@@ -124,7 +127,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
           return Visibility(
             visible: _showShare.value,
             child: IconButton(
-              onPressed: () {},
+              onPressed: () => _screen.emitScreen(_shareComponent),
               icon: Icon(
                 Icons.share,
               ),
