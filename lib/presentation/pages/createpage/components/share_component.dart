@@ -1,15 +1,8 @@
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
-import 'dart:ui' as ui;
 
 import '../create.dart';
-import '../../../components/show_message.dart';
+import '../arguments/arguments_share.dart';
 
 class ShareComponent implements IComponent<CreateNoteState, AlertDialog, void> {
 
@@ -79,43 +72,16 @@ class ShareComponent implements IComponent<CreateNoteState, AlertDialog, void> {
     );
 
     if (selecionou == 1) {
-      final response = await _createImageShare();
-
-      if (response.isNotEmpty) {
-        Share.shareFiles([response]);
-      } else {
-        MessageDefaultSystem.showMessage(_screen.context, "Não foi possível criar a imagem!");
-      }
+      Navigator.of(_screen.context).pushNamed(
+        "/share/image",
+        arguments:
+          ArgumentsShare(anotacaoModel: _screen.anotacao!, screen: _screen)
+      );
     }
   }
 
   @override
   void init() {
     return;
-  }
-
-  Future<String> _createImageShare() async {
-    try {
-      RenderRepaintBoundary boundary = _screen.boundary.currentContext!.findRenderObject() as RenderRepaintBoundary;
-      ui.Image image = await boundary.toImage(pixelRatio: 1.1);
-
-      final path = (await getApplicationDocumentsDirectory()).path;
-      final dirShare = Directory("$path/share");
-
-      if (!dirShare.existsSync()) {
-        dirShare.createSync(recursive: true);
-      }
-
-      ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      Uint8List pngBytes = byteData!.buffer.asUint8List();
-
-      File imgFile = File("${dirShare.path}/anotacao-${_screen.id}.png");
-
-      await imgFile.writeAsBytes(pngBytes);
-
-      return imgFile.path;
-    } catch (e) {
-      return "";
-    }
-  }
+  }  
 }

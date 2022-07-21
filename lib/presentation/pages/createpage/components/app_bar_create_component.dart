@@ -202,7 +202,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
 
   double _returnSizeContainer() {
     double baseSize = 48.0;
-    int qtdIcones =  4;
+    int qtdIcones = 4;
 
     if (!_showContainer.value) {
       return baseSize;
