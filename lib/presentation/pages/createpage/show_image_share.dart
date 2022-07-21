@@ -33,7 +33,7 @@ class ShowImageShare extends StatelessWidget {
         color: Colors.white,
       ),
       backgroundColor: Theme.of(context).primaryColor,
-      title: Text("Compartilhar a anotação"),
+      title: Text("Compartilhar anotação"),
       centerTitle: true,
       actions: _buildActions(arguments, context),
     );
@@ -122,10 +122,7 @@ class ShowImageShare extends StatelessWidget {
           backgroundColor: Colors.transparent,
           children: [
             Center(
-              child: CircularProgressIndicator(
-                backgroundColor: Colors.white,
-                color: Theme.of(context).primaryColor,
-              ),
+              child: CircularProgressIndicator(),
             )
           ],
         );
@@ -144,7 +141,7 @@ class ShowImageShare extends StatelessWidget {
     if (response.isNotEmpty) {
       Share.shareFiles([response]);
     } else {
-      MessageDefaultSystem.showMessage(screen.context, "Não foi possível gerar o arquivo!");
+      MessageDefaultSystem.showMessage(context, "Não foi possível gerar a imagem!");
     }
   }
 
@@ -154,7 +151,7 @@ class ShowImageShare extends StatelessWidget {
       ui.Image image = await boundary.toImage(pixelRatio: MediaQuery.of(screen.context).devicePixelRatio);
 
       final path = (await getApplicationDocumentsDirectory()).path;
-      final dirShare = Directory("$path/share");
+      final dirShare = Directory("$path/share/image");
 
       if (!dirShare.existsSync()) {
         dirShare.createSync(recursive: true);

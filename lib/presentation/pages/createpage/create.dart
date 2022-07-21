@@ -41,9 +41,6 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
   late AppBarCreateComponent _appBarCreateComponent;
   late ButtonSaveNoteComponent _buttonSaveNoteComponent;
 
-  int _numLinesTitle = 0;
-  int _numLinesDesc = 0;
-
   @override
   void initState() {
     super.initState();

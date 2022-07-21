@@ -22,6 +22,10 @@ void main() {
           cursorColor: Color(0XFFA50044)
         ),
         colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Color(0xFFA50044)),
+        progressIndicatorTheme: ProgressIndicatorThemeData(
+          color: Color(0xFFA50044),
+          circularTrackColor: Colors.white
+        ),
       ),
       routes: routes(),
     )

@@ -48,9 +48,7 @@ class ListComponent implements IComponent<HomeState, Widget, void> {
                 return SizedBox(
                   height:  MediaQuery.of(context).size.height - 350,
                   child: Center(
-                    child: CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor)
-                    )
+                    child: CircularProgressIndicator()
                   ),
                 );
               } else if (_listaCardNoteNotifier.value.length == 0) {

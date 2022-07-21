@@ -77,6 +77,12 @@ class ShareComponent implements IComponent<CreateNoteState, AlertDialog, void> {
         arguments:
           ArgumentsShare(anotacaoModel: _screen.anotacao!, screen: _screen)
       );
+    } else {
+      Navigator.of(_screen.context).pushNamed(
+        "/share/pdf",
+        arguments:
+          ArgumentsShare(anotacaoModel: _screen.anotacao!, screen: _screen)
+      );
     }
   }
 
