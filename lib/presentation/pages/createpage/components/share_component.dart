@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../create.dart';
 import '../arguments/arguments_share.dart';
 
-class ShareComponent implements IComponent<CreateNoteState, AlertDialog, void> {
+class ShareComponent implements IComponent<CreateNoteState, Container, void> {
 
   final CreateNoteState _screen;
 
@@ -21,35 +21,60 @@ class ShareComponent implements IComponent<CreateNoteState, AlertDialog, void> {
   }
 
   @override
-  AlertDialog constructor() {
-    return AlertDialog(
-      title: Text("Como deseja compartilhar a anotação?"),
-      content: Column(
+  Container constructor() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(15), topRight: Radius.circular(15))
+      ),
+      child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          Container(
+            child: Icon(Icons.drag_handle, color: Colors.grey, size: 40.0),
+          ), 
           TextButton(
             onPressed: () {
-              Navigator.of(_screen.context).pop(0);
+              Navigator.of(_screen.context).pushNamed(
+                "/share/pdf",
+                arguments:
+                  ArgumentsShare(anotacaoModel: _screen.anotacao!, screen: _screen)
+              );
             },
-            child: Text(
-              "Compartilhar anotação como PDF",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.black
-              )
+            child: Text("Compartilhar anotação como PDF", style: TextStyle(fontSize: 16.0)),
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.all(15),
+              primary: Colors.black,
             ),
           ),
-          Container(height: 1.0, color: Colors.black),
           TextButton(
-            onPressed: () async {
-              Navigator.of(_screen.context).pop(1);
+            onPressed: () {
+              Navigator.of(_screen.context).pushNamed(
+                "/share/image",
+                arguments:
+                  ArgumentsShare(anotacaoModel: _screen.anotacao!, screen: _screen)
+              );
             },
-            child: Text(
-              "Compartilhar anotação como imagem",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.black
-              )
+            child: Text("Compartilhar anotação como imagem", style: TextStyle(fontSize: 16.0)),
+            style: TextButton.styleFrom(
+              padding: EdgeInsets.all(15),
+              primary: Colors.black,
+            ),
+          ),
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(10.0)),
+            ),
+            height: 50.0,
+            margin: EdgeInsets.only(bottom: 25.0, top: 15.0),
+            padding: EdgeInsets.only(left: 10.0, right: 10.0),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                primary: Theme.of(_screen.context).primaryColor,
+              ),
+              onPressed: () => Navigator.of(_screen.context).pop(),
+              child: Text("Cancelar")
             ),
           )
         ],
@@ -64,26 +89,12 @@ class ShareComponent implements IComponent<CreateNoteState, AlertDialog, void> {
 
   @override
   void event() async {
-    int? selecionou = await showDialog<int>(
+    showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       context: _screen.context,
-      builder: (BuildContext context) {
-        return constructor();
-      }
+      builder: (BuildContext context) => constructor()
     );
-
-    if (selecionou == 1) {
-      Navigator.of(_screen.context).pushNamed(
-        "/share/image",
-        arguments:
-          ArgumentsShare(anotacaoModel: _screen.anotacao!, screen: _screen)
-      );
-    } else {
-      Navigator.of(_screen.context).pushNamed(
-        "/share/pdf",
-        arguments:
-          ArgumentsShare(anotacaoModel: _screen.anotacao!, screen: _screen)
-      );
-    }
   }
 
   @override

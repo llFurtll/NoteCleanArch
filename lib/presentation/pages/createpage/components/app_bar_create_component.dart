@@ -129,7 +129,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
             child: IconButton(
               onPressed: () => _screen.emitScreen(_shareComponent),
               icon: Icon(
-                Icons.share,
+                Icons.ios_share_outlined,
               ),
               color: _screen.color,
               disabledColor: Colors.grey,

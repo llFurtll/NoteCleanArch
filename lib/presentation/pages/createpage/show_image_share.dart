@@ -76,10 +76,16 @@ class ShowImageShare extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
+          constraints: BoxConstraints(
+            minHeight: 500.0
+          ),
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(25.0),
               color: Colors.white.withOpacity(0.5),
+            ),
+            constraints: BoxConstraints(
+              minHeight: 500.0
             ),
             padding: EdgeInsets.all(25.0),
             child: Column(
