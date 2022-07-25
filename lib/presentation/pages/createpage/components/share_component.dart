@@ -34,11 +34,13 @@ class ShareComponent implements IComponent<CreateNoteState, Container, void> {
             child: Icon(Icons.drag_handle, color: Colors.grey, size: 40.0),
           ), 
           TextButton(
-            onPressed: () {
+            onPressed: () async {
+              final showImage = await _showDialogImage();
+
               Navigator.of(_screen.context).pushNamed(
                 "/share/pdf",
                 arguments:
-                  ArgumentsShare(anotacaoModel: _screen.anotacao!, screen: _screen)
+                  ArgumentsShare(anotacaoModel: _screen.anotacao!, screen: _screen, showImage: showImage!)
               );
             },
             child: Text("Compartilhar anotação como PDF", style: TextStyle(fontSize: 16.0)),
@@ -48,11 +50,13 @@ class ShareComponent implements IComponent<CreateNoteState, Container, void> {
             ),
           ),
           TextButton(
-            onPressed: () {
+            onPressed: () async {
+              final showImage = await _showDialogImage();
+
               Navigator.of(_screen.context).pushNamed(
                 "/share/image",
                 arguments:
-                  ArgumentsShare(anotacaoModel: _screen.anotacao!, screen: _screen)
+                  ArgumentsShare(anotacaoModel: _screen.anotacao!, screen: _screen, showImage: showImage!)
               );
             },
             child: Text("Compartilhar anotação como imagem", style: TextStyle(fontSize: 16.0)),
@@ -100,5 +104,58 @@ class ShareComponent implements IComponent<CreateNoteState, Container, void> {
   @override
   void init() {
     return;
-  }  
+  }
+
+  Future<bool?> _showDialogImage() async {
+
+    if (_screen.anotacao!.imagemFundo!.isEmpty) {
+      return false;
+    }
+
+    bool? decision = await showDialog(
+      barrierDismissible: false,
+      context: _screen.context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          buttonPadding: EdgeInsets.zero,
+          title: Text("Deseja compartilhar com a imagem de fundo?"),
+          content: Text("Define se a imagem da anotação será exibida no compartilhamento!"),
+          actions: [
+            TextButton(
+              child: Text("Sim", style: TextStyle(fontSize: 18.0)),
+              onPressed: () => Navigator.of(context).pop(true),
+              style: TextButton.styleFrom(
+                minimumSize: Size(double.infinity, 45.0),
+                side: BorderSide(color: Colors.grey.shade300, width: 0.5),
+                padding: EdgeInsets.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+              ),
+            ),
+            TextButton(
+              child: Text("Não", style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.normal)),
+              onPressed: () => Navigator.of(context).pop(false),
+              style: TextButton.styleFrom(
+                primary: Colors.black,
+                minimumSize: Size(double.infinity, 45.0),
+                side: BorderSide(color: Colors.grey.shade300, width: 0.5),
+                padding: EdgeInsets.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                shape: 
+                  RoundedRectangleBorder(
+                    borderRadius:
+                      BorderRadius.only(
+                        bottomLeft: Radius.circular(5.0),
+                        bottomRight: Radius.circular(5.0),
+                      )
+                  )
+              ),
+            ),
+          ],
+        );
+      }
+    );
+
+    return decision == null || decision == false ? false : true;
+  }
 }

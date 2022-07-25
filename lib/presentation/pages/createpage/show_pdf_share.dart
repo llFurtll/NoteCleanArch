@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -112,29 +113,63 @@ class ShowPdfShare extends StatelessWidget {
   Future<Uint8List> makePdf(ArgumentsShare arguments) async {
     final pdf = pw.Document();
     final paragraps = arguments.anotacaoModel.observacao!.split("\n");
+    final backgroundImage = arguments.anotacaoModel.imagemFundo!;
+    final showImage = arguments.showImage;
+    dynamic image;
+
+    if (showImage) {
+      try {
+        if (backgroundImage.contains("lib")) {
+          ByteData bytes = await rootBundle.load(backgroundImage);
+          image = pw.MemoryImage(bytes.buffer.asUint8List());
+        } else {
+          image = pw.MemoryImage(
+            File(backgroundImage).readAsBytesSync()
+          );
+        }
+      } catch (e) {
+        image = null;
+      }
+    }
 
     pdf.addPage(
       pw.MultiPage(
-        pageFormat: PdfPageFormat.a4,
+        pageTheme: pw.PageTheme(
+          margin: pw.EdgeInsets.zero,
+          buildBackground: (context) {
+            return image == null || !showImage ? pw.Container() : pw.Opacity(
+              opacity: 0.5,
+              child: pw.Container(
+                child: pw.Image(image, fit: pw.BoxFit.cover)
+              ),
+            );
+          },
+          pageFormat: PdfPageFormat.a4,
+        ),
         build: (context) {
           return [
-            pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.stretch,
-              mainAxisSize: pw.MainAxisSize.max,
-              children: [
-                pw.Header(
-                  padding: pw.EdgeInsets.only(bottom: 1.0),
-                  level: 1,
-                  text: arguments.anotacaoModel.titulo,
-                  textStyle: pw.TextStyle(
-                    fontSize: 25.0,
-                    fontWeight: pw.FontWeight.bold,
-                  )
-                ),
-                ...paragraps.map((e) => pw.Paragraph(
-                  text: e
-                ))
-              ]
+            pw.Container(
+              margin: pw.EdgeInsets.all(56),
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+                mainAxisSize: pw.MainAxisSize.max,
+                children: [
+                  pw.Header(
+                    level: 1,
+                    text: arguments.anotacaoModel.titulo,
+                    textStyle: pw.TextStyle(
+                      fontSize: 25.0,
+                      fontWeight: pw.FontWeight.bold,
+                    )
+                  ),
+                  ...paragraps.map((e) => pw.Paragraph(
+                    style: pw.TextStyle(
+                      fontSize: 18.0
+                    ),
+                    text: e
+                  ))
+                ]
+              )
             ),
           ];
         }

@@ -59,6 +59,7 @@ class ShowImageShare extends StatelessWidget {
 
   Widget _buildCard(ArgumentsShare arguments) {
     final screen = arguments.screen as CreateNoteState;
+    final showImage = arguments.showImage;
 
     return RepaintBoundary(
       key: _boundary,
@@ -69,7 +70,7 @@ class ShowImageShare extends StatelessWidget {
           child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(25.0),
-            image: screen.pathImage.isEmpty ? null : DecorationImage(
+            image: !showImage ? null : DecorationImage(
               image: screen.pathImage.contains('lib') ?
                 AssetImage(screen.pathImage) as ImageProvider :
                 FileImage(File(screen.pathImage)),
