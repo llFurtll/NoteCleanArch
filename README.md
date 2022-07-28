@@ -30,7 +30,7 @@
 ## :warning:  Issues
 - [x] Refactor code
 - [x] Register annotation using device microphone
-- [ ] Annotation sharing. (PDF and Image)
+- [x] Annotation sharing. (PDF and Image)
 - [ ] New features in note creation. (Bold, Italics, etc)
 - [ ] Encryption backup service
 - [ ] Application internationalization
