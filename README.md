@@ -31,6 +31,7 @@
 - [x] Refactor code
 - [x] Register annotation using device microphone
 - [x] Annotation sharing. (PDF and Image)
+- [ ] Update version Flutter
 - [ ] New features in note creation. (Bold, Italics, etc)
 - [ ] Encryption backup service
 - [ ] Application internationalization
