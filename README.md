@@ -6,7 +6,7 @@
 
 <h1 align="">
     <a href="https://flutter.dev/">🔗 Flutter</a>
-<img src="https://img.shields.io/badge/Flutter-Version2.5.3-blue"/>
+<img src="https://img.shields.io/badge/Flutter-Version2.10.5-blue"/>
 </h1>
 
 ### :camera:  Screenshots
@@ -31,7 +31,7 @@
 - [x] Refactor code
 - [x] Register annotation using device microphone
 - [x] Annotation sharing. (PDF and Image)
-- [ ] Update version Flutter
+- [x] Update version Flutter
 - [ ] New features in note creation. (Bold, Italics, etc)
 - [ ] Encryption backup service
 - [ ] Application internationalization
