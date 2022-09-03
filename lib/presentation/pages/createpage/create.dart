@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/domain/interfaces/iscreen.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 
 import '../../../data/model/anotacao_model.dart';
 import '../../../domain/usecases/crud_usecases.dart';
@@ -32,7 +34,6 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
   final ChangeNotifierGlobal<String> _pathImageNotifier = ChangeNotifierGlobal("");
   final ChangeNotifierGlobal<Color> _colorNotifier = ChangeNotifierGlobal(Color(0xFF000000));
   final TextEditingController _title = TextEditingController();
-  final TextEditingController _desc = TextEditingController();
   final FocusNode _focusTitle = FocusNode();
   final FocusNode _focusDesc = FocusNode();
   
@@ -40,6 +41,8 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
   late CrudUseCases useCases;
   late AppBarCreateComponent _appBarCreateComponent;
   late ButtonSaveNoteComponent _buttonSaveNoteComponent;
+
+  QuillController _desc = QuillController.basic();
 
   @override
   void initState() {
@@ -54,7 +57,15 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
         _anotacaoModel = await useCases.getByIdUseCase(id: widget.id!);
 
         _title.text = _anotacaoModel!.titulo!;
-        _desc.text = _anotacaoModel!.observacao!;
+
+        try {
+          _desc = QuillController(
+            document: Document.fromJson(jsonDecode(_anotacaoModel!.observacao!)),
+            selection: TextSelection.collapsed(offset: 0)
+          );
+        } catch (e) {
+           _desc.document.insert(0, _anotacaoModel!.observacao!);
+        }
 
         if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
           _pathImageNotifier.value = _anotacaoModel!.imagemFundo!;
@@ -124,24 +135,29 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
     );
   }
 
-  TextFormField _descricao() {
-    return TextFormField(
+  QuillToolbar _options() {
+    return QuillToolbar.basic(
       controller: _desc,
-      decoration: InputDecoration(
-        hintText: "Comece a escrever",
-        hintStyle: TextStyle(
-          color:  _colorNotifier.value.withOpacity(0.5)
-        ),
-        border: InputBorder.none,
-      ),
-      style: TextStyle(
-        color: _colorNotifier.value,
-        fontSize: 18.0
-      ),
-      minLines: 10,
-      maxLines: null,
-      keyboardType: TextInputType.multiline,
-      focusNode: _focusDesc,
+      toolbarIconSize: 20.0,
+      locale: Locale('pt'),
+      multiRowsDisplay: false,
+      showCodeBlock: false,
+      showInlineCode: false,
+      showAlignmentButtons: true,
+    );
+  }
+
+  QuillEditor _descricao() {
+    return QuillEditor(
+      controller: _desc,
+      readOnly: false,
+      scrollController: ScrollController(),
+      scrollable: true,
+      focusNode: FocusNode(),
+      autoFocus: true,
+      expands: true,
+      padding: EdgeInsets.zero,
+      minHeight: 250.0,
     );
   }
 
@@ -151,18 +167,17 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
       builder: (BuildContext context, Color value, Widget? widget) {
         return Container(
           padding: EdgeInsets.all(25.0),
-          child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _titulo(),
-                  _descricao(),
-                ],
+          child: Column(
+            children: [
+              _options(),
+              _titulo(),
+              Form(
+                key: _formKey,
+                child: Expanded(
+                  child: _descricao(),
+                )
               ),
-            ),
+            ],
           ),
         );
       },
@@ -246,7 +261,7 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
   }
 
   String get descricao {
-    return _desc.text;
+    return jsonEncode(_desc.document.toDelta().toJson());
   }
 
   GlobalKey<FormState> get formKey {
@@ -281,7 +296,7 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
     return _title;
   }
 
-  TextEditingController get controllerDesc {
+  QuillController get controllerDesc {
     return _desc;
   }
 }

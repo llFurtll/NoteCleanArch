@@ -7,6 +7,8 @@ import './routes.dart';
 void main() {
   registerDependencies();
   
+  WidgetsFlutterBinding.ensureInitialized();
+  
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
