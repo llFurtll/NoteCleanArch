@@ -40,9 +40,7 @@ void main() {
           data: DateTime.now().toIso8601String(),
           imagemFundo: "Legal",
           observacao: "Eu amo flutter",
-          situacao: 0,
-          titulo: "Lindo",
-          cor: "#FFFFFF"
+          situacao: 0
         ) as AnotacaoModel);
 
         assert(update == 1);
@@ -54,9 +52,7 @@ void main() {
           data: DateTime.now().toIso8601String(),
           imagemFundo: "Legal",
           observacao: "Eu amo flutter",
-          situacao: 0,
-          titulo: "Lindo",
-          cor: "#FFFFFF"
+          situacao: 0
         ) as AnotacaoModel);
 
         assert(update == 1);
@@ -70,12 +66,10 @@ void main() {
       test("Testando o insert", () async {
         int? insert = await useCases.insertUseCase(
           anotacao: gerarAnotacao(
-            titulo: "Teste do insert",
             data: DateTime.now().toIso8601String(),
             situacao: 1,
             imagemFundo: "http",
             observacao: "Teste insert",
-            cor: "#FFFFFF"
           ) as AnotacaoModel
         );
 
@@ -88,7 +82,7 @@ void main() {
       });
 
       test("find com desc", () async {
-        List<AnotacaoModel?> listaAnotacao = await useCases.findWithDesc(desc: "teste");
+        List<AnotacaoModel?> listaAnotacao = await useCases.findWithDesc(desc: "gostei");
         expect(listaAnotacao.length, 2);
       });
 

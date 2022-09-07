@@ -13,12 +13,10 @@ Future<Database> inicializeDatabase() async {
       """
       CREATE TABLE IF NOT EXISTS NOTE(
         id INTEGER PRIMARY KEY,
-        titulo TEXT NOT NULL,
         data DATETIME NOT NULL,
         situacao INTEGER NOT NULL,
         imagem_fundo TEXT,
-        observacao TEXT,
-        cor TEXT
+        observacao TEXT
       )
       """
     );
@@ -41,17 +39,15 @@ Future<Database> inicializeDatabase() async {
 }
 
 Anotacao gerarAnotacao(
-  {int id = 0, String titulo = "", String data = "",
-  int situacao = 1, String imagemFundo = "", String observacao = "", String cor = ""}
+  {int id = 0, String data = "",
+  int situacao = 1, String imagemFundo = "", String observacao = ""}
   ) {
     AnotacaoModel anotacao =  new AnotacaoModel(
       id: id,
-      titulo: titulo,
       data: data,
       situacao: situacao,
       imagemFundo: imagemFundo,
-      observacao: observacao,
-      cor: cor
+      observacao: observacao
     );
 
     return anotacao;
@@ -60,12 +56,10 @@ Anotacao gerarAnotacao(
 Map<String, Object?> inserirAnotacao() {
   Map<String, Object?> insert = Map();
 
-  insert["titulo"] = "teste";
   insert["data"] = DateTime.now().toIso8601String();
   insert["situacao"] = 1;
   insert["imagem_fundo"] = "http";
   insert["observacao"] = "gostei";
-  insert["cor"] = "#FFFFFF";
 
   return insert;
 }

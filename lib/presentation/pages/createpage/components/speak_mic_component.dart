@@ -56,18 +56,14 @@ class SpeakMicComponent implements IComponent<CreateNoteState, ValueListenableBu
   void event() async {
     bool response = false;
 
-    if (_screen.focusTitle.hasFocus) {
-      response = await _showDialogListen();
-      _screen.controllerTitle.text += _textSpeak;
-      _screen.focusTitle.requestFocus();
-    } else if (_screen.focusDesc.hasFocus) {
+    if (_screen.focusDesc.hasFocus) {
       response = await _showDialogListen();
       _screen.controllerDesc.document.insert(0, _screen.controllerDesc.getPlainText() + _textSpeak); 
       _screen.focusDesc.requestFocus();
     } else {
       MessageDefaultSystem.showMessage(
         _screen.context,
-        "Selecione algum campo para utilizar o microfone!"
+        "Selecione o campo de digitação e tente novamente!"
       );
     }
 

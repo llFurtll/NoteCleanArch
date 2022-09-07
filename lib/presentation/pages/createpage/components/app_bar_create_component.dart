@@ -4,7 +4,6 @@ import 'package:compmanager/domain/interfaces/icomponent.dart';
 
 import '../create.dart';
 import 'change_image_background_component.dart';
-import 'alter_color_component.dart';
 import 'speak_mic_component.dart';
 import '../../../../core/change_notifier_global.dart';
 import 'share_component.dart';
@@ -18,7 +17,6 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
   final ChangeNotifierGlobal<bool> _showShare = ChangeNotifierGlobal(false);
 
   late final ChangeImageBackgroundComponent _changeImageBackgroundComponent;
-  late final AlterColorComponent _alterColorComponent;
   late final SpeakMicComponent _speakMicComponent;
   late final ShareComponent _shareComponent;
 
@@ -40,17 +38,12 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
   PreferredSize constructor() {
     return PreferredSize(
       preferredSize: Size.fromHeight(60.0),
-      child: ValueListenableBuilder(
-        valueListenable: _screen.colorNotifier,
-        builder: (BuildContext context, Color value, Widget? widget) {
-          return AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            actions: _actions(),
-            leading: _iconLeading(),
-          );
-        },
-      ),
+      child: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: _actions(),
+        leading: _iconLeading(),
+      )
     );
   }
 
@@ -63,7 +56,6 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
   void init() {
     _screen.addComponent(this);
     _changeImageBackgroundComponent = ChangeImageBackgroundComponent(_screen);
-    _alterColorComponent = AlterColorComponent(_screen);
     _speakMicComponent = SpeakMicComponent(_screen);
     _shareComponent = ShareComponent(_screen);
   }
@@ -113,7 +105,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
     return IconButton(
       onPressed: () => close ? _showContainer.value = false : _showContainer.value = true,
       icon: Icon(close ? Icons.arrow_forward_outlined : Icons.arrow_back_outlined),
-      color: _screen.color,
+      color: Colors.black,
       padding: EdgeInsets.zero,
       splashRadius: 25.0,
     );
@@ -131,7 +123,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
               icon: Icon(
                 Icons.ios_share_outlined,
               ),
-              color: _screen.color,
+              color: Colors.black,
               disabledColor: Colors.grey,
               padding: EdgeInsets.zero,
               splashRadius: 25.0,
@@ -144,15 +136,8 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
         icon: Icon(
           Icons.mic,
         ),
-        color: _screen.color,
+        color: Colors.black,
         disabledColor: Colors.grey,
-        padding: EdgeInsets.zero,
-        splashRadius: 25.0,
-      ),
-      IconButton(
-        icon: Icon(Icons.color_lens),
-        color: _screen.color,
-        onPressed: () => _screen.emitScreen(_alterColorComponent),
         padding: EdgeInsets.zero,
         splashRadius: 25.0,
       ),
@@ -162,7 +147,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
           return Visibility(
             visible: _removeBackgroundNotifier.value,
             child: IconButton(
-              color: _screen.color,
+              color: Colors.black,
               onPressed: () {
                 _screen.pathImage = "";
                 _removeBackgroundNotifier.value = false;
@@ -180,7 +165,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
         onPressed: () => _screen.emitScreen(_changeImageBackgroundComponent),
         icon: Icon(
           Icons.photo,
-          color: _screen.color,
+          color: Colors.black,
         ),
         padding: EdgeInsets.zero,
         splashRadius: 25.0,
@@ -192,7 +177,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
     return IconButton(
       icon: Icon(
         Icons.arrow_back_ios,
-        color: _screen.color
+        color: Colors.black
       ),
       onPressed: () {
         Navigator.pop(_screen.context);
@@ -202,7 +187,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
 
   double _returnSizeContainer() {
     double baseSize = 48.0;
-    int qtdIcones = 4;
+    int qtdIcones = 3;
 
     if (!_showContainer.value) {
       return baseSize;

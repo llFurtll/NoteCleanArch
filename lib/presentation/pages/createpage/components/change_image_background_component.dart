@@ -263,7 +263,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
       context: _screen.context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Deletar imagem?", style: TextStyle(color: _screen.color)),
+          title: Text("Deletar imagem?", style: TextStyle(color: Colors.black)),
           actions: [
             TextButton(
               onPressed: () {
@@ -272,7 +272,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
               child: Text(
                 "Não",
                 style: TextStyle(
-                  color: _screen.color,
+                  color: Colors.black,
                   fontWeight: FontWeight.bold
                 ),
               )
@@ -301,7 +301,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
               child: Text(
                 "Sim",
                 style: TextStyle(
-                  color: _screen.color,
+                  color: Colors.black,
                   fontWeight: FontWeight.bold
                 ),
               )

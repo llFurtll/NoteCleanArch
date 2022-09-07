@@ -28,9 +28,7 @@ class AnotacaoModel implements Anotacao {
     this.data,
     this.imagemFundo,
     this.observacao,
-    this.situacao,
-    this.titulo,
-    this.cor
+    this.situacao
   });
 
   @override
@@ -40,9 +38,7 @@ class AnotacaoModel implements Anotacao {
       data: json["data"],
       imagemFundo: json["imagem_fundo"],
       observacao: json["observacao"],
-      situacao: json["situacao"],
-      titulo: json["titulo"],
-      cor: json["cor"]
+      situacao: json["situacao"]
     );
   }
 }

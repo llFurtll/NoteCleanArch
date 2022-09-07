@@ -10,7 +10,7 @@ import '../create.dart';
 import '../../../../domain/usecases/crud_usecases.dart';
 import '../components/app_bar_create_component.dart';
 
-class ButtonSaveNoteComponent implements IComponent<CreateNoteState, FloatingActionButton, void> {
+class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListenableBuilder, void> {
 
   final CompManagerInjector _injector = CompManagerInjector();
   final CreateNoteState _screen;
@@ -34,28 +34,37 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, FloatingAct
   }
 
   @override
-  FloatingActionButton constructor() {
-    return FloatingActionButton(
-      backgroundColor: Theme.of(_screen.context).floatingActionButtonTheme.backgroundColor,
-      onPressed: () => _screen.emitScreen(this),
-      child: const Icon(Icons.save),
+  ValueListenableBuilder constructor() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: _screen.keyboardVisible,
+      builder: (BuildContext context, bool value, Widget? widget) {
+        return Visibility(
+          visible: !_screen.keyboardVisible.value,
+          child: FloatingActionButton(
+            backgroundColor: Theme.of(_screen.context).floatingActionButtonTheme.backgroundColor,
+            onPressed: () => _screen.emitScreen(this),
+            child: const Icon(Icons.save),
+          )
+        );
+      }
     );
   }
 
   @override
   void event() {
-    if (_screen.formKey.currentState!.validate()) {
+    print(_screen.controllerDesc.document.toPlainText());
+    if (_screen.controllerDesc.document.toPlainText().isNotEmpty) {
       if (_screen.id == null) {
         _insertNote();
       } else {
-        _screen.anotacao!.titulo = _screen.titulo;
         _screen.anotacao!.observacao = _screen.descricao;
         _screen.anotacao!.imagemFundo = _screen.pathImage;
-        _screen.anotacao!.cor = _screen.color.value.toString();
         _updateNote(_screen.anotacao!);
       }
 
       _conversable.callScreen("home")!.receive("refresh", "");
+    } else {
+      MessageDefaultSystem.showMessage(_screen.context, "Preencha a descrição!");
     }
   }
 
@@ -71,12 +80,10 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, FloatingAct
 
   void _insertNote() async {
     AnotacaoModel anotacaoModel = AnotacaoModel(
-      titulo: _screen.titulo,
       observacao: _screen.descricao,
       data: DateTime.now().toIso8601String(),
       imagemFundo: _screen.pathImage,
       situacao: 1,
-      cor: _screen.color.value.toString()
     );
 
     int? insert = await _useCases.insertUseCase(anotacao: anotacaoModel);

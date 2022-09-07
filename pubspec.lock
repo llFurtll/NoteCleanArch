@@ -296,7 +296,7 @@ packages:
     source: sdk
     version: "0.0.0"
   flutter_colorpicker:
-    dependency: "direct dev"
+    dependency: transitive
     description:
       name: flutter_colorpicker
       url: "https://pub.dartlang.org"

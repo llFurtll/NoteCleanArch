@@ -266,23 +266,12 @@ class CardComponent extends IComponent<HomeState, ValueListenableBuilder, void> 
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 5.0),
-          child: Text(
-            _anotacao.titulo!,
-            style: TextStyle(
-              color: _anotacao.cor!.isNotEmpty ? Color(int.parse("${_anotacao.cor}")) : Colors.black,
-              fontSize: 18.0,
-              fontWeight: FontWeight.bold
-            ),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(bottom: 5.0),
           child:  Text(
             _anotacao.observacao!,
             overflow: TextOverflow.ellipsis,
             maxLines: 3,
             style: TextStyle(
-              color: _anotacao.cor!.isNotEmpty ? Color(int.parse("${_anotacao.cor}")) : Colors.black,
+              color: Colors.black,
               fontSize: 15.0,
               fontWeight: FontWeight.normal
             ),
@@ -291,7 +280,7 @@ class CardComponent extends IComponent<HomeState, ValueListenableBuilder, void> 
         Text(
           _formatDate(_anotacao.data!),
           style: TextStyle(
-            color: _anotacao.cor!.isNotEmpty ? Color(int.parse("${_anotacao.cor}")) : Colors.black,
+            color: Colors.black,
             fontSize: 14.0,
             fontWeight: FontWeight.normal
           ),

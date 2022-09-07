@@ -24,16 +24,14 @@ class CreateNote extends StatefulWidget {
   CreateNoteState createState() => CreateNoteState();
 }
 
-class CreateNoteState extends State<CreateNote> implements IScreen {
+class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver implements IScreen {
 
   @override
   List<IComponent> listComponents = [];
 
   final CompManagerInjector injector = CompManagerInjector();
-  final GlobalKey<FormState> _formKey = GlobalKey();
   final ChangeNotifierGlobal<String> _pathImageNotifier = ChangeNotifierGlobal("");
-  final ChangeNotifierGlobal<Color> _colorNotifier = ChangeNotifierGlobal(Color(0xFF000000));
-  final TextEditingController _title = TextEditingController();
+  final ChangeNotifierGlobal<bool> _keyboardVisible = ChangeNotifierGlobal(false);
   final FocusNode _focusTitle = FocusNode();
   final FocusNode _focusDesc = FocusNode();
   
@@ -56,8 +54,6 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
       if (widget.id != null) {
         _anotacaoModel = await useCases.getByIdUseCase(id: widget.id!);
 
-        _title.text = _anotacaoModel!.titulo!;
-
         try {
           _desc = QuillController(
             document: Document.fromJson(jsonDecode(_anotacaoModel!.observacao!)),
@@ -72,78 +68,59 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
           _appBarCreateComponent.removeBackground = true;
         }
 
-        if (_anotacaoModel!.cor != null && _anotacaoModel!.cor!.isNotEmpty) {
-          _colorNotifier.value = Color(int.parse("${_anotacaoModel!.cor}"));
-        }
-
         _appBarCreateComponent.showShare = true;
       }
     });
+
+    WidgetsBinding.instance?.addObserver(this);
   }
 
   @override
   void dispose() {
     _appBarCreateComponent.dispose();
+    WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
   }
 
   @override
+  void didChangeMetrics() async {
+    _keyboardVisible.value = await _verifyKeyboard;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        _colorNotifier.value = Color(0xFF000000);
-        return true;
-      },
-      child: Scaffold(
-        extendBodyBehindAppBar: true,
-        backgroundColor: Colors.white,
-        appBar: _appBarCreateComponent.constructor(),
-        body: _body(),
-        floatingActionButton: _buttonSaveNoteComponent.constructor(),
-      ),
+    return  Scaffold(
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.white,
+      appBar: _appBarCreateComponent.constructor(),
+      body: _body(),
+      floatingActionButton: _buttonSaveNoteComponent.constructor(),
     );
   }
 
-  TextFormField _titulo() {
-    return TextFormField(
-      controller: _title,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return "Por favor preencha o título!";
-        }
-
-        return null;
-      },
-      decoration: InputDecoration(
-        hintText: "Título",
-        errorStyle: TextStyle(color: _colorNotifier.value.withOpacity(0.5)),
-        hintStyle: TextStyle(
-          color: _colorNotifier.value.withOpacity(0.5),
-          fontWeight: FontWeight.normal,
-        ),
-        border: InputBorder.none,
-      ),
-      style: TextStyle(
-        color: _colorNotifier.value,
-        fontWeight: FontWeight.bold,
-        fontSize: 25.0
-      ),
-      minLines: 1,
-      maxLines: null,
-      keyboardType: TextInputType.multiline,
-      focusNode: _focusTitle,
-    );
-  }
-
-  QuillToolbar _options() {
-    return QuillToolbar.basic(
-      controller: _desc,
-      toolbarIconSize: 20.0,
-      locale: Locale('pt'),
-      multiRowsDisplay: false,
-      showCodeBlock: false,
-      showInlineCode: false,
-      showAlignmentButtons: true,
+  ValueListenableBuilder _options() {
+    return ValueListenableBuilder<bool>(
+      valueListenable: _keyboardVisible,
+      builder: (BuildContext context, bool value, Widget? widget) {
+        return Visibility(
+          visible: _keyboardVisible.value,
+          child: Positioned(
+            child: QuillToolbar.basic(
+              controller: _desc,
+              toolbarIconSize: 20.0,
+              locale: Locale('pt'),
+              multiRowsDisplay: false,
+              showCodeBlock: false,
+              showInlineCode: false,
+              showFontSize: false,
+              showAlignmentButtons: true,            
+            ),
+            left: 0,
+            right: 0,
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+        );
+      }
     );
   }
 
@@ -153,34 +130,24 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
       readOnly: false,
       scrollController: ScrollController(),
       scrollable: true,
-      focusNode: FocusNode(),
-      autoFocus: true,
+      focusNode: _focusDesc,
+      autoFocus: false,
       expands: true,
       padding: EdgeInsets.zero,
-      minHeight: 250.0,
+      minHeight: 250.0
     );
   }
 
   Widget _home() {
-    return ValueListenableBuilder(
-      valueListenable: _colorNotifier,
-      builder: (BuildContext context, Color value, Widget? widget) {
-        return Container(
-          padding: EdgeInsets.all(25.0),
-          child: Column(
-            children: [
-              _options(),
-              _titulo(),
-              Form(
-                key: _formKey,
-                child: Expanded(
-                  child: _descricao(),
-                )
-              ),
-            ],
-          ),
-        );
-      },
+    return Container(
+      padding: EdgeInsets.all(20.0),
+        child:  Column(
+        children: [
+          Expanded(
+            child: _descricao(),
+          )
+        ],
+      ),
     );
   }
 
@@ -212,6 +179,7 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
             child: _home(),
           ),
         ),
+        _options()
       ],
     );
   }
@@ -236,6 +204,16 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
     return;
   }
 
+  Future<bool> get _verifyKeyboard async {
+    final check = () => (WidgetsBinding.instance?.window.viewInsets.bottom ?? 0) > 0;
+    if (!check()) return false;
+    return await Future.delayed(Duration(milliseconds: 100), () => check());
+  }
+
+  ChangeNotifierGlobal<bool> get keyboardVisible {
+    return _keyboardVisible;
+  }
+
   String get pathImage {
     return _pathImageNotifier.value;
   }
@@ -243,29 +221,9 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
   set pathImage(String path) {
     _pathImageNotifier.value = path;
   }
-  
-  Color get color {
-    return _colorNotifier.value;
-  }
-
-  set color(Color color) {
-    _colorNotifier.value = color;
-  }
-
-  ChangeNotifierGlobal<Color> get colorNotifier {
-    return _colorNotifier;
-  }
-
-  String get titulo {
-    return _title.text;
-  }
 
   String get descricao {
     return jsonEncode(_desc.document.toDelta().toJson());
-  }
-
-  GlobalKey<FormState> get formKey {
-    return _formKey;
   }
 
   AnotacaoModel? get anotacao {
@@ -290,10 +248,6 @@ class CreateNoteState extends State<CreateNote> implements IScreen {
 
   FocusNode get focusDesc {
     return _focusDesc;
-  }
-
-  TextEditingController get controllerTitle {
-    return _title;
   }
 
   QuillController get controllerDesc {

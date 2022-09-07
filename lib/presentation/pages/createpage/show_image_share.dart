@@ -98,7 +98,7 @@ class ShowImageShare extends StatelessWidget {
                     child: Text(
                     arguments.anotacaoModel.titulo!,
                     style: TextStyle(
-                      color: screen.color,
+                      color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 25.0
                     ),
@@ -107,7 +107,7 @@ class ShowImageShare extends StatelessWidget {
                 Text(
                   arguments.anotacaoModel.observacao!,
                   style: TextStyle(
-                    color: screen.color,
+                    color: Colors.black,
                     fontSize: 18.0
                   ),
                 )

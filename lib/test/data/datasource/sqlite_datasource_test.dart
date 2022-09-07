@@ -27,12 +27,10 @@ void main() {
       test('Testando o insert', () async {
         int? insert = await datasourceTest.insert(
           anotacao: gerarAnotacao(
-            titulo: "Teste do insert",
             data: DateTime.now().toIso8601String(),
             situacao: 1,
             imagemFundo: "http",
             observacao: "Teste insert",
-            cor: "#FFFFFF"
           ) as AnotacaoModel
         );
 
@@ -42,13 +40,11 @@ void main() {
       test("Testando o update", () async {
         int? update = await datasourceTest.update(
           anotacao: gerarAnotacao(
-            id: 2,
-            titulo: "Daniel",
+            id: 2
             data: DateTime.now().toIso8601String(),
             situacao: 0,
             imagemFundo: "https",
-            observacao: "Daniel!",
-            cor: "#FFFFFF"
+            observacao: "Daniel!"
           ) as AnotacaoModel
         );
 
@@ -58,13 +54,11 @@ void main() {
       test("Testando o updateSituacao", () async {
         int? update = await datasourceTest.updateSituacao(
           anotacao: gerarAnotacao(
-            id: 2,
-            titulo: "Daniel",
+            id: 2
             data: DateTime.now().toIso8601String(),
             situacao: 0,
             imagemFundo: "https",
-            observacao: "Daniel!",
-            cor: "#FFFFFF"
+            observacao: "Daniel!"
           ) as AnotacaoModel
         );
 
@@ -82,7 +76,7 @@ void main() {
       });
 
       test("Testando o find com desc", () async {
-        List<AnotacaoModel?> lista = await datasourceTest.findWithDesc(desc: "teste");
+        List<AnotacaoModel?> lista = await datasourceTest.findWithDesc(desc: "gostei");
         expect(lista.length, 2);
       }); 
 
