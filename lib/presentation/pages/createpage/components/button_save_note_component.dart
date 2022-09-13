@@ -52,8 +52,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
 
   @override
   void event() {
-    print(_screen.controllerDesc.document.toPlainText());
-    if (_screen.controllerDesc.document.toPlainText().isNotEmpty) {
+    if (_screen.controllerDesc.document.toPlainText().trim().isNotEmpty) {
       if (_screen.id == null) {
         _insertNote();
       } else {

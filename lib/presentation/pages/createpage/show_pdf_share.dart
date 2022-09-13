@@ -1,22 +1,20 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
-
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 
 import './arguments/arguments_share.dart';
 import 'create.dart';
 import '../../components/show_message.dart';
 
+import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
+
 // ignore: must_be_immutable
 class ShowPdfShare extends StatelessWidget {
-  Future<Uint8List>? pdf;
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +25,8 @@ class ShowPdfShare extends StatelessWidget {
       appBar: _buildAppBar(arguments, context),
       body: PdfPreview(
         useActions: false,
-        pdfFileName: "anotacao-${screen.id}",
         build: (context) async {
-          pdf = makePdf(arguments);
-          return pdf!;
+          return makePdf(screen);
         },
       ),
     );
@@ -56,9 +52,7 @@ class ShowPdfShare extends StatelessWidget {
         onPressed: () async {
           _showLoading(context);
 
-          final tempPdf = await pdf;
-
-          final response = await _shareFile(tempPdf!, arguments.screen as CreateNoteState);
+          final response = await _shareFile(arguments.screen as CreateNoteState);
 
           Navigator.of(context).pop();
 
@@ -73,7 +67,7 @@ class ShowPdfShare extends StatelessWidget {
     ];
   }
 
-  Future<String> _shareFile(Uint8List list, CreateNoteState screen) async {
+  Future<String> _shareFile(CreateNoteState screen) async {
     try {
       final path = (await getApplicationDocumentsDirectory()).path;
       final dirShare = Directory("$path/share/pdf");
@@ -83,8 +77,6 @@ class ShowPdfShare extends StatelessWidget {
       }
 
       File pdfFile = File("${dirShare.path}/anotacao-${screen.id}.pdf");
-
-      await pdfFile.writeAsBytes(list);
 
       return pdfFile.path;
     } catch (e) {
@@ -110,72 +102,81 @@ class ShowPdfShare extends StatelessWidget {
     );
   }
 
-  Future<Uint8List> makePdf(ArgumentsShare arguments) async {
-    final pdf = pw.Document();
-    final paragraps = arguments.anotacaoModel.observacao!.split("\n");
-    final backgroundImage = arguments.anotacaoModel.imagemFundo!;
-    final showImage = arguments.showImage;
-    dynamic image;
+  Future<Uint8List> makePdf(CreateNoteState screen) async {
+    final path = (await getApplicationDocumentsDirectory()).path;
+    final dirShare = Directory("$path/share/pdf");
 
-    if (showImage) {
-      try {
-        if (backgroundImage.contains("lib")) {
-          ByteData bytes = await rootBundle.load(backgroundImage);
-          image = pw.MemoryImage(bytes.buffer.asUint8List());
-        } else {
-          image = pw.MemoryImage(
-            File(backgroundImage).readAsBytesSync()
-          );
-        }
-      } catch (e) {
-        image = null;
-      }
+    if (!dirShare.existsSync()) {
+      dirShare.createSync(recursive: true);
     }
 
-    pdf.addPage(
-      pw.MultiPage(
-        pageTheme: pw.PageTheme(
-          margin: pw.EdgeInsets.zero,
-          buildBackground: (context) {
-            return image == null || !showImage ? pw.Container() : pw.Opacity(
-              opacity: 0.5,
-              child: pw.Container(
-                child: pw.Image(image, fit: pw.BoxFit.cover)
-              ),
-            );
-          },
-          pageFormat: PdfPageFormat.a4,
-        ),
-        build: (context) {
-          return [
-            pw.Container(
-              margin: pw.EdgeInsets.all(56),
-              child: pw.Column(
-                crossAxisAlignment: pw.CrossAxisAlignment.stretch,
-                mainAxisSize: pw.MainAxisSize.max,
-                children: [
-                  pw.Header(
-                    level: 1,
-                    text: arguments.anotacaoModel.titulo,
-                    textStyle: pw.TextStyle(
-                      fontSize: 25.0,
-                      fontWeight: pw.FontWeight.bold,
-                    )
-                  ),
-                  ...paragraps.map((e) => pw.Paragraph(
-                    style: pw.TextStyle(
-                      fontSize: 18.0
-                    ),
-                    text: e
-                  ))
-                ]
-              )
-            ),
-          ];
-        }
-      )
+    File pdfFile = File("${dirShare.path}/anotacao-${screen.id}.pdf");
+
+    File pdf = await FlutterHtmlToPdf.convertFromHtmlContent(
+      "",
+      pdfFile.path,
+      "anotacao-${screen.id}"
     );
 
-    return pdf.save();
+    return pdf.readAsBytes();
+
+    // final pdf = pw.Document();
+    // final paragraps = arguments.anotacaoModel.observacao!.split("\n");
+    // final backgroundImage = arguments.anotacaoModel.imagemFundo!;
+    // final showImage = arguments.showImage;
+    // dynamic image;
+
+    // if (showImage) {
+    //   try {
+    //     if (backgroundImage.contains("lib")) {
+    //       ByteData bytes = await rootBundle.load(backgroundImage);
+    //       image = pw.MemoryImage(bytes.buffer.asUint8List());
+    //     } else {
+    //       image = pw.MemoryImage(
+    //         File(backgroundImage).readAsBytesSync()
+    //       );
+    //     }
+    //   } catch (e) {
+    //     image = null;
+    //   }
+    // }
+
+    // pdf.addPage(
+    //   pw.MultiPage(
+    //     pageTheme: pw.PageTheme(
+    //       margin: pw.EdgeInsets.zero,
+    //       buildBackground: (context) {
+    //         return image == null || !showImage ? pw.Container() : pw.Opacity(
+    //           opacity: 0.5,
+    //           child: pw.Container(
+    //             child: pw.Image(image, fit: pw.BoxFit.cover)
+    //           ),
+    //         );
+    //       },
+    //       pageFormat: PdfPageFormat.a4,
+    //     ),
+    //     build: (context) {
+    //       return [
+    //         pw.Container(
+    //           margin: pw.EdgeInsets.all(56),
+    //           child: pw.Column(
+    //             crossAxisAlignment: pw.CrossAxisAlignment.stretch,
+    //             mainAxisSize: pw.MainAxisSize.max,
+    //             children: [
+    //               ...paragraps.map((e) => pw.Paragraph(
+    //                 style: pw.TextStyle(
+    //                   fontSize: 18.0
+    //                 ),
+    //                 text: e
+    //               ))
+    //             ]
+    //           )
+    //         ),
+    //       ];
+    //     }
+    //   )
+    // );
+
+    // return pdf.save();
   }
 }

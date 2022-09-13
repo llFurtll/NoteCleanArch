@@ -8,16 +8,16 @@ Future<void> initDatabase() async {
     version: 2,
     onCreate: (Database db, int version) async {
         await db.execute(
-        """
-          CREATE TABLE IF NOT EXISTS NOTE(
-            id INTEGER PRIMARY KEY,
-            data DATETIME NOT NULL,
-            situacao INTEGER NOT NULL,
-            imagem_fundo TEXT,
-            observacao TEXT
-          )
-        """
-      );
+          """
+            CREATE TABLE IF NOT EXISTS NOTE(
+              id INTEGER PRIMARY KEY,
+              data DATETIME NOT NULL,
+              situacao INTEGER NOT NULL,
+              imagem_fundo TEXT,
+              observacao TEXT
+            )
+          """
+        );
 
       await db.execute(
         """
@@ -40,17 +40,29 @@ Future<void> initDatabase() async {
       List<Map> columns = await db.rawQuery("PRAGMA TABLE_INFO('NOTE')");
       for (Map item in columns) {
         if (item["name"] == "titulo") {
-          await db.execute("ALTER TABLE NOTE DROP COLUMN TITULO");
-        }
+          await db.execute(
+            """
+              CREATE TABLE IF NOT EXISTS NEW_NOTE(
+                id INTEGER PRIMARY KEY,
+                data DATETIME NOT NULL,
+                situacao INTEGER NOT NULL,
+                imagem_fundo TEXT,
+                observacao TEXT
+              )
+            """
+          );
 
-        if (item["name"] == "cor") {
-          await db.execute("ALTER TABLE NOTE DROP COLUMN COR");
+          await db.rawInsert("""
+              INSERT INTO NEW_NOTE (ID, DATA, SITUACAO, IMAGEM_FUNDO, OBSERVACAO)
+              SELECT ID, DATA, SITUACAO, IMAGEM_FUNDO, OBSERVACAO FROM NOTE
+            """
+          );
+
+          await db.execute("DROP TABLE IF EXISTS NOTE");
+          await db.execute("ALTER TABLE NEW_NOTE RENAME TO NOTE");
           break;
         }
       }
-
-      columns = await db.rawQuery("PRAGMA TABLE_INFO('NOTE')");
-      print(columns);
     }
   );
 }

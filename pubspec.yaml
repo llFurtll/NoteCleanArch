@@ -45,6 +45,7 @@ dependencies:
   pdf: 3.8.1
   printing: 5.9.1
   flutter_quill: 4.2.3
+  flutter_html_to_pdf: 0.7.0
 
 dev_dependencies:
   flutter_test:

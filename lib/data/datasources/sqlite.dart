@@ -62,7 +62,7 @@ class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
 
     insert = await _db.rawInsert(
       """INSERT INTO NOTE(data, situacao, imagem_fundo, observacao)
-          VALUES(?, ?, ?, ?, ?, ?)
+          VALUES(?, ?, ?, ?)
       """,
       [anotacao.data, anotacao.situacao, anotacao.imagemFundo, anotacao.observacao]
     );
@@ -95,7 +95,7 @@ class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
 
     update = await _db.rawUpdate(
       """
-      UPDATE NOTE SET DATA = ?, SITUACAO = ?, IMAGEM_FUNDO = ?, OBSERVACAO = ?, WHERE ID = ?
+      UPDATE NOTE SET DATA = ?, SITUACAO = ?, IMAGEM_FUNDO = ?, OBSERVACAO = ? WHERE ID = ?
       """,
       [
         anotacao.data, anotacao.situacao,
@@ -151,7 +151,7 @@ class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
     List<AnotacaoModel> listAnotacao = [];
     
     List<Map> listNote = await _db.rawQuery(
-      "SELECT * FROM NOTE WHERE SITUACAO = 1 AND TITULO LIKE '%$desc%' ORDER BY DATA DESC"
+      "SELECT * FROM NOTE WHERE SITUACAO = 1 AND OBSERVACAO LIKE '%$desc%' ORDER BY DATA DESC"
     );
 
     listNote.forEach((elemento) {

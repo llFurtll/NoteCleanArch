@@ -63,6 +63,8 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
            _desc.document.insert(0, _anotacaoModel!.observacao!);
         }
 
+        setState(() {});
+
         if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
           _pathImageNotifier.value = _anotacaoModel!.imagemFundo!;
           _appBarCreateComponent.removeBackground = true;
@@ -127,6 +129,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   QuillEditor _descricao() {
     return QuillEditor(
       controller: _desc,
+      locale: Locale('pt'),
       readOnly: false,
       scrollController: ScrollController(),
       scrollable: true,
@@ -134,7 +137,8 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
       autoFocus: false,
       expands: true,
       padding: EdgeInsets.zero,
-      minHeight: 250.0
+      minHeight: 250.0,
+      placeholder: "Comece a escrever aqui...",
     );
   }
 
