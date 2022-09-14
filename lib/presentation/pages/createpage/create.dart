@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -6,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/domain/interfaces/iscreen.dart';
-import 'package:flutter_quill/flutter_quill.dart';
+import 'package:html_editor_enhanced/html_editor.dart';
 
 import '../../../data/model/anotacao_model.dart';
 import '../../../domain/usecases/crud_usecases.dart';
@@ -34,13 +33,12 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   final ChangeNotifierGlobal<bool> _keyboardVisible = ChangeNotifierGlobal(false);
   final FocusNode _focusTitle = FocusNode();
   final FocusNode _focusDesc = FocusNode();
+  final HtmlEditorController _controllerEditor = HtmlEditorController();
   
   late AnotacaoModel? _anotacaoModel;
   late CrudUseCases useCases;
   late AppBarCreateComponent _appBarCreateComponent;
   late ButtonSaveNoteComponent _buttonSaveNoteComponent;
-
-  QuillController _desc = QuillController.basic();
 
   @override
   void initState() {
@@ -53,17 +51,6 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (widget.id != null) {
         _anotacaoModel = await useCases.getByIdUseCase(id: widget.id!);
-
-        try {
-          _desc = QuillController(
-            document: Document.fromJson(jsonDecode(_anotacaoModel!.observacao!)),
-            selection: TextSelection.collapsed(offset: 0)
-          );
-        } catch (e) {
-           _desc.document.insert(0, _anotacaoModel!.observacao!);
-        }
-
-        setState(() {});
 
         if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
           _pathImageNotifier.value = _anotacaoModel!.imagemFundo!;
@@ -107,15 +94,16 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
         return Visibility(
           visible: _keyboardVisible.value,
           child: Positioned(
-            child: QuillToolbar.basic(
-              controller: _desc,
-              toolbarIconSize: 20.0,
-              locale: Locale('pt'),
-              multiRowsDisplay: false,
-              showCodeBlock: false,
-              showInlineCode: false,
-              showFontSize: false,
-              showAlignmentButtons: true,            
+            child: ToolbarWidget(
+              controller: _controllerEditor,
+              htmlToolbarOptions: HtmlToolbarOptions(
+                defaultToolbarButtons: [
+                  ListButtons(),
+                  InsertButtons()
+                ],
+                toolbarPosition: ToolbarPosition.belowEditor,
+              ),
+              callbacks: null
             ),
             left: 0,
             right: 0,
@@ -126,32 +114,54 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
     );
   }
 
-  QuillEditor _descricao() {
-    return QuillEditor(
-      controller: _desc,
-      locale: Locale('pt'),
-      readOnly: false,
-      scrollController: ScrollController(),
-      scrollable: true,
-      focusNode: _focusDesc,
-      autoFocus: false,
-      expands: true,
-      padding: EdgeInsets.zero,
-      minHeight: 250.0,
-      placeholder: "Comece a escrever aqui...",
+  Widget _descricao() {
+    return HtmlEditor(
+      callbacks: Callbacks(onInit: () {
+        _controllerEditor.setFullScreen();
+        _controllerEditor.editorController!
+          .evaluateJavascript(
+            source: "document.getElementsByClassName('note-editable')[0].style.backgroundColor='transparent';"
+          );
+      }),
+      otherOptions: OtherOptions(
+        decoration: BoxDecoration(
+          color: Colors.transparent
+        )
+      ),
+      controller: _controllerEditor,
+      htmlEditorOptions: HtmlEditorOptions(
+        hint: "Comece a digitar aqui...",
+      ),
+      htmlToolbarOptions: HtmlToolbarOptions(
+        defaultToolbarButtons: [
+          OtherButtons(
+            redo: true,
+            undo: true,
+            help: false,
+            codeview: false,
+            fullscreen: false,
+          ),
+          FontSettingButtons(
+            fontSizeUnit: false
+          ),
+          FontButtons(
+            subscript: false,
+            superscript: false
+          ),
+          ParagraphButtons(
+            caseConverter: false,
+            textDirection: false
+          ),
+          ColorButtons()
+        ],
+      ),
     );
   }
 
   Widget _home() {
     return Container(
       padding: EdgeInsets.all(20.0),
-        child:  Column(
-        children: [
-          Expanded(
-            child: _descricao(),
-          )
-        ],
-      ),
+        child:  _descricao(),
     );
   }
 
@@ -226,10 +236,6 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
     _pathImageNotifier.value = path;
   }
 
-  String get descricao {
-    return jsonEncode(_desc.document.toDelta().toJson());
-  }
-
   AnotacaoModel? get anotacao {
     return _anotacaoModel!;
   }
@@ -252,9 +258,5 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
 
   FocusNode get focusDesc {
     return _focusDesc;
-  }
-
-  QuillController get controllerDesc {
-    return _desc;
   }
 }

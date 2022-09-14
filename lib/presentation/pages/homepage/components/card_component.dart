@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -8,7 +7,6 @@ import 'package:animations/animations.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/core/conversable.dart';
-import 'package:flutter_quill/flutter_quill.dart' as quill;
 
 import '../../../components/show_message.dart';
 import '../home.dart';
@@ -25,7 +23,6 @@ class CardComponent extends IComponent<HomeState, ValueListenableBuilder, void> 
   final HomeState _screen;
   final AnotacaoModel _anotacao;
   final ChangeNotifierGlobal<double> _offset = ChangeNotifierGlobal(0.0);
-  late final quill.QuillController _controller;
   
   late final CrudUseCases _useCases;
   late final HeaderComponent _headerComponent;
@@ -70,15 +67,6 @@ class CardComponent extends IComponent<HomeState, ValueListenableBuilder, void> 
 
   @override
   ValueListenableBuilder<double> constructor() {
-    try {
-      _controller = quill.QuillController(
-        document: quill.Document.fromJson(jsonDecode(_anotacao.observacao!)),
-        selection: TextSelection.collapsed(offset: 0)
-      );
-    } catch (e) {
-        _controller.document.insert(0, _anotacao.observacao!);
-    }
-
     return ValueListenableBuilder(
       valueListenable: _offset,
       builder: (BuildContext context, double value, Widget? widget) {
@@ -298,21 +286,7 @@ class CardComponent extends IComponent<HomeState, ValueListenableBuilder, void> 
       children: [
         Padding(
           padding: const EdgeInsets.only(bottom: 10.0),
-          child: quill.QuillEditor(
-            controller: _controller,
-            locale: Locale('pt'),
-            readOnly: true,
-            scrollController: ScrollController(),
-            scrollable: true,
-            focusNode: FocusNode(),
-            autoFocus: false,
-            expands: false,
-            showCursor: false,
-            padding: EdgeInsets.zero,
-            maxHeight: 150.0,
-            minHeight: 50.0,
-            enableInteractiveSelection: false,
-          ),
+          child: Container()
         ),
       ],
     );

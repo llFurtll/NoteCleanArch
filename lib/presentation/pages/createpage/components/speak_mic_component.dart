@@ -58,7 +58,6 @@ class SpeakMicComponent implements IComponent<CreateNoteState, ValueListenableBu
 
     if (_screen.focusDesc.hasFocus) {
       response = await _showDialogListen();
-      _screen.controllerDesc.document.insert(0, _screen.controllerDesc.getPlainText() + _textSpeak); 
       _screen.focusDesc.requestFocus();
     } else {
       MessageDefaultSystem.showMessage(

@@ -44,8 +44,8 @@ dependencies:
   font_awesome_flutter: 10.1.0
   pdf: 3.8.1
   printing: 5.9.1
-  flutter_quill: 4.2.3
   flutter_html_to_pdf: 0.7.0
+  html_editor_enhanced: 2.4.0+1
 
 dev_dependencies:
   flutter_test:

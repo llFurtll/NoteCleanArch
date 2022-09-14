@@ -52,11 +52,11 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
 
   @override
   void event() {
-    if (_screen.controllerDesc.document.toPlainText().trim().isNotEmpty) {
+    if (true) {
       if (_screen.id == null) {
         _insertNote();
       } else {
-        _screen.anotacao!.observacao = _screen.descricao;
+        _screen.anotacao!.observacao = "";
         _screen.anotacao!.imagemFundo = _screen.pathImage;
         _updateNote(_screen.anotacao!);
       }
@@ -79,7 +79,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
 
   void _insertNote() async {
     AnotacaoModel anotacaoModel = AnotacaoModel(
-      observacao: _screen.descricao,
+      observacao: "",
       data: DateTime.now().toIso8601String(),
       imagemFundo: _screen.pathImage,
       situacao: 1,
