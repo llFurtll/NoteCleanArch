@@ -51,8 +51,8 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
   }
 
   @override
-  void event() {
-    if (true) {
+  void event() async {
+    if ((await _screen.controller.getText()).trim().isEmpty) {
       if (_screen.id == null) {
         _insertNote();
       } else {
@@ -63,7 +63,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
 
       _conversable.callScreen("home")!.receive("refresh", "");
     } else {
-      MessageDefaultSystem.showMessage(_screen.context, "Preencha a descrição!");
+      MessageDefaultSystem.showMessage(_screen.context, "Anotação não pode estar vazia!");
     }
   }
 

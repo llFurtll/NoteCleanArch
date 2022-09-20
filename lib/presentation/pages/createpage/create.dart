@@ -259,4 +259,8 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   FocusNode get focusDesc {
     return _focusDesc;
   }
+
+  HtmlEditorController get controller {
+    return _controllerEditor;
+  }
 }
