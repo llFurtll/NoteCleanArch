@@ -1,17 +1,18 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 import './arguments/arguments_share.dart';
 import 'create.dart';
 import '../../components/show_message.dart';
-
-import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
 
 // ignore: must_be_immutable
 class ShowPdfShare extends StatelessWidget {
@@ -26,7 +27,7 @@ class ShowPdfShare extends StatelessWidget {
       body: PdfPreview(
         useActions: false,
         build: (context) async {
-          return makePdf(screen);
+          return makePdf(arguments, screen);
         },
       ),
     );
@@ -102,7 +103,7 @@ class ShowPdfShare extends StatelessWidget {
     );
   }
 
-  Future<Uint8List> makePdf(CreateNoteState screen) async {
+  Future<Uint8List> makePdf(ArgumentsShare arguments, CreateNoteState screen) async {
     final path = (await getApplicationDocumentsDirectory()).path;
     final dirShare = Directory("$path/share/pdf");
 
@@ -110,18 +111,13 @@ class ShowPdfShare extends StatelessWidget {
       dirShare.createSync(recursive: true);
     }
 
-    File pdfFile = File("${dirShare.path}/anotacao-${screen.id}.pdf");
-
     File pdf = await FlutterHtmlToPdf.convertFromHtmlContent(
-      "",
-      pdfFile.path,
+      screen.anotacao!.observacao!,
+      dirShare.path,
       "anotacao-${screen.id}"
     );
-
-    return pdf.readAsBytes();
-
-    // final pdf = pw.Document();
-    // final paragraps = arguments.anotacaoModel.observacao!.split("\n");
+    
+    // final pdfDocument = pw.Document();
     // final backgroundImage = arguments.anotacaoModel.imagemFundo!;
     // final showImage = arguments.showImage;
     // dynamic image;
@@ -141,8 +137,10 @@ class ShowPdfShare extends StatelessWidget {
     //   }
     // }
 
-    // pdf.addPage(
-    //   pw.MultiPage(
+    // print("PASOU 2");
+
+    // pdfDocument.addPage(
+    //   pw.Page(
     //     pageTheme: pw.PageTheme(
     //       margin: pw.EdgeInsets.zero,
     //       buildBackground: (context) {
@@ -156,27 +154,17 @@ class ShowPdfShare extends StatelessWidget {
     //       pageFormat: PdfPageFormat.a4,
     //     ),
     //     build: (context) {
-    //       return [
-    //         pw.Container(
-    //           margin: pw.EdgeInsets.all(56),
-    //           child: pw.Column(
-    //             crossAxisAlignment: pw.CrossAxisAlignment.stretch,
-    //             mainAxisSize: pw.MainAxisSize.max,
-    //             children: [
-    //               ...paragraps.map((e) => pw.Paragraph(
-    //                 style: pw.TextStyle(
-    //                   fontSize: 18.0
-    //                 ),
-    //                 text: e
-    //               ))
-    //             ]
-    //           )
-    //         ),
-    //       ];
+    //       return pw.Container();
     //     }
     //   )
     // );
 
-    // return pdf.save();
+    // print("PASOU 3");
+
+    // final bytes = await pdfDocument.save();
+
+    // pdf.writeAsBytes(bytes);
+
+    return pdf.readAsBytes();
   }
 }

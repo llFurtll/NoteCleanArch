@@ -52,6 +52,8 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
       if (widget.id != null) {
         _anotacaoModel = await useCases.getByIdUseCase(id: widget.id!);
 
+        _controllerEditor.setText(_anotacaoModel!.observacao!);
+
         if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
           _pathImageNotifier.value = _anotacaoModel!.imagemFundo!;
           _appBarCreateComponent.removeBackground = true;
@@ -78,7 +80,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
+    return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
       appBar: _appBarCreateComponent.constructor(),
@@ -87,23 +89,63 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
     );
   }
 
-  ValueListenableBuilder _options() {
+
+  Widget _options() {
+    return Container(
+      color: Colors.white,
+      child: ToolbarWidget(
+        controller: _controllerEditor,
+        callbacks: null,
+        htmlToolbarOptions: HtmlToolbarOptions(
+          buttonSelectedColor: Theme.of(context).primaryColor,
+          buttonFillColor: Theme.of(context).primaryColor.withOpacity(0.3),
+          defaultToolbarButtons: [
+            OtherButtons(
+              redo: true,
+              undo: true,
+              help: false,
+              codeview: false,
+              fullscreen: false,
+            ),
+            FontSettingButtons(
+              fontSizeUnit: false
+            ),
+            FontButtons(
+              subscript: false,
+              superscript: false
+            ),
+            ParagraphButtons(
+              caseConverter: false,
+              textDirection: false
+            ),
+            ColorButtons()
+          ],
+          toolbarPosition: ToolbarPosition.aboveEditor
+        ),
+      ),
+    );
+  }
+
+  ValueListenableBuilder _optionsKeyboard() {
     return ValueListenableBuilder<bool>(
       valueListenable: _keyboardVisible,
       builder: (BuildContext context, bool value, Widget? widget) {
         return Visibility(
           visible: _keyboardVisible.value,
           child: Positioned(
-            child: ToolbarWidget(
-              controller: _controllerEditor,
-              htmlToolbarOptions: HtmlToolbarOptions(
-                defaultToolbarButtons: [
-                  ListButtons(),
-                  InsertButtons()
-                ],
-                toolbarPosition: ToolbarPosition.belowEditor,
+            child: Container(
+              color: Colors.white,
+              child: ToolbarWidget(
+                controller: _controllerEditor,
+                htmlToolbarOptions: HtmlToolbarOptions(
+                  defaultToolbarButtons: [
+                    ListButtons(),
+                    InsertButtons()
+                  ],
+                  toolbarPosition: ToolbarPosition.belowEditor,
+                ),
+                callbacks: null,
               ),
-              callbacks: null
             ),
             left: 0,
             right: 0,
@@ -116,44 +158,31 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
 
   Widget _descricao() {
     return HtmlEditor(
-      callbacks: Callbacks(onInit: () {
-        _controllerEditor.setFullScreen();
-        _controllerEditor.editorController!
-          .evaluateJavascript(
+      controller: _controllerEditor,
+      callbacks: Callbacks(
+        onInit: () async {
+          _controllerEditor.setFullScreen();
+          _controllerEditor.editorController!
+            .evaluateJavascript(
             source: "document.getElementsByClassName('note-editable')[0].style.backgroundColor='transparent';"
           );
-      }),
+          _controllerEditor.editorController!
+            .evaluateJavascript(
+            source: "document.getElementsByClassName('note-placeholder')[0].style.color='black';"
+          );
+        },
+      ),
       otherOptions: OtherOptions(
         decoration: BoxDecoration(
-          color: Colors.transparent
+          color: Colors.transparent,
         )
       ),
-      controller: _controllerEditor,
       htmlEditorOptions: HtmlEditorOptions(
         hint: "Comece a digitar aqui...",
       ),
       htmlToolbarOptions: HtmlToolbarOptions(
-        defaultToolbarButtons: [
-          OtherButtons(
-            redo: true,
-            undo: true,
-            help: false,
-            codeview: false,
-            fullscreen: false,
-          ),
-          FontSettingButtons(
-            fontSizeUnit: false
-          ),
-          FontButtons(
-            subscript: false,
-            superscript: false
-          ),
-          ParagraphButtons(
-            caseConverter: false,
-            textDirection: false
-          ),
-          ColorButtons()
-        ],
+        toolbarPosition: ToolbarPosition.custom,
+        defaultToolbarButtons: [],
       ),
     );
   }
@@ -161,7 +190,14 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   Widget _home() {
     return Container(
       padding: EdgeInsets.all(20.0),
-        child:  _descricao(),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            _options(),
+            _descricao()
+          ],
+        ),
+      )
     );
   }
 
@@ -193,7 +229,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
             child: _home(),
           ),
         ),
-        _options()
+        _optionsKeyboard()
       ],
     );
   }
