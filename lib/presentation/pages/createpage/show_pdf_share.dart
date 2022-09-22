@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -111,8 +112,42 @@ class ShowPdfShare extends StatelessWidget {
       dirShare.createSync(recursive: true);
     }
 
+    final backgroundImage = arguments.anotacaoModel.imagemFundo!;
+    final showImage = arguments.showImage;
+    String image = "";
+
+    if (showImage) {
+      try {
+        if (backgroundImage.contains("lib")) {
+          ByteData bytes = await rootBundle.load(backgroundImage);
+          image = base64Encode(pw.MemoryImage(bytes.buffer.asUint8List()).bytes);
+        } else {
+          image = base64Encode(pw.MemoryImage(
+            File(backgroundImage).readAsBytesSync()
+          ).bytes);
+        }
+      } catch (e) {
+        image = "";
+      }
+    }
+
+    String html;
+    if (showImage && image.isNotEmpty) {
+      html = """
+        <div style="background-image: url('data:image/png;base64, $image'); width: 100%; height: 100%; opacity: 0.5;">
+          <div style='height: 100%; width: 100%; opacity: 1;'>
+            ${arguments.anotacaoModel.observacao}
+          </div>
+        </div>
+      """;
+    } else {
+      html = arguments.anotacaoModel.observacao!;
+    }
+
+    print(html);
+
     File pdf = await FlutterHtmlToPdf.convertFromHtmlContent(
-      screen.anotacao!.observacao!,
+      html,
       dirShare.path,
       "anotacao-${screen.id}"
     );
@@ -122,20 +157,7 @@ class ShowPdfShare extends StatelessWidget {
     // final showImage = arguments.showImage;
     // dynamic image;
 
-    // if (showImage) {
-    //   try {
-    //     if (backgroundImage.contains("lib")) {
-    //       ByteData bytes = await rootBundle.load(backgroundImage);
-    //       image = pw.MemoryImage(bytes.buffer.asUint8List());
-    //     } else {
-    //       image = pw.MemoryImage(
-    //         File(backgroundImage).readAsBytesSync()
-    //       );
-    //     }
-    //   } catch (e) {
-    //     image = null;
-    //   }
-    // }
+    
 
     // print("PASOU 2");
 
