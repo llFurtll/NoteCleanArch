@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:ui' as ui;
 import 'package:share_plus/share_plus.dart';
@@ -88,29 +89,12 @@ class ShowImageShare extends StatelessWidget {
             constraints: BoxConstraints(
               minHeight: 500.0
             ),
-            padding: EdgeInsets.all(25.0),
+            padding: EdgeInsets.all(10.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Padding(
-                  padding: EdgeInsets.only(bottom: 10.0),
-                    child: Text(
-                    arguments.anotacaoModel.titulo!,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25.0
-                    ),
-                  ),
-                ),
-                Text(
-                  arguments.anotacaoModel.observacao!,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 18.0
-                  ),
-                )
+                Html(data: arguments.anotacaoModel.observacao!)
               ],
             ),
           ),

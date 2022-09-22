@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -8,7 +9,6 @@ import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
-import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import './arguments/arguments_share.dart';
@@ -131,62 +131,62 @@ class ShowPdfShare extends StatelessWidget {
       }
     }
 
-    String html;
-    if (showImage && image.isNotEmpty) {
-      html = """
-        <div style="background-image: url('data:image/png;base64, $image'); width: 100%; height: 100%; opacity: 0.5;">
-          <div style='height: 100%; width: 100%; opacity: 1;'>
-            ${arguments.anotacaoModel.observacao}
-          </div>
-        </div>
-      """;
-    } else {
-      html = arguments.anotacaoModel.observacao!;
-    }
-
-    print(html);
+    String html = _generateHtml(showImage && image.isNotEmpty, image, arguments.anotacaoModel.observacao!);
 
     File pdf = await FlutterHtmlToPdf.convertFromHtmlContent(
       html,
       dirShare.path,
       "anotacao-${screen.id}"
     );
-    
-    // final pdfDocument = pw.Document();
-    // final backgroundImage = arguments.anotacaoModel.imagemFundo!;
-    // final showImage = arguments.showImage;
-    // dynamic image;
-
-    
-
-    // print("PASOU 2");
-
-    // pdfDocument.addPage(
-    //   pw.Page(
-    //     pageTheme: pw.PageTheme(
-    //       margin: pw.EdgeInsets.zero,
-    //       buildBackground: (context) {
-    //         return image == null || !showImage ? pw.Container() : pw.Opacity(
-    //           opacity: 0.5,
-    //           child: pw.Container(
-    //             child: pw.Image(image, fit: pw.BoxFit.cover)
-    //           ),
-    //         );
-    //       },
-    //       pageFormat: PdfPageFormat.a4,
-    //     ),
-    //     build: (context) {
-    //       return pw.Container();
-    //     }
-    //   )
-    // );
-
-    // print("PASOU 3");
-
-    // final bytes = await pdfDocument.save();
-
-    // pdf.writeAsBytes(bytes);
 
     return pdf.readAsBytes();
+  }
+
+  String _generateHtml(bool showImage, String image, String observacao) {
+    return """
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>
+            body {
+              margin: 0;
+              padding: 0;
+            }
+
+            .banner {
+              position: relative;
+              z-index: 5;
+              height: 10000000px;
+              width: 100vw;
+            }
+            
+            .banner .bg {
+              position: absolute;
+              z-index: -1;
+              top: 0;
+              bottom: 0;
+              left: 0;
+              right: 0;
+              ${showImage ? "background: url('data:image/png;base64, $image');" : ""}
+              opacity: .4;
+              width: 100%;
+              height: 100%;
+            }
+
+            .banner .content {
+              padding: ${showImage ? "25px" : "0px"};
+            }
+          </style>
+        </head>
+        <body>
+          <div class='banner'>
+            <div class='bg'></div>
+            <div class='content'>
+              $observacao
+            </div>
+          </div>
+        </body>
+        </html>
+    """;
   }
 }

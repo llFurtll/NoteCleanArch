@@ -160,21 +160,23 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
     return HtmlEditor(
       controller: _controllerEditor,
       callbacks: Callbacks(
-        onInit: () async {
+        onInit: () {
           _controllerEditor.setFullScreen();
-          _controllerEditor.editorController!
-            .evaluateJavascript(
-            source: "document.getElementsByClassName('note-editable')[0].style.backgroundColor='transparent';"
-          );
-          _controllerEditor.editorController!
-            .evaluateJavascript(
-            source: "document.getElementsByClassName('note-placeholder')[0].style.color='black';"
-          );
+          Future.delayed((Duration(milliseconds: 500)), () {
+              _controllerEditor.editorController!
+              .evaluateJavascript(
+              source: "document.getElementsByClassName('note-editable')[0].style.backgroundColor='transparent';"
+            );
+            _controllerEditor.editorController!
+              .evaluateJavascript(
+              source: "document.getElementsByClassName('note-placeholder')[0].style.color='black';"
+            );
+          });
         },
       ),
       otherOptions: OtherOptions(
         decoration: BoxDecoration(
-          color: Colors.transparent,
+          border: Border.all(width: 0.0, color: Colors.transparent),
         )
       ),
       htmlEditorOptions: HtmlEditorOptions(
@@ -190,14 +192,15 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   Widget _home() {
     return Container(
       padding: EdgeInsets.all(20.0),
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            _options(),
-            _descricao()
-          ],
-        ),
-      )
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          _options(),
+          Expanded(
+            child: _descricao(),
+          ),
+        ],
+      ),
     );
   }
 
@@ -229,7 +232,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
             child: _home(),
           ),
         ),
-        _optionsKeyboard()
+        //_optionsKeyboard()
       ],
     );
   }
