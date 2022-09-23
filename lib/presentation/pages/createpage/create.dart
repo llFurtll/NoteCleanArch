@@ -5,13 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/domain/interfaces/iscreen.dart';
-import 'package:html_editor_enhanced/html_editor.dart';
+import 'package:note/presentation/components/editor_note.dart';
 
 import '../../../data/model/anotacao_model.dart';
 import '../../../domain/usecases/crud_usecases.dart';
 import '../../../presentation/pages/createpage/components/app_bar_create_component.dart';
 import 'components/button_save_note_component.dart';
 import '../../../../core/change_notifier_global.dart';
+import '../../domain/editor/ieditor.dart';
 
 // ignore: must_be_immutable
 class CreateNote extends StatefulWidget {
@@ -33,8 +34,8 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   final ChangeNotifierGlobal<bool> _keyboardVisible = ChangeNotifierGlobal(false);
   final FocusNode _focusTitle = FocusNode();
   final FocusNode _focusDesc = FocusNode();
-  final HtmlEditorController _controllerEditor = HtmlEditorController();
   
+  late final IEditor _editor;
   late AnotacaoModel? _anotacaoModel;
   late CrudUseCases useCases;
   late AppBarCreateComponent _appBarCreateComponent;
@@ -44,6 +45,8 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   void initState() {
     super.initState();
 
+    _editor = HtmlEditorNote(this);
+
     useCases = injector.getDependencie();
     _appBarCreateComponent = AppBarCreateComponent(this);
     _buttonSaveNoteComponent = ButtonSaveNoteComponent(this);
@@ -52,7 +55,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
       if (widget.id != null) {
         _anotacaoModel = await useCases.getByIdUseCase(id: widget.id!);
 
-        _controllerEditor.setText(_anotacaoModel!.observacao!);
+        _editor.setText(_anotacaoModel!.observacao!);
 
         if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
           _pathImageNotifier.value = _anotacaoModel!.imagemFundo!;
@@ -89,104 +92,8 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
     );
   }
 
-
-  Widget _options() {
-    return Container(
-      color: Colors.white,
-      child: ToolbarWidget(
-        controller: _controllerEditor,
-        callbacks: null,
-        htmlToolbarOptions: HtmlToolbarOptions(
-          buttonSelectedColor: Theme.of(context).primaryColor,
-          buttonFillColor: Theme.of(context).primaryColor.withOpacity(0.3),
-          defaultToolbarButtons: [
-            OtherButtons(
-              redo: true,
-              undo: true,
-              help: false,
-              codeview: false,
-              fullscreen: false,
-            ),
-            FontSettingButtons(
-              fontSizeUnit: false
-            ),
-            FontButtons(
-              subscript: false,
-              superscript: false
-            ),
-            ParagraphButtons(
-              caseConverter: false,
-              textDirection: false
-            ),
-            ColorButtons()
-          ],
-          toolbarPosition: ToolbarPosition.aboveEditor
-        ),
-      ),
-    );
-  }
-
-  ValueListenableBuilder _optionsKeyboard() {
-    return ValueListenableBuilder<bool>(
-      valueListenable: _keyboardVisible,
-      builder: (BuildContext context, bool value, Widget? widget) {
-        return Visibility(
-          visible: _keyboardVisible.value,
-          child: Positioned(
-            child: Container(
-              color: Colors.white,
-              child: ToolbarWidget(
-                controller: _controllerEditor,
-                htmlToolbarOptions: HtmlToolbarOptions(
-                  defaultToolbarButtons: [
-                    ListButtons(),
-                    InsertButtons()
-                  ],
-                  toolbarPosition: ToolbarPosition.belowEditor,
-                ),
-                callbacks: null,
-              ),
-            ),
-            left: 0,
-            right: 0,
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-        );
-      }
-    );
-  }
-
   Widget _descricao() {
-    return HtmlEditor(
-      controller: _controllerEditor,
-      callbacks: Callbacks(
-        onInit: () {
-          _controllerEditor.setFullScreen();
-          Future.delayed((Duration(milliseconds: 500)), () {
-              _controllerEditor.editorController!
-              .evaluateJavascript(
-              source: "document.getElementsByClassName('note-editable')[0].style.backgroundColor='transparent';"
-            );
-            _controllerEditor.editorController!
-              .evaluateJavascript(
-              source: "document.getElementsByClassName('note-placeholder')[0].style.color='black';"
-            );
-          });
-        },
-      ),
-      otherOptions: OtherOptions(
-        decoration: BoxDecoration(
-          border: Border.all(width: 0.0, color: Colors.transparent),
-        )
-      ),
-      htmlEditorOptions: HtmlEditorOptions(
-        hint: "Comece a digitar aqui...",
-      ),
-      htmlToolbarOptions: HtmlToolbarOptions(
-        toolbarPosition: ToolbarPosition.custom,
-        defaultToolbarButtons: [],
-      ),
-    );
+    return _editor.constructor();
   }
 
   Widget _home() {
@@ -195,7 +102,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
-          _options(),
+          _editor.options(),
           Expanded(
             child: _descricao(),
           ),
@@ -232,7 +139,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
             child: _home(),
           ),
         ),
-        //_optionsKeyboard()
+        _editor.optionsKeyboard()
       ],
     );
   }
@@ -299,7 +206,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
     return _focusDesc;
   }
 
-  HtmlEditorController get controller {
-    return _controllerEditor;
+  IEditor get editor {
+    return _editor;
   }
 }

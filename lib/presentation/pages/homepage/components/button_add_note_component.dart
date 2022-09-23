@@ -6,6 +6,7 @@ import 'package:compmanager/domain/interfaces/icomponent.dart';
 
 import '../home.dart';
 import '../../createpage/create.dart';
+import '../../../components/editor_note.dart';
 
 class ButtonAddNoteComponent implements IComponent<HomeState, OpenContainer, void> {
 

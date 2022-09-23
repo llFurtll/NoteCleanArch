@@ -52,7 +52,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
 
   @override
   void event() async {
-    String text = (await _screen.controller.getText()).trim();
+    String text = (await _screen.editor.getText()).trim();
     if (text.isNotEmpty) {
       if (_screen.id == null) {
         _insertNote(text);

@@ -149,14 +149,15 @@ class ShowPdfShare extends StatelessWidget {
         <head>
           <style>
             body {
-              margin: 0;
               padding: 0;
+              margin: 0;
             }
 
             .banner {
               position: relative;
               z-index: 5;
-              height: 10000000px;
+              min-height: 100vh;
+              max-height: 99999px;
               width: 100vw;
             }
             
