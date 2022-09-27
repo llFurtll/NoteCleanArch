@@ -50,13 +50,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
 
   @override
   void setText(String text) async {
-    while (true) {
-      bool isLoading = await _controllerEditor.editorController!.isLoading();
-      if (!isLoading) {
-        _controllerEditor.setText(text);
-        break;
-      }
-    }
+      _controllerEditor.setText(text);
   }
 
   @override
@@ -109,6 +103,8 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
               child: ToolbarWidget(
                 controller: _controllerEditor,
                 htmlToolbarOptions: HtmlToolbarOptions(
+                  buttonSelectedColor: Theme.of(_screen.context).primaryColor,
+                  buttonFillColor: Theme.of(_screen.context).primaryColor.withOpacity(0.3),
                   defaultToolbarButtons: [
                     ListButtons(),
                     InsertButtons()
@@ -147,15 +143,19 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
     final url = TextEditingController();
     final urlFocus = FocusNode();
     String title = "";
+    String escolherArquivo = "";
+    String? validateFailed;
     if (type == ButtonType.picture) {
       title = "Inserir imagem";
+      escolherArquivo = "Escolher imagem";
     } else if (type == ButtonType.video) {
       title = "Inserir video";
+      escolherArquivo = "Escolher video";
     } else {
       title = "Inserir audio";
+      escolherArquivo = "Escolher audio";
     }
     FilePickerResult? result;
-    String? validateFailed;
     await showDialog(
       context: _screen.context,
       builder: (BuildContext context) {
@@ -172,7 +172,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                   'Selecionar arquivos',
                   style: TextStyle(
                     fontWeight: FontWeight.bold
-                    )
+                  )
                 ),
                 SizedBox(height: 10),
                 TextFormField(
@@ -181,37 +181,48 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                   decoration: InputDecoration(
                     prefixIcon: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                          primary: Theme.of(context)
-                              .dialogBackgroundColor,
-                          padding: EdgeInsets.only(
-                              left: 5, right: 5),
-                          elevation: 0.0),
+                        primary: Theme.of(context).dialogBackgroundColor,
+                        padding: EdgeInsets.only(left: 0, right: 0),
+                        elevation: 0.0
+                      ),
                       onPressed: () async {
-                        result = await FilePicker.platform
+                        if (type == ButtonType.picture) {
+                          result = await FilePicker.platform
                             .pickFiles(
-                          type: FileType.image,
-                          withData: true
-                        );
-                        if (result?.files.single.name !=
-                            null) {
+                              type: FileType.image,
+                              withData: true
+                            );
+                        } else if (type == ButtonType.video) {
+                          result = await FilePicker.platform
+                            .pickFiles(
+                              type: FileType.video,
+                              withData: true
+                            );
+                        } else {
+                          result = await FilePicker.platform
+                            .pickFiles(
+                              type: FileType.audio,
+                              withData: true
+                            );
+                        }
+                        if (result?.files.single.name != null) {
                           setState(() {
-                            filename.text =
-                                result!.files.single.name;
+                            filename.text = result!.files.single.name;
                           });
                         }
                       },
-                      child: Text(
-                        'Escolher imagem',
-                        style: TextStyle(
-                          color: Theme.of(context)
-                            .textTheme
-                            .bodyText1
-                            ?.color
-                          )
+                      child: Padding(
+                          padding: EdgeInsets.zero,
+                          child: Text(
+                            escolherArquivo,
+                            style: TextStyle(
+                              color: Theme.of(context).textTheme.bodyText1?.color,
+                            )
+                          ),
                         ),
                       ),
-                      suffixIcon: result != null
-                        ? IconButton(
+                      suffixIcon: result != null ? 
+                        IconButton(
                             icon: Icon(Icons.close),
                             onPressed: () {
                               setState(() {
@@ -220,7 +231,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                               });
                             }
                           )
-                        : Container(height: 0, width: 0),
+                        : SizedBox.shrink(),
                     errorText: validateFailed,
                     errorMaxLines: 2,
                     border: InputBorder.none,
@@ -252,11 +263,23 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                   onPressed: () async {
                     if (filename.text.isEmpty && url.text.isEmpty) {
                       setState(() {
-                        validateFailed = 'Escolha uma imagem ou insira uma URL de imagem!';
+                        if (type == ButtonType.picture) {
+                          validateFailed = "Escolha uma imagem ou insira uma URL de imagem!";
+                        } else if (type == ButtonType.video) {
+                          validateFailed = "Escolha um arquivo de video ou insira uma URL de video!";
+                        } else {
+                          validateFailed = "Escolha um arquivo de audio ou insira uma URL de audio!";
+                        }
                       });
                     } else if (filename.text.isNotEmpty && url.text.isNotEmpty) {
                       setState(() {
-                        validateFailed = 'Insira uma imagem ou uma URL de imagem, não ambos!';
+                        if (type == ButtonType.picture) {
+                          validateFailed = "Insira uma imagem ou uma URL de imagem, não ambos!";
+                        } else if (type == ButtonType.video) {
+                          validateFailed = "Insira um arquivo de video ou uma URL de video, não ambos!";
+                        } else {
+                          validateFailed = "Insira um arquivo de audio ou uma URL de audio, não ambos!";
+                        }
                       });
                     } else if (filename.text.isNotEmpty && result?.files.single.bytes != null) {
                         var base64Data = base64
