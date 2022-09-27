@@ -22,8 +22,6 @@ class AnotacaoModel implements Anotacao {
   @override
   String? cor;
 
-  String? htmlContent;
-
   AnotacaoModel({
     this.id,
     this.data,
@@ -41,9 +39,5 @@ class AnotacaoModel implements Anotacao {
       observacao: json["observacao"],
       situacao: json["situacao"]
     );
-  }
-
-  set html(String? htmlContent) {
-    this.htmlContent = htmlContent;
   }
 }
