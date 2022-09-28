@@ -45,8 +45,6 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   void initState() {
     super.initState();
 
-    _editor = HtmlEditorNote(this);
-
     useCases = injector.getDependencie();
     _appBarCreateComponent = AppBarCreateComponent(this);
     _buttonSaveNoteComponent = ButtonSaveNoteComponent(this);
@@ -54,8 +52,6 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (widget.id != null) {
         _anotacaoModel = await useCases.getByIdUseCase(id: widget.id!);
-
-        _editor.setText(_anotacaoModel!.observacao!);
 
         if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
           _pathImageNotifier.value = _anotacaoModel!.imagemFundo!;
@@ -65,6 +61,8 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
         _appBarCreateComponent.showShare = true;
       }
     });
+
+    _editor = HtmlEditorNote(this);
 
     WidgetsBinding.instance?.addObserver(this);
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
+import 'package:numberpicker/numberpicker.dart';
 
 import '../domain/editor/ieditor.dart';
 import '../pages/createpage/create.dart';
@@ -25,8 +26,11 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
             source: "document.getElementsByClassName('note-editable')[0].style.backgroundColor='transparent';"
           );
           _controllerEditor.editorController!.evaluateJavascript(
-            source: "document.getElementsByClassName('note-placeholder')[0].style.backgroundColor='transparent';"
+            source: "document.getElementsByClassName('note-placeholder')[0].style.color='black';"
           );
+          if (_screen.id != null) {
+            setText(_screen.anotacao!.observacao!);
+          }
         }
       ),
       otherOptions: OtherOptions(
@@ -132,9 +136,140 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
       case ButtonType.audio:
         await _showDialogMedia(type);
         return false;
+      case ButtonType.link:
+        await _showDialogLink();
+        return false;
+      case ButtonType.table:
+        await _showTable();
+        return false;
       default:
         return true;
     }
+  }
+
+  // Link
+  Future<void> _showDialogLink() async {
+    final text = TextEditingController();
+    final url = TextEditingController();
+    final textFocus = FocusNode();
+    final urlFocus = FocusNode();
+    final formKey = GlobalKey<FormState>();
+    var openNewTab = false;
+    await showDialog(
+      context: _screen.context,
+      builder: (BuildContext context) {
+        return PointerInterceptor(
+          child: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return AlertDialog(
+                title: Text('Inserir link'),
+                scrollable: true,
+                content: Form(
+                  key: formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Texto de exibição',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold
+                        )
+                      ),
+                      SizedBox(height: 10),
+                      TextField(
+                        controller: text,
+                        focusNode: textFocus,
+                        textInputAction: TextInputAction.next,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'Texto',
+                        ),
+                        onSubmitted: (_) {
+                          urlFocus.requestFocus();
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        'URL',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold
+                        )
+                      ),
+                      SizedBox(height: 10),
+                      TextFormField(
+                        controller: url,
+                        focusNode: urlFocus,
+                        textInputAction: TextInputAction.done,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          hintText: 'URL',
+                        ),
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor, insira uma URL!';
+                          }
+                          return null;
+                        },
+                      ),
+                      Row(
+                        children: <Widget>[
+                          SizedBox(
+                            height: 48.0,
+                            width: 24.0,
+                            child: Checkbox(
+                              value: openNewTab,
+                              activeColor: Color(0xFF827250),
+                              onChanged: (bool? value) {
+                                setState(() {
+                                  openNewTab = value!;
+                                });
+                              },
+                            ),
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Theme.of(context).dialogBackgroundColor,
+                              padding: EdgeInsets.only(left: 5,right: 5),
+                              elevation: 0.0
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                openNewTab = !openNewTab;
+                              });
+                            },
+                            child: Text('Abrir em uma nova janela',
+                              style: TextStyle(
+                                color: Theme.of(context).textTheme.bodyText1?.color
+                              )
+                            ),
+                          ),
+                        ],
+                      ),
+                    ]),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cancelar'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    if (formKey.currentState!.validate()) {
+                      _controllerEditor.insertLink(text.text, url.text, openNewTab);
+                      Navigator.of(context).pop();
+                    }
+                  },
+                  child: Text('OK'),
+                )
+              ],
+            );
+          }),
+        );
+      }
+    );
   }
 
   // Image, audio and video
@@ -310,5 +445,60 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
           }),
         );
     });
+  }
+
+  // Table
+  Future<void> _showTable() async {
+    var currentRows = 1;
+    var currentCols = 1;
+    await showDialog(
+      context: _screen.context,
+      builder: (BuildContext context) {
+        return PointerInterceptor(
+          child: StatefulBuilder(builder: (BuildContext context, StateSetter setState) {
+            return AlertDialog(
+              title: Text('Inserir tabela'),
+              scrollable: true,
+              content: Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  NumberPicker(
+                    value: currentRows,
+                    minValue: 1,
+                    maxValue: 10,
+                    onChanged: (value) => setState(() => currentRows = value),
+                  ),
+                  Text('x'),
+                  NumberPicker(
+                    value: currentCols,
+                    minValue: 1,
+                    maxValue: 10,
+                    onChanged: (value) => setState(() => currentCols = value),
+                  ),
+                ]
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('Cancelar'),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    await _controllerEditor.editorController!
+                      .evaluateJavascript(
+                        source: "\$('#summernote-2').summernote('insertTable', '${currentRows}x$currentCols');"
+                      );
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                )
+              ],
+            );
+          }),
+        );
+      });
   }
 }
