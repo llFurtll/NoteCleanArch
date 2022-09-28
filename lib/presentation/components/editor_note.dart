@@ -5,9 +5,11 @@ import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../domain/editor/ieditor.dart';
 import '../pages/createpage/create.dart';
+import '../components/show_message.dart';
 
 class HtmlEditorNote implements IEditor<CreateNoteState> {
   final CreateNoteState _screen;
@@ -31,6 +33,16 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
           if (_screen.id != null) {
             setText(_screen.anotacao!.observacao!);
           }
+        },
+        onNavigationRequestMobile: (String url) async {
+          Uri urlTo = Uri.parse(url);
+          if (await canLaunchUrl(urlTo)) {
+            await launchUrl(urlTo);
+          } else {
+            MessageDefaultSystem.showMessage(_screen.context, "Link inserido não é válido!");
+          }
+
+          return NavigationActionPolicy.CANCEL;
         }
       ),
       otherOptions: OtherOptions(
@@ -154,7 +166,6 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
     final textFocus = FocusNode();
     final urlFocus = FocusNode();
     final formKey = GlobalKey<FormState>();
-    var openNewTab = false;
     await showDialog(
       context: _screen.context,
       builder: (BuildContext context) {
@@ -208,44 +219,12 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                         validator: (String? value) {
                           if (value == null || value.isEmpty) {
                             return 'Por favor, insira uma URL!';
+                          } else if (!value.contains("http")) {
+                            return 'Por favor, insira uma URL válida!';
                           }
                           return null;
-                        },
-                      ),
-                      Row(
-                        children: <Widget>[
-                          SizedBox(
-                            height: 48.0,
-                            width: 24.0,
-                            child: Checkbox(
-                              value: openNewTab,
-                              activeColor: Color(0xFF827250),
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  openNewTab = value!;
-                                });
-                              },
-                            ),
-                          ),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              primary: Theme.of(context).dialogBackgroundColor,
-                              padding: EdgeInsets.only(left: 5,right: 5),
-                              elevation: 0.0
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                openNewTab = !openNewTab;
-                              });
-                            },
-                            child: Text('Abrir em uma nova janela',
-                              style: TextStyle(
-                                color: Theme.of(context).textTheme.bodyText1?.color
-                              )
-                            ),
-                          ),
-                        ],
-                      ),
+                        }
+                      )
                     ]),
               ),
               actions: [
@@ -258,7 +237,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                 TextButton(
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      _controllerEditor.insertLink(text.text, url.text, openNewTab);
+                      _controllerEditor.insertLink(text.text, url.text, true);
                       Navigator.of(context).pop();
                     }
                   },
