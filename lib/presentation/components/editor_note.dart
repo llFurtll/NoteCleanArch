@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:html_editor_enhanced/utils/utils.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -55,7 +54,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
         ),
       ),
       htmlEditorOptions: HtmlEditorOptions(
-        hint: "Comece a digitar aqui...",
+        hint: "<p>Comece a digitar aqui...</p>",
       ),
       htmlToolbarOptions: HtmlToolbarOptions(
         toolbarPosition: ToolbarPosition.custom
@@ -106,7 +105,19 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
           ],
           toolbarPosition: ToolbarPosition.aboveEditor,
           onButtonPressed:
-            (ButtonType type, bool? status, Function()? updateStatus) async => await _buttonPressed(type, updateStatus)
+            (ButtonType type, bool? status, Function()? updateStatus) async {
+              bool edit = await _buttonPressed(type);
+              if (type == ButtonType.foregroundColor) {
+                if (_foreColorSelected.value != Colors.black.value) {
+                  status = true;
+                } else {
+                  status = false;
+                }
+                updateStatus!();
+              }
+
+              return edit;
+            }
         ),
       ),
     );
@@ -133,7 +144,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                   ],
                   toolbarPosition: ToolbarPosition.belowEditor,
                   onButtonPressed:
-                    (ButtonType type, bool? status, Function()? updateStatus) async => await _buttonPressed(type, updateStatus)
+                    (ButtonType type, bool? status, Function()? updateStatus) async => await _buttonPressed(type)
                 ),
                 callbacks: null,
               ),
@@ -147,8 +158,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
     );
   }
   
-  Future<bool> _buttonPressed(ButtonType type, Function()? updateStatus) async {
-    print(type);
+  Future<bool> _buttonPressed(ButtonType type) async {
     switch (type) {
       case ButtonType.picture:
       case ButtonType.video:
@@ -162,7 +172,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
         await _showTable();
         return false;
       case ButtonType.foregroundColor:
-        await _showColorText(updateStatus);
+        await _showColorText();
         return false;
       default:
         return true;
@@ -492,9 +502,8 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
     );
   }
 
-  Future<void> _showColorText(Function()? updateStatus) async {
+  Future<void> _showColorText() async {
     Color newColor = _foreColorSelected;
-    updateStatus!();
     await showDialog(
       context: _screen.context,
       builder: (BuildContext context) {
@@ -521,8 +530,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                   pickersEnabled: <ColorPickerType, bool>{
                     ColorPickerType.wheel: true,
                   },
-                  copyPasteBehavior:
-                      const ColorPickerCopyPasteBehavior(
+                  copyPasteBehavior: const ColorPickerCopyPasteBehavior(
                     parseShortHexCode: true,
                   ),
                   actionButtons: const ColorPickerActionButtons(
@@ -547,9 +555,11 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                       );
                       _controllerEditor.execCommand(
                         'foreColor',
-                        argument: 'initial'
+                        argument: (_foreColorSelected.value & 0xFFFFFF)
+                          .toRadixString(16)
+                          .padLeft(6, '0')
+                          .toUpperCase()
                       );
-                      updateStatus();
                       Navigator.of(context).pop();
                     },
                     child: Text('Resetar para cor padrão')
@@ -566,7 +576,6 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                       setState(() {
                         _foreColorSelected = newColor;
                       });
-                      updateStatus();
                       Navigator.of(context).pop();
                     },
                     child: Text('Definir cor'),
