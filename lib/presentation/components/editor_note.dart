@@ -3,9 +3,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:html_editor_enhanced/utils/utils.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flex_color_picker/flex_color_picker.dart';
 
 import '../domain/editor/ieditor.dart';
 import '../pages/createpage/create.dart';
@@ -14,6 +16,8 @@ import '../components/show_message.dart';
 class HtmlEditorNote implements IEditor<CreateNoteState> {
   final CreateNoteState _screen;
   final HtmlEditorController _controllerEditor = HtmlEditorController();
+  
+  Color _foreColorSelected = Colors.black;
 
   HtmlEditorNote(this._screen);
 
@@ -100,7 +104,9 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
             ),
             ColorButtons()
           ],
-          toolbarPosition: ToolbarPosition.aboveEditor
+          toolbarPosition: ToolbarPosition.aboveEditor,
+          onButtonPressed:
+            (ButtonType type, bool? status, Function()? updateStatus) async => await _buttonPressed(type, updateStatus)
         ),
       ),
     );
@@ -127,7 +133,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                   ],
                   toolbarPosition: ToolbarPosition.belowEditor,
                   onButtonPressed:
-                    (ButtonType type, bool? status, Function()? updateStatus) async => await _buttonPressed(type)
+                    (ButtonType type, bool? status, Function()? updateStatus) async => await _buttonPressed(type, updateStatus)
                 ),
                 callbacks: null,
               ),
@@ -141,7 +147,8 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
     );
   }
   
-  Future<bool> _buttonPressed(ButtonType type) async {
+  Future<bool> _buttonPressed(ButtonType type, Function()? updateStatus) async {
+    print(type);
     switch (type) {
       case ButtonType.picture:
       case ButtonType.video:
@@ -153,6 +160,9 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
         return false;
       case ButtonType.table:
         await _showTable();
+        return false;
+      case ButtonType.foregroundColor:
+        await _showColorText(updateStatus);
         return false;
       default:
         return true;
@@ -478,6 +488,95 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
             );
           }),
         );
-      });
+      }
+    );
+  }
+
+  Future<void> _showColorText(Function()? updateStatus) async {
+    Color newColor = _foreColorSelected;
+    updateStatus!();
+    await showDialog(
+      context: _screen.context,
+      builder: (BuildContext context) {
+        return PointerInterceptor(
+          child: StatefulBuilder(
+            builder: (BuildContext context, Function setState) {
+              return AlertDialog(
+                scrollable: true,
+                content: ColorPicker(
+                  color: newColor,
+                  onColorChanged: (color) {
+                    newColor = color;
+                  },
+                  title: Text('Escolher a cor', style: Theme.of(context).textTheme.headline6),
+                  width: 40,
+                  height: 40,
+                  spacing: 0,
+                  runSpacing: 0,
+                  borderRadius: 0,
+                  wheelDiameter: 165,
+                  enableOpacity: false,
+                  showColorCode: true,
+                  colorCodeHasColor: true,
+                  pickersEnabled: <ColorPickerType, bool>{
+                    ColorPickerType.wheel: true,
+                  },
+                  copyPasteBehavior:
+                      const ColorPickerCopyPasteBehavior(
+                    parseShortHexCode: true,
+                  ),
+                  actionButtons: const ColorPickerActionButtons(
+                    dialogActionButtons: true,
+                  ),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Cancelar'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _foreColorSelected = Colors.black;
+                      });
+                      _controllerEditor.execCommand(
+                        'removeFormat',
+                        argument: 'foreColor'
+                      );
+                      _controllerEditor.execCommand(
+                        'foreColor',
+                        argument: 'initial'
+                      );
+                      updateStatus();
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Resetar para cor padrão')
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      _controllerEditor.execCommand(
+                        'foreColor',
+                        argument: (newColor.value & 0xFFFFFF)
+                          .toRadixString(16)
+                          .padLeft(6, '0')
+                          .toUpperCase()
+                      );
+                      setState(() {
+                        _foreColorSelected = newColor;
+                      });
+                      updateStatus();
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('Definir cor'),
+                  )
+                ],
+              );
+            }
+          ),
+        );
+      }
+    );
   }
 }
