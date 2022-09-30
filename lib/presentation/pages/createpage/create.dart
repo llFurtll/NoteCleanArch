@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/domain/interfaces/iscreen.dart';
-import 'package:note/presentation/components/editor_note.dart';
 
 import '../../../data/model/anotacao_model.dart';
 import '../../../domain/usecases/crud_usecases.dart';
@@ -13,6 +12,7 @@ import '../../../presentation/pages/createpage/components/app_bar_create_compone
 import 'components/button_save_note_component.dart';
 import '../../../../core/change_notifier_global.dart';
 import '../../domain/editor/ieditor.dart';
+import '../../components/editor_note.dart';
 
 // ignore: must_be_immutable
 class CreateNote extends StatefulWidget {
@@ -33,7 +33,6 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   final ChangeNotifierGlobal<String> _pathImageNotifier = ChangeNotifierGlobal("");
   final ChangeNotifierGlobal<bool> _keyboardVisible = ChangeNotifierGlobal(false);
   final FocusNode _focusTitle = FocusNode();
-  final FocusNode _focusDesc = FocusNode();
   
   late final IEditor _editor;
   late AnotacaoModel? _anotacaoModel;
@@ -198,10 +197,6 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
 
   FocusNode get focusTitle {
     return _focusTitle;
-  }
-
-  FocusNode get focusDesc {
-    return _focusDesc;
   }
 
   IEditor get editor {

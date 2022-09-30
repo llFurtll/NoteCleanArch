@@ -6,4 +6,5 @@ abstract class IEditor<T extends State> {
   Widget optionsKeyboard();
   Future<String> getText();
   void setText(String text);
+  void insertHtml(String html);
 }

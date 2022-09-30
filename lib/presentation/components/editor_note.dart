@@ -55,7 +55,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
         ),
       ),
       htmlEditorOptions: HtmlEditorOptions(
-        hint: "<p>Comece a digitar aqui...</p>",
+        hint: "<p>Comece a digitar aqui...<p>",
       ),
       htmlToolbarOptions: HtmlToolbarOptions(
         toolbarPosition: ToolbarPosition.custom
@@ -70,7 +70,12 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
 
   @override
   void setText(String text) async {
-      _controllerEditor.setText(text);
+    _controllerEditor.setText(text);
+  }
+
+  @override
+  void insertHtml(String html) {
+    _controllerEditor.insertHtml(html);
   }
 
   @override

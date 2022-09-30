@@ -5,7 +5,6 @@ import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
-import '../../../components/show_message.dart';
 import '../create.dart';
 import '../components/app_bar_create_component.dart';
 import '../../../../core/change_notifier_global.dart';
@@ -56,15 +55,8 @@ class SpeakMicComponent implements IComponent<CreateNoteState, ValueListenableBu
   void event() async {
     bool response = false;
 
-    if (_screen.focusDesc.hasFocus) {
-      response = await _showDialogListen();
-      _screen.focusDesc.requestFocus();
-    } else {
-      MessageDefaultSystem.showMessage(
-        _screen.context,
-        "Selecione o campo de digitação e tente novamente!"
-      );
-    }
+    response = await _showDialogListen();
+    _screen.editor.insertHtml(_textSpeak);
 
     if (response) {
       afterEvent();
