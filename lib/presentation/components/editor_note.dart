@@ -17,6 +17,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
   final HtmlEditorController _controllerEditor = HtmlEditorController();
   
   Color _foreColorSelected = Colors.black;
+  Color _backgroundColorSelected = Colors.yellow;
 
   HtmlEditorNote(this._screen);
 
@@ -46,7 +47,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
           }
 
           return NavigationActionPolicy.CANCEL;
-        }
+        },
       ),
       otherOptions: OtherOptions(
         decoration: BoxDecoration(
@@ -105,19 +106,20 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
           ],
           toolbarPosition: ToolbarPosition.aboveEditor,
           onButtonPressed: (ButtonType type, bool? status, Function()? updateStatus) async {
-            if (type == ButtonType.foregroundColor) {
+            if (type == ButtonType.foregroundColor || type == ButtonType.highlightColor) {
+              bool isBackgroundColor = type == ButtonType.highlightColor;
               if (status!) {
                 updateStatus!();
-                _clearColor();
+                _clearColor(isBackgroundColor);
                 return false;
               }
 
-              int selected = await _showColorText();
+              int selected = await _showColorText(isBackgroundColor);
 
               if (selected == 0) {
                 return false;
               } else if (selected == 1) {
-                _clearColor();
+                _clearColor(isBackgroundColor);
               } else {
                 updateStatus!();
               }
@@ -152,8 +154,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                     InsertButtons()
                   ],
                   toolbarPosition: ToolbarPosition.belowEditor,
-                  onButtonPressed:
-                    (ButtonType type, bool? status, Function()? updateStatus) async => await _buttonPressed(type)
+                  onButtonPressed: (ButtonType type, bool? status, Function()? updateStatus) async => await _buttonPressed(type)
                 ),
                 callbacks: null,
               ),
@@ -263,8 +264,14 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                 TextButton(
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      _controllerEditor.insertLink(text.text, url.text, true);
+                      _controllerEditor.insertHtml(
+                        """
+                          <a href="${url.text}" target="new">${text.text}</a><br>
+                        """
+                      );
+                      // _controllerEditor.insertLink(text.text, url.text, true);
                       Navigator.of(context).pop();
+                      print(await getText());
                     }
                   },
                   child: Text('OK'),
@@ -508,8 +515,13 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
     );
   }
 
-  Future<int> _showColorText() async {
-    Color newColor = _foreColorSelected;
+  Future<int> _showColorText(bool isBackgroundColor) async {
+    Color newColor;
+    if (isBackgroundColor) {
+      newColor = _backgroundColorSelected;
+    } else {
+      newColor = _foreColorSelected;
+    }
     return await showDialog(
       context: _screen.context,
       builder: (BuildContext context) {
@@ -550,21 +562,31 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                   ),
                   TextButton(
                     onPressed: () {
-                      _clearColor();
+                      _clearColor(isBackgroundColor);
                       Navigator.of(context).pop(1);
                     },
-                    child: Text('Cor padrão')
+                    child: Text(isBackgroundColor ? 'Remover fundo' : 'Cor padrão')
                   ),
                   TextButton(
                     onPressed: () {
-                      _controllerEditor.execCommand(
-                        'foreColor',
-                        argument: (newColor.value & 0xFFFFFF)
-                          .toRadixString(16)
-                          .padLeft(6, '0')
-                          .toUpperCase()
-                      );
-                      _foreColorSelected = newColor;
+                      if (isBackgroundColor) {
+                        _controllerEditor.execCommand('hiliteColor',
+                          argument: (newColor.value & 0xFFFFFF)
+                            .toRadixString(16)
+                            .padLeft(6, '0')
+                            .toUpperCase()
+                          );
+                          _backgroundColorSelected = newColor;
+                      } else {
+                        _controllerEditor.execCommand(
+                          'foreColor',
+                          argument: (newColor.value & 0xFFFFFF)
+                            .toRadixString(16)
+                            .padLeft(6, '0')
+                            .toUpperCase()
+                        );
+                        _foreColorSelected = newColor;
+                      }
                       Navigator.of(context).pop(2);
                     },
                     child: Text('Definir cor'),
@@ -578,18 +600,30 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
     );
   }
 
-  void _clearColor() {
-    _foreColorSelected = Colors.black;
-    _controllerEditor.execCommand(
-      'removeFormat',
-      argument: 'foreColor'
-    );
-    _controllerEditor.execCommand(
-      'foreColor',
-      argument: (_foreColorSelected.value & 0xFFFFFF)
-        .toRadixString(16)
-        .padLeft(6, '0')
-        .toUpperCase()
-    );
+  void _clearColor(bool isBackgroundColor) {
+    if (isBackgroundColor) {
+      _backgroundColorSelected = Colors.yellow;
+      _controllerEditor.execCommand(
+        'removeFormat',
+        argument: 'hiliteColor'
+      );
+      _controllerEditor.execCommand(
+        'hiliteColor',
+        argument: 'initial'
+      );
+    } else {
+      _foreColorSelected = Colors.black;
+      _controllerEditor.execCommand(
+        'removeFormat',
+        argument: 'foreColor'
+      );
+      _controllerEditor.execCommand(
+        'foreColor',
+        argument: (_foreColorSelected.value & 0xFFFFFF)
+          .toRadixString(16)
+          .padLeft(6, '0')
+          .toUpperCase()
+      );
+    }
   }
 }
