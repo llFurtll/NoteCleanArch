@@ -104,20 +104,29 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
             ColorButtons()
           ],
           toolbarPosition: ToolbarPosition.aboveEditor,
-          onButtonPressed:
-            (ButtonType type, bool? status, Function()? updateStatus) async {
-              bool edit = await _buttonPressed(type);
-              if (type == ButtonType.foregroundColor) {
-                if (_foreColorSelected.value != Colors.black.value) {
-                  status = true;
-                } else {
-                  status = false;
-                }
+          onButtonPressed: (ButtonType type, bool? status, Function()? updateStatus) async {
+            if (type == ButtonType.foregroundColor) {
+              if (status!) {
+                updateStatus!();
+                _clearColor();
+                return false;
+              }
+
+              int selected = await _showColorText();
+
+              if (selected == 0) {
+                return false;
+              } else if (selected == 1) {
+                _clearColor();
+              } else {
                 updateStatus!();
               }
 
-              return edit;
+              return false;
+            } else {
+              return await _buttonPressed(type);
             }
+          }
         ),
       ),
     );
@@ -170,9 +179,6 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
         return false;
       case ButtonType.table:
         await _showTable();
-        return false;
-      case ButtonType.foregroundColor:
-        await _showColorText();
         return false;
       default:
         return true;
@@ -502,67 +508,52 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
     );
   }
 
-  Future<void> _showColorText() async {
+  Future<int> _showColorText() async {
     Color newColor = _foreColorSelected;
-    await showDialog(
+    return await showDialog(
       context: _screen.context,
       builder: (BuildContext context) {
         return PointerInterceptor(
-          child: StatefulBuilder(
-            builder: (BuildContext context, Function setState) {
-              return AlertDialog(
-                scrollable: true,
-                content: ColorPicker(
-                  color: newColor,
-                  onColorChanged: (color) {
-                    newColor = color;
-                  },
-                  title: Text('Escolher a cor', style: Theme.of(context).textTheme.headline6),
-                  width: 40,
-                  height: 40,
-                  spacing: 0,
-                  runSpacing: 0,
-                  borderRadius: 0,
-                  wheelDiameter: 165,
-                  enableOpacity: false,
-                  showColorCode: true,
-                  colorCodeHasColor: true,
-                  pickersEnabled: <ColorPickerType, bool>{
-                    ColorPickerType.wheel: true,
-                  },
-                  copyPasteBehavior: const ColorPickerCopyPasteBehavior(
-                    parseShortHexCode: true,
-                  ),
-                  actionButtons: const ColorPickerActionButtons(
-                    dialogActionButtons: true,
-                  ),
-                ),
-                actions: <Widget>[
+          child: AlertDialog(
+            title: Text('Escolher a cor', style: Theme.of(context).textTheme.headline6),
+            scrollable: true,
+            content: ColorPicker(
+              color: newColor,
+              onColorChanged: (color) {
+                newColor = color;
+              },
+              spacing: 0,
+              padding: EdgeInsets.only(bottom: 0.0),
+              runSpacing: 0,
+              borderRadius: 0,
+              wheelDiameter: 165,
+              enableOpacity: false,
+              showColorCode: false,
+              colorCodeHasColor: false,
+              enableShadesSelection: false,
+              pickersEnabled: <ColorPickerType, bool>{
+                ColorPickerType.wheel: true,
+                ColorPickerType.primary: false,
+                ColorPickerType.accent: false,
+              }
+            ),
+            actions: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   TextButton(
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      Navigator.of(context).pop(0);
                     },
                     child: Text('Cancelar'),
                   ),
                   TextButton(
                     onPressed: () {
-                      setState(() {
-                        _foreColorSelected = Colors.black;
-                      });
-                      _controllerEditor.execCommand(
-                        'removeFormat',
-                        argument: 'foreColor'
-                      );
-                      _controllerEditor.execCommand(
-                        'foreColor',
-                        argument: (_foreColorSelected.value & 0xFFFFFF)
-                          .toRadixString(16)
-                          .padLeft(6, '0')
-                          .toUpperCase()
-                      );
-                      Navigator.of(context).pop();
+                      _clearColor();
+                      Navigator.of(context).pop(1);
                     },
-                    child: Text('Resetar para cor padrão')
+                    child: Text('Cor padrão')
                   ),
                   TextButton(
                     onPressed: () {
@@ -573,19 +564,32 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                           .padLeft(6, '0')
                           .toUpperCase()
                       );
-                      setState(() {
-                        _foreColorSelected = newColor;
-                      });
-                      Navigator.of(context).pop();
+                      _foreColorSelected = newColor;
+                      Navigator.of(context).pop(2);
                     },
                     child: Text('Definir cor'),
                   )
                 ],
-              );
-            }
+              )
+            ],
           ),
         );
       }
+    );
+  }
+
+  void _clearColor() {
+    _foreColorSelected = Colors.black;
+    _controllerEditor.execCommand(
+      'removeFormat',
+      argument: 'foreColor'
+    );
+    _controllerEditor.execCommand(
+      'foreColor',
+      argument: (_foreColorSelected.value & 0xFFFFFF)
+        .toRadixString(16)
+        .padLeft(6, '0')
+        .toUpperCase()
     );
   }
 }
