@@ -14,7 +14,7 @@ import '../../../../domain/usecases/crud_usecases.dart';
 import '../../createpage/create.dart';
 import '../../../../data/model/anotacao_model.dart';
 import 'header_component.dart';
-import '../../../../core/change_notifier_global.dart';
+import '../../../../../../core/notifiers/change_notifier_global.dart';
 
 class CardComponent extends IComponent<HomeState, ValueListenableBuilder, void> {
 

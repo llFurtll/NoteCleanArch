@@ -10,7 +10,7 @@ import '../../../data/model/anotacao_model.dart';
 import '../../../domain/usecases/crud_usecases.dart';
 import '../../../presentation/pages/createpage/components/app_bar_create_component.dart';
 import 'components/button_save_note_component.dart';
-import '../../../../core/change_notifier_global.dart';
+import '../../../../../core/notifiers/change_notifier_global.dart';
 import '../../adapters/editor/ieditor.dart';
 import '../../components/editor_note.dart';
 
@@ -116,7 +116,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
         fontSize: 25.0
       ),
       minLines: 1,
-      maxLines: null,
+      maxLines: 2,
       keyboardType: TextInputType.multiline,
       focusNode: _focusTitle,
     );
@@ -196,7 +196,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   }
 
   Future<bool> get _verifyKeyboard async {
-    final check = () => (WidgetsBinding.instance?.window.viewInsets.bottom ?? 0) > 0;
+    final check = () => (WidgetsBinding.instance?.window.viewInsets.bottom ?? 0) > 0 && !_focusTitle.hasFocus;
     if (!check()) return false;
     return await Future.delayed(Duration(milliseconds: 100), () => check());
   }

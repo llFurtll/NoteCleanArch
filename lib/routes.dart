@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import './presentation/pages/homepage/home.dart';
-import './presentation/pages/homepage/info.dart';
-import './presentation/pages/createpage/create.dart';
-import './presentation/pages/createpage/show_image_share.dart';
-import './presentation/pages/createpage/show_pdf_share.dart';
+import 'features/note/presentation/pages/homepage/home.dart';
+import 'features/note/presentation/pages/homepage/info.dart';
+import 'features/note/presentation/pages/createpage/create.dart';
+import 'features/note/presentation/pages/createpage/show_image_share.dart';
+import 'features/note/presentation/pages/createpage/show_pdf_share.dart';
 
 Map<String, Widget Function(BuildContext)> routes() {
   return {

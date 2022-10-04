@@ -1,8 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:note/data/model/anotacao_model.dart';
-import 'package:note/test/utils/utils.dart';
 import 'datasourcetest.dart';
+
+import '../../../features/note/data/model/anotacao_model.dart';
+import '../../utils/utils.dart';
 
 void main() {
   late DatasourceTest datasourceTest;

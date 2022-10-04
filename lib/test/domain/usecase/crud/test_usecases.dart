@@ -1,6 +1,5 @@
-import 'package:note/data/model/anotacao_model.dart';
-import 'package:note/domain/repositories/irepository.dart';
-
+import '../../../../features/note/data/model/anotacao_model.dart';
+import '../../../../features/note/domain/repositories/irepository.dart';
 class UseCasesTest {
   IRepository<AnotacaoModel> repository;
 

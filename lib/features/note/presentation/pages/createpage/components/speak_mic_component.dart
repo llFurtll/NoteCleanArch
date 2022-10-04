@@ -7,7 +7,7 @@ import 'package:speech_to_text/speech_to_text.dart';
 
 import '../create.dart';
 import '../components/app_bar_create_component.dart';
-import '../../../../core/change_notifier_global.dart';
+import '../../../../../../core/notifiers/change_notifier_global.dart';
 
 class SpeakMicComponent implements IComponent<CreateNoteState, ValueListenableBuilder, void> {
 

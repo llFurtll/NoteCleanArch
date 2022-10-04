@@ -38,10 +38,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
             setText(_screen.anotacao!.observacao!);
           }
         },
-        onFocus: () {
-          _screen.focusTitle.unfocus();
-          _controllerEditor.setFocus();
-        },
+        onFocus: () => _screen.focusTitle.unfocus(),
         onNavigationRequestMobile: (String url) async {
           Uri urlTo = Uri.parse(url);
           if (await canLaunchUrl(urlTo)) {

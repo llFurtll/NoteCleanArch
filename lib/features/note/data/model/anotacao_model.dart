@@ -1,4 +1,4 @@
-import 'package:note/domain/entities/anotacao.dart';
+import '../../domain/entities/anotacao.dart';
 
 class AnotacaoModel implements Anotacao {
   @override

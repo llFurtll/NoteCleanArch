@@ -1,5 +1,5 @@
-import '../../../../data/datasources/datasource.dart';
-import '../../../../domain/repositories/iconfig_repository.dart';
+import '../../../../features/note/data/datasources/datasource.dart';
+import '../../../../features/note/domain/repositories/iconfig_repository.dart';
 
 class RepositoryConfigTest implements IConfigRepository{
   DatasourceBase datasourceBase;

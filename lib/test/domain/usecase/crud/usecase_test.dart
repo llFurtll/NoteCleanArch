@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:note/data/model/anotacao_model.dart';
-import 'package:note/test/data/datasource/datasourcetest.dart';
-import 'package:note/test/data/repository/crud/repositorytest.dart';
-import 'package:note/test/domain/usecase/crud/test_usecases.dart';
-import 'package:note/test/utils/utils.dart';
+import '../../../../features/note/data/model/anotacao_model.dart';
+import '../../../data/datasource/datasourcetest.dart';
+import '../../../data/repository/crud/repositorytest.dart';
+import '../../../domain/usecase/crud/test_usecases.dart';
+import '../../../utils/utils.dart';
 
 void main() {
   late UseCasesTest useCases;

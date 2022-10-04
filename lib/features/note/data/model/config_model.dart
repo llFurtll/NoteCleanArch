@@ -1,4 +1,4 @@
-import 'package:note/domain/entities/config.dart';
+import '../../domain/entities/config.dart';
 
 class ConfigModel implements Config {
   @override

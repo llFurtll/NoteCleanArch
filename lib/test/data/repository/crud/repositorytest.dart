@@ -1,6 +1,6 @@
-import '../../../../data/datasources/datasource.dart';
-import '../../../../data/model/anotacao_model.dart';
-import '../../../../domain/repositories/irepository.dart';
+import '../../../../features/note/data/datasources/datasource.dart';
+import '../../../../features/note/data/model/anotacao_model.dart';
+import '../../../../features/note/domain/repositories/irepository.dart';
 
 class RepositoryTest implements IRepository<AnotacaoModel> {
 

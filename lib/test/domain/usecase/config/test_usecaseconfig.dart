@@ -1,4 +1,4 @@
-import 'package:note/domain/repositories/iconfig_repository.dart';
+import '../../../../features/note/domain/repositories/iconfig_repository.dart';
 
 class UseCaseConfigTest {
   IConfigRepository repository;
