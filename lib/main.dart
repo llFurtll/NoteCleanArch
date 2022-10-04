@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import './injector.dart';
 import './presentation/pages/splashscreen/splash.dart';
 import './routes.dart';
+import 'core/utils/init_database.dart';
 
-void main() {
-  registerDependencies();
-  
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  registerDependencies();
+  await initDatabase();
   
   runApp(
     MaterialApp(

@@ -22,12 +22,15 @@ class AnotacaoModel implements Anotacao {
   @override
   String? cor;
 
+
   AnotacaoModel({
     this.id,
     this.data,
     this.imagemFundo,
     this.observacao,
-    this.situacao
+    this.situacao,
+    this.titulo,
+    this.cor
   });
 
   @override
@@ -37,7 +40,8 @@ class AnotacaoModel implements Anotacao {
       data: json["data"],
       imagemFundo: json["imagem_fundo"],
       observacao: json["observacao"],
-      situacao: json["situacao"]
+      situacao: json["situacao"],
+      titulo: json["titulo"]
     );
   }
 }

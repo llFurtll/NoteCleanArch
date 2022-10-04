@@ -214,7 +214,7 @@ class CardComponent extends IComponent<HomeState, ValueListenableBuilder, void> 
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Padding(
-                              padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0),
+                              padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 20.0, bottom: 20.0),
                               child: _contentCard(),
                             ),
                             Container(
@@ -279,16 +279,17 @@ class CardComponent extends IComponent<HomeState, ValueListenableBuilder, void> 
   //   }
   // }
 
-  Column _contentCard() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(bottom: 10.0),
-          child: Container()
+  Widget _contentCard() {
+    return Container(
+      alignment: Alignment.bottomLeft,
+      child: Text(
+        _anotacao.titulo!,
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 18.0,
+          fontWeight: FontWeight.bold
         ),
-      ],
+      ),
     );
   }
 }

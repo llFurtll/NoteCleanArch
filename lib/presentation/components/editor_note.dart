@@ -8,7 +8,7 @@ import 'package:numberpicker/numberpicker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 
-import '../domain/editor/ieditor.dart';
+import '../adapters/editor/ieditor.dart';
 import '../pages/createpage/create.dart';
 import '../components/show_message.dart';
 
@@ -37,6 +37,10 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
           if (_screen.id != null) {
             setText(_screen.anotacao!.observacao!);
           }
+        },
+        onFocus: () {
+          _screen.focusTitle.unfocus();
+          _controllerEditor.setFocus();
         },
         onNavigationRequestMobile: (String url) async {
           Uri urlTo = Uri.parse(url);
@@ -269,12 +273,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                 TextButton(
                   onPressed: () async {
                     if (formKey.currentState!.validate()) {
-                      _controllerEditor.insertHtml(
-                        """
-                          <a href="${url.text}" target="new">${text.text}</a><br>
-                        """
-                      );
-                      // _controllerEditor.insertLink(text.text, url.text, true);
+                      _controllerEditor.insertLink(text.text, url.text, true);
                       Navigator.of(context).pop();
                       print(await getText());
                     }

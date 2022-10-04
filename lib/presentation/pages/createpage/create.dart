@@ -11,7 +11,7 @@ import '../../../domain/usecases/crud_usecases.dart';
 import '../../../presentation/pages/createpage/components/app_bar_create_component.dart';
 import 'components/button_save_note_component.dart';
 import '../../../../core/change_notifier_global.dart';
-import '../../domain/editor/ieditor.dart';
+import '../../adapters/editor/ieditor.dart';
 import '../../components/editor_note.dart';
 
 // ignore: must_be_immutable
@@ -33,12 +33,13 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   final ChangeNotifierGlobal<String> _pathImageNotifier = ChangeNotifierGlobal("");
   final ChangeNotifierGlobal<bool> _keyboardVisible = ChangeNotifierGlobal(false);
   final FocusNode _focusTitle = FocusNode();
-  
-  late final IEditor _editor;
+  final TextEditingController _title = TextEditingController();
+
   late AnotacaoModel? _anotacaoModel;
   late CrudUseCases useCases;
   late AppBarCreateComponent _appBarCreateComponent;
   late ButtonSaveNoteComponent _buttonSaveNoteComponent;
+  late IEditor _editor;
 
   @override
   void initState() {
@@ -51,6 +52,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (widget.id != null) {
         _anotacaoModel = await useCases.getByIdUseCase(id: widget.id!);
+        _title.text = _anotacaoModel!.titulo!;
 
         if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
           _pathImageNotifier.value = _anotacaoModel!.imagemFundo!;
@@ -89,6 +91,37 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
     );
   }
 
+  TextFormField _titulo() {
+    return TextFormField(
+      controller: _title,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return "Por favor preencha o título!";
+        }
+
+        return null;
+      },
+      decoration: InputDecoration(
+        hintText: "Título",
+        errorStyle: TextStyle(color: Colors.red),
+        hintStyle: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.normal,
+        ),
+        border: InputBorder.none,
+      ),
+      style: TextStyle(
+        color: Colors.black,
+        fontWeight: FontWeight.bold,
+        fontSize: 25.0
+      ),
+      minLines: 1,
+      maxLines: null,
+      keyboardType: TextInputType.multiline,
+      focusNode: _focusTitle,
+    );
+  }
+
   Widget _descricao() {
     return _editor.constructor();
   }
@@ -99,6 +132,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
+          _titulo(),
           _editor.options(),
           Expanded(
             child: _descricao(),
@@ -201,5 +235,9 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
 
   IEditor get editor {
     return _editor;
+  }
+
+  TextEditingController get title {
+    return _title;
   }
 }

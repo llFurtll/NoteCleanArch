@@ -59,10 +59,10 @@ class DatasourceTest implements DatasourceBase<AnotacaoModel> {
     int? insert;
 
     insert = await _db.rawInsert(
-      """INSERT INTO NOTE(data, situacao, imagem_fundo, observacao)
-          VALUES(?, ?, ?, ?)
+      """INSERT INTO NOTE(titulo, data, situacao, imagem_fundo, observacao)
+          VALUES(?, ?, ?, ?, ?)
       """,
-      [anotacao.data, anotacao.situacao, anotacao.imagemFundo, anotacao.observacao]
+      [anotacao.titulo, anotacao.data, anotacao.situacao, anotacao.imagemFundo, anotacao.observacao]
     );
 
     await closeConnection();
@@ -93,10 +93,10 @@ class DatasourceTest implements DatasourceBase<AnotacaoModel> {
 
     update = await _db.rawUpdate(
       """
-      UPDATE NOTE SET DATA = ?, SITUACAO = ?, IMAGEM_FUNDO = ?, OBSERVACAO = ? WHERE ID = ?
+      UPDATE NOTE SET TITULO = ?,  DATA = ?, SITUACAO = ?, IMAGEM_FUNDO = ?, OBSERVACAO = ? WHERE ID = ?
       """,
       [
-        anotacao.data, anotacao.situacao,
+        anotacao.titulo, anotacao.data, anotacao.situacao,
         anotacao.imagemFundo, anotacao.observacao, anotacao.id
       ]
     );
@@ -149,7 +149,7 @@ class DatasourceTest implements DatasourceBase<AnotacaoModel> {
     List<AnotacaoModel> listAnotacao = [];
     
     List<Map> listNote = await _db.rawQuery(
-      "SELECT * FROM NOTE WHERE SITUACAO = 1 AND OBSERVACAO LIKE '%$desc%' ORDER BY DATA DESC"
+      "SELECT * FROM NOTE WHERE SITUACAO = 1 AND TITULO LIKE '%$desc%' ORDER BY DATA DESC"
     );
 
     listNote.forEach((elemento) {

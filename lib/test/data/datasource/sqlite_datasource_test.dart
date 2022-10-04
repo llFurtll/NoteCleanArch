@@ -31,6 +31,7 @@ void main() {
             situacao: 1,
             imagemFundo: "http",
             observacao: "Teste insert",
+            titulo: "Teste"
           ) as AnotacaoModel
         );
 
@@ -44,7 +45,8 @@ void main() {
             data: DateTime.now().toIso8601String(),
             situacao: 0,
             imagemFundo: "https",
-            observacao: "Daniel!"
+            observacao: "Daniel!",
+            titulo: "Teste Update"
           ) as AnotacaoModel
         );
 
@@ -76,7 +78,7 @@ void main() {
       });
 
       test("Testando o find com desc", () async {
-        List<AnotacaoModel?> lista = await datasourceTest.findWithDesc(desc: "gostei");
+        List<AnotacaoModel?> lista = await datasourceTest.findWithDesc(desc: "teste desc");
         expect(lista.length, 2);
       }); 
 

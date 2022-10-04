@@ -52,19 +52,21 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
 
   @override
   void event() async {
-    String text = (await _screen.editor.getText()).trim();
-    if (text.isNotEmpty) {
+    String title = _screen.title.text.trim();
+    String content = await _screen.editor.getText();
+    if (title.isNotEmpty) {
       if (_screen.id == null) {
-        _insertNote(text);
+        _insertNote(title, content);
       } else {
-        _screen.anotacao!.observacao = text;
+        _screen.anotacao!.observacao = content;
         _screen.anotacao!.imagemFundo = _screen.pathImage;
+        _screen.anotacao!.titulo = title;
         _updateNote(_screen.anotacao!);
       }
 
       _conversable.callScreen("home")!.receive("refresh", "");
     } else {
-      MessageDefaultSystem.showMessage(_screen.context, "Anotação não pode estar vazia!");
+      MessageDefaultSystem.showMessage(_screen.context, "Título não pode estar vazio!");
     }
   }
 
@@ -78,9 +80,10 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
     return;
   }
 
-  void _insertNote(String text) async {
+  void _insertNote(String title, String content) async {
     AnotacaoModel anotacaoModel = AnotacaoModel(
-      observacao: text,
+      observacao: content,
+      titulo: title,
       data: DateTime.now().toIso8601String(),
       imagemFundo: _screen.pathImage,
       situacao: 1,

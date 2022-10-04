@@ -52,7 +52,8 @@ void main() {
           data: DateTime.now().toIso8601String(),
           imagemFundo: "Legal",
           observacao: "Eu amo flutter",
-          situacao: 0
+          situacao: 0,
+          titulo: "Teste"
         ) as AnotacaoModel);
 
         assert(update == 1);
@@ -70,6 +71,7 @@ void main() {
             situacao: 1,
             imagemFundo: "http",
             observacao: "Teste insert",
+            titulo: "Teste"
           ) as AnotacaoModel
         );
 
@@ -82,7 +84,7 @@ void main() {
       });
 
       test("find com desc", () async {
-        List<AnotacaoModel?> listaAnotacao = await useCases.findWithDesc(desc: "gostei");
+        List<AnotacaoModel?> listaAnotacao = await useCases.findWithDesc(desc: "teste desc");
         expect(listaAnotacao.length, 2);
       });
 

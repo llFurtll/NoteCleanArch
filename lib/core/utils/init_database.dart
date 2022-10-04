@@ -5,19 +5,20 @@ import 'package:sqflite/sqflite.dart';
 Future<void> initDatabase() async {
   await openDatabase(
     join(await getDatabasesPath(), "note.db"),
-    version: 2,
+    version: 1,
     onCreate: (Database db, int version) async {
-        await db.execute(
-          """
-            CREATE TABLE IF NOT EXISTS NOTE(
-              id INTEGER PRIMARY KEY,
-              data DATETIME NOT NULL,
-              situacao INTEGER NOT NULL,
-              imagem_fundo TEXT,
-              observacao TEXT
-            )
-          """
-        );
+      await db.execute(
+        """
+          CREATE TABLE IF NOT EXISTS NOTE(
+            id INTEGER PRIMARY KEY,
+            titulo TEXT NOT NULL,
+            data DATETIME NOT NULL,
+            situacao INTEGER NOT NULL,
+            imagem_fundo TEXT,
+            observacao TEXT
+          )
+        """
+      );
 
       await db.execute(
         """
@@ -39,22 +40,23 @@ Future<void> initDatabase() async {
     onUpgrade: (Database db, int version, int newVersion) async {
       List<Map> columns = await db.rawQuery("PRAGMA TABLE_INFO('NOTE')");
       for (Map item in columns) {
-        if (item["name"] == "titulo") {
+        if (item["name"] == "cor") {
           await db.execute(
             """
-              CREATE TABLE IF NOT EXISTS NEW_NOTE(
+              CREATE TABLE IF NOT EXISTS NOTE(
                 id INTEGER PRIMARY KEY,
+                titulo TEXT NOT NULL,
                 data DATETIME NOT NULL,
                 situacao INTEGER NOT NULL,
                 imagem_fundo TEXT,
                 observacao TEXT
               )
-            """
+          """
           );
 
           await db.rawInsert("""
-              INSERT INTO NEW_NOTE (ID, DATA, SITUACAO, IMAGEM_FUNDO, OBSERVACAO)
-              SELECT ID, DATA, SITUACAO, IMAGEM_FUNDO, OBSERVACAO FROM NOTE
+              INSERT INTO NEW_NOTE (ID, TITULO, DATA, SITUACAO, IMAGEM_FUNDO, OBSERVACAO)
+              SELECT ID, TITULO, DATA, SITUACAO, IMAGEM_FUNDO, OBSERVACAO FROM NOTE
             """
           );
 

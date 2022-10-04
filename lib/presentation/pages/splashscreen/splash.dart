@@ -1,8 +1,5 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
-
-import '../../../utils/init_database.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -15,7 +12,6 @@ class SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Future.delayed(Duration(seconds: 3), () async {
-      await initDatabase();
       Navigator.pushNamed(context, "/home");
     });
   }

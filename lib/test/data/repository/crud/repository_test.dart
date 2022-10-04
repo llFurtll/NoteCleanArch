@@ -78,7 +78,7 @@ void main() {
       });
 
       test("find com desc", () async {
-        List<AnotacaoModel?> listaAnotacao = await repositoryTest.findWithDesc(desc: "gostei");
+        List<AnotacaoModel?> listaAnotacao = await repositoryTest.findWithDesc(desc: "teste desc");
         expect(listaAnotacao.length, 2);
       });
 

@@ -1,15 +1,12 @@
+
 import 'package:flutter/material.dart';
-
 import 'package:animations/animations.dart';
-
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 
 import '../home.dart';
 import '../../createpage/create.dart';
-import '../../../components/editor_note.dart';
 
 class ButtonAddNoteComponent implements IComponent<HomeState, OpenContainer, void> {
-
   final HomeState _screen;
   final double _fabDimension = 56.0;
   final ContainerTransitionType _transitionType = ContainerTransitionType.fadeThrough;

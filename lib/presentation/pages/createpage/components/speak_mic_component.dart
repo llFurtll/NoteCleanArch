@@ -56,7 +56,11 @@ class SpeakMicComponent implements IComponent<CreateNoteState, ValueListenableBu
     bool response = false;
 
     response = await _showDialogListen();
-    _screen.editor.insertHtml(_textSpeak);
+    if (_screen.focusTitle.hasFocus) {
+      _screen.title.text += _textSpeak;
+    } else {
+      _screen.editor.insertHtml(_textSpeak);
+    }
 
     if (response) {
       afterEvent();
