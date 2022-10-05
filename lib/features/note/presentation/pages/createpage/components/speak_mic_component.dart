@@ -59,7 +59,7 @@ class SpeakMicComponent implements IComponent<CreateNoteState, ValueListenableBu
     if (_screen.focusTitle.hasFocus) {
       _screen.title.text += _textSpeak;
     } else {
-      _screen.editor.insertHtml(_textSpeak);
+      _screen.editor.insertText(_textSpeak);
     }
 
     if (response) {

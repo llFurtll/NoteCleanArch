@@ -7,4 +7,5 @@ abstract class IEditor<T extends State> {
   Future<String> getText();
   void setText(String text);
   void insertHtml(String html);
+  void insertText(String text);
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
@@ -34,11 +35,15 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
           _controllerEditor.editorController!.evaluateJavascript(
             source: "document.getElementsByClassName('note-placeholder')[0].style.color='black';"
           );
-          if (_screen.id != null) {
+          if (_screen.id != null && _screen.anotacao!.observacao!.isNotEmpty) {
             setText(_screen.anotacao!.observacao!);
           }
         },
-        onFocus: () => _screen.focusTitle.unfocus(),
+        onFocus: () {
+          if (_screen.focusTitle.hasFocus) {
+            _screen.focusTitle.unfocus();
+          }
+        },
         onNavigationRequestMobile: (String url) async {
           Uri urlTo = Uri.parse(url);
           if (await canLaunchUrl(urlTo)) {
@@ -59,7 +64,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
         hint: "<p>Comece a digitar aqui...<p>",
       ),
       htmlToolbarOptions: HtmlToolbarOptions(
-        toolbarPosition: ToolbarPosition.custom
+        toolbarPosition: ToolbarPosition.custom,
       ),
     );
   }
@@ -77,6 +82,11 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
   @override
   void insertHtml(String html) {
     _controllerEditor.insertHtml(html);
+  }
+
+  @override
+  void insertText(String text) {
+    _controllerEditor.insertText(text);
   }
 
   @override
@@ -305,6 +315,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
     }
     FilePickerResult? result;
     await showDialog(
+      barrierDismissible: false,
       context: _screen.context,
       builder: (BuildContext context) {
         return PointerInterceptor(
@@ -465,6 +476,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
     var currentRows = 1;
     var currentCols = 1;
     await showDialog(
+      barrierDismissible: false,
       context: _screen.context,
       builder: (BuildContext context) {
         return PointerInterceptor(
@@ -524,10 +536,12 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
       newColor = _foreColorSelected;
     }
     return await showDialog(
+      barrierDismissible: false,
       context: _screen.context,
       builder: (BuildContext context) {
         return PointerInterceptor(
           child: AlertDialog(
+            
             title: Text('Escolher a cor', style: Theme.of(context).textTheme.headline6),
             scrollable: true,
             content: ColorPicker(
