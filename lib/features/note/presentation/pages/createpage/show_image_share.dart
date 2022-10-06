@@ -89,11 +89,22 @@ class ShowImageShare extends StatelessWidget {
             constraints: BoxConstraints(
               minHeight: 500.0
             ),
-            padding: EdgeInsets.all(10.0),
+            padding: EdgeInsets.all(15.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisSize: MainAxisSize.min,
               children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 5.0),
+                    child: Text(
+                    arguments.anotacaoModel.titulo!,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25.0
+                    ),
+                  ),
+                ),
                 Html(data: arguments.anotacaoModel.observacao!)
               ],
             ),

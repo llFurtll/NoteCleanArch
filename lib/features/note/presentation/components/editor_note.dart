@@ -26,7 +26,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
     return HtmlEditor(
       controller: _controllerEditor,
       callbacks: Callbacks(
-        onInit: () {
+        onInit: () async {
           _controllerEditor.setFullScreen();
           _controllerEditor.editorController!.evaluateJavascript(
             source: "document.getElementsByClassName('note-editable')[0].style.backgroundColor='transparent';"
@@ -60,7 +60,23 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
         ),
       ),
       htmlEditorOptions: HtmlEditorOptions(
-        hint: "<p>Comece a digitar aqui...<p>",
+        hint: "<p>Comece a digitar aqui...</p>",
+        customOptions: """
+          popover: {
+            image: [
+              ['image', ['resizeFull', 'resizeHalf', 'resizeQuarter', 'resizeNone']],
+              ['float', ['floatLeft', 'floatRight', 'floatNone']],
+              ['remove', ['removeMedia']]
+            ],
+            link: [
+              ['link', ['unlink']]
+            ],
+            table: [
+              ['add', ['addRowDown', 'addRowUp', 'addColLeft', 'addColRight']],
+              ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
+            ],
+          },
+        """
       ),
       htmlToolbarOptions: HtmlToolbarOptions(
         toolbarPosition: ToolbarPosition.custom,
@@ -154,32 +170,64 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
     return ValueListenableBuilder<bool>(
       valueListenable: _screen.keyboardVisible,
       builder: (BuildContext context, bool value, Widget? widget) {
-        return Visibility(
-          visible: _screen.keyboardVisible.value,
-          child: Positioned(
-            child: Container(
-              color: Colors.white,
-              child: ToolbarWidget(
-                controller: _controllerEditor,
-                htmlToolbarOptions: HtmlToolbarOptions(
-                  buttonSelectedColor: Theme.of(_screen.context).primaryColor,
-                  buttonFillColor: Theme.of(_screen.context).primaryColor.withOpacity(0.3),
-                  defaultToolbarButtons: [
-                    ListButtons(),
-                    InsertButtons()
-                  ],
-                  toolbarPosition: ToolbarPosition.belowEditor,
-                  onButtonPressed: (ButtonType type, bool? status, Function()? updateStatus) async => await _buttonPressed(type)
-                ),
-                callbacks: null,
-              ),
+        bool isShowOptions = value;
+        return Positioned(
+          child: Container(
+            width: isShowOptions ? null : 40.0,
+            height: isShowOptions ? null : 40.0,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(isShowOptions ? 0.0 : 50.0)),
+              color: Colors.white
             ),
-            left: 0,
-            right: 0,
-            bottom: MediaQuery.of(context).viewInsets.bottom,
+            child: isShowOptions ? _rowOptionsKeyboard() : _iconShowOptions()
           ),
+          left: isShowOptions ? 0 : null,
+          right: isShowOptions ? 0 : 25,
+          bottom: isShowOptions ? MediaQuery.of(context).viewInsets.bottom : 10.0,
         );
       }
+    );
+  }
+
+  Widget _rowOptionsKeyboard() {
+    return Row(
+      children: [
+        Expanded(
+          child: SizedBox(
+            child: ToolbarWidget(
+              controller: _controllerEditor,
+              htmlToolbarOptions: HtmlToolbarOptions(
+                buttonSelectedColor: Theme.of(_screen.context).primaryColor,
+                buttonFillColor: Theme.of(_screen.context).primaryColor.withOpacity(0.3),
+                defaultToolbarButtons: [
+                  ListButtons(
+                    listStyles: false
+                  ),
+                  InsertButtons()
+                ],
+                toolbarPosition: ToolbarPosition.belowEditor,
+                onButtonPressed: (ButtonType type, bool? status, Function()? updateStatus) async => await _buttonPressed(type),
+              ),
+              callbacks: null,
+            ),
+          ),
+        ),
+        Tooltip(
+          message: "Fechar barra de ferramentas",
+          preferBelow: false,
+          child: IconButton(
+            onPressed: () => _screen.keyboardVisible.value = false,
+            icon: Icon(Icons.close),
+          ),
+        )
+      ],
+    );
+  }
+
+  Widget _iconShowOptions() {
+    return IconButton(
+      onPressed: () => _screen.keyboardVisible.value = true,
+      icon: Icon(Icons.arrow_upward)
     );
   }
   

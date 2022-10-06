@@ -80,13 +80,13 @@ class Info extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(top: 20.0),
       child: Text(
-          "Daniel Melonari",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 25.0
-          ),
+        "Daniel Melonari",
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+          fontSize: 25.0
         ),
+      ),
     );
   }
 
@@ -116,7 +116,7 @@ class Info extends StatelessWidget {
 
   Padding _iconCoffee(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(top: 20.0, left: 5.0, right: 5.0),
+      padding: EdgeInsets.only(top: 20.0, left: 5.0, right: 5.0, bottom: 20.0),
       child: GestureDetector(
         onTap: () => _launchUrl("https://www.buymeacoffee.com/danielmelonari", context),
         child: Container(
@@ -132,8 +132,9 @@ class Info extends StatelessWidget {
   }
 
   Future<void> _launchUrl(String url, BuildContext context) async {
-    if (await canLaunch(url)) {
-      await launch(url);
+    Uri newUrl = Uri.parse(url);
+    if (await canLaunchUrl(newUrl)) {
+      await launchUrl(newUrl);
     } else {
       MessageDefaultSystem.showMessage(
         context,

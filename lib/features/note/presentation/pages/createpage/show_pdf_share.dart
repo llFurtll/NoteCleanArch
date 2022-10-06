@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:note/features/note/data/model/anotacao_model.dart';
 import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -131,7 +131,7 @@ class ShowPdfShare extends StatelessWidget {
       }
     }
 
-    String html = _generateHtml(showImage && image.isNotEmpty, image, arguments.anotacaoModel.observacao!);
+    String html = _generateHtml(showImage && image.isNotEmpty, image, arguments.anotacaoModel);
 
     File pdf = await FlutterHtmlToPdf.convertFromHtmlContent(
       html,
@@ -142,7 +142,9 @@ class ShowPdfShare extends StatelessWidget {
     return pdf.readAsBytes();
   }
 
-  String _generateHtml(bool showImage, String image, String observacao) {
+  String _generateHtml(bool showImage, String image, AnotacaoModel anotacaoModel) {
+    String title = anotacaoModel.titulo!;
+    String observacao = anotacaoModel.observacao!;
     return """
       <!DOCTYPE html>
       <html>
@@ -177,12 +179,19 @@ class ShowPdfShare extends StatelessWidget {
             .banner .content {
               padding: ${showImage ? "25px" : "0px"};
             }
+
+            .title {
+              color: black;
+              font-size: 25px;
+              font-weight: bold;
+            }
           </style>
         </head>
         <body>
           <div class='banner'>
             <div class='bg'></div>
             <div class='content'>
+              <span class="title">$title</span>
               $observacao
             </div>
           </div>

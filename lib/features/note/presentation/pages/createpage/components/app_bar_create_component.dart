@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:compmanager/domain/interfaces/icomponent.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../create.dart';
 import 'change_image_background_component.dart';
@@ -104,7 +105,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
   IconButton _iconOpenItens(bool close) {
     return IconButton(
       onPressed: () => close ? _showContainer.value = false : _showContainer.value = true,
-      icon: Icon(close ? Icons.arrow_forward_outlined : Icons.arrow_back_outlined),
+      icon: Icon(close ? Icons.close : Icons.menu),
       color: Colors.black,
       padding: EdgeInsets.zero,
       splashRadius: 25.0,
@@ -119,6 +120,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
           return Visibility(
             visible: _showShare.value,
             child: IconButton(
+              tooltip: "Compartilhar",
               onPressed: () => _screen.emitScreen(_shareComponent),
               icon: Icon(
                 Icons.ios_share_outlined,
@@ -132,9 +134,10 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
         }
       ),
       IconButton(
+        tooltip: _disableSpeak.value ? "Permissão negada" : "Usar microfone",
         onPressed: _disableSpeak.value ? null : () => _screen.emitScreen(_speakMicComponent),
         icon: Icon(
-          Icons.mic,
+          _disableSpeak.value ? Icons.mic_off : Icons.mic,
         ),
         color: Colors.black,
         disabledColor: Colors.grey,
@@ -144,32 +147,26 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
       ValueListenableBuilder(
         valueListenable: _removeBackgroundNotifier,
         builder: (BuildContext context, bool value, Widget? widget) {
-          return Visibility(
-            visible: _removeBackgroundNotifier.value,
-            child: IconButton(
-              color: Colors.black,
-              onPressed: () {
+          bool containPhoto = _removeBackgroundNotifier.value;
+          return IconButton(
+            tooltip: containPhoto ? "Remover imagem de fundo" : "Adicionar imagem de fundo",
+            color: Colors.black,
+            onPressed: () {
+              if (containPhoto) {
                 _screen.pathImage = "";
                 _removeBackgroundNotifier.value = false;
                 _changeImageBackgroundComponent.imageSelected = -1;
                 changeMenuItens();
-              },
-              icon: const Icon(Icons.close),
-              padding: EdgeInsets.zero,
-              splashRadius: 25.0,
-            )
+              } else {
+                _screen.emitScreen(_changeImageBackgroundComponent);
+              }
+            },
+            icon: Icon(containPhoto ? Icons.no_photography : Icons.photo),
+            padding: EdgeInsets.zero,
+            splashRadius: 25.0,
           );
         },
       ),
-      IconButton(
-        onPressed: () => _screen.emitScreen(_changeImageBackgroundComponent),
-        icon: Icon(
-          Icons.photo,
-          color: Colors.black,
-        ),
-        padding: EdgeInsets.zero,
-        splashRadius: 25.0,
-      )
     ];
   }
 
@@ -192,11 +189,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
     if (!_showContainer.value) {
       return baseSize;
     }
-
-    if (_removeBackgroundNotifier.value) {
-      qtdIcones++;
-    }
-
+    
     if (_screen.id != null) {
       qtdIcones++;
     }
