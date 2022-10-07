@@ -1,5 +1,5 @@
 abstract class Config {
-  String? path_foto;
+  String? pathFoto;
   String? nome;
 
   Config();

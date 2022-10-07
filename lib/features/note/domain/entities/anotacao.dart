@@ -1,6 +1,5 @@
 abstract class Anotacao {
   int? id;
-  @deprecated
   String? titulo;
   String? data;
   int? situacao;

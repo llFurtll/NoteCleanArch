@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:compmanager/domain/interfaces/icomponent.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../create.dart';
 import 'change_image_background_component.dart';

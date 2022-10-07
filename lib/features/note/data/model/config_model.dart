@@ -5,13 +5,11 @@ class ConfigModel implements Config {
   String? nome;
 
   @override
-  // ignore: non_constant_identifier_names
-  String? path_foto;
+  String? pathFoto;
 
   ConfigModel({
       this.nome,
-      // ignore: non_constant_identifier_names
-      this.path_foto
+      this.pathFoto
     }
   );
 
@@ -19,7 +17,7 @@ class ConfigModel implements Config {
   factory ConfigModel.froJson(Map json) {
     return ConfigModel(
       nome: json["nome"],
-      path_foto: json["path_foto"],
+      pathFoto: json["path_foto"],
     );
   }
 }
