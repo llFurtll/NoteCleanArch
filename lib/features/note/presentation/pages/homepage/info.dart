@@ -13,6 +13,7 @@ class Info extends StatelessWidget {
       backgroundColor: Colors.white,
       elevation: 0,
       leading: IconButton(
+        tooltip: "Voltar",
         icon: Icon(Icons.arrow_back_ios),
         onPressed: () => Navigator.of(context).pop(),
       ),

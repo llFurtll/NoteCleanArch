@@ -39,6 +39,7 @@ class ButtonAddNoteComponent implements IComponent<HomeState, OpenContainer, voi
       ),
       closedBuilder: (BuildContext context, VoidCallback openContainer) {
         return FloatingActionButton(
+          tooltip: "Criar nota",
           backgroundColor: Theme.of(context).floatingActionButtonTheme.backgroundColor,
           elevation: 0.0,
           onPressed: null,

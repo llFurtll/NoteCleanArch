@@ -41,6 +41,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
         return Visibility(
           visible: !_screen.keyboardVisible.value,
           child: FloatingActionButton(
+            tooltip: "Salvar",
             backgroundColor: Theme.of(_screen.context).floatingActionButtonTheme.backgroundColor,
             onPressed: () => _screen.emitScreen(this),
             child: const Icon(Icons.save),

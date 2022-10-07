@@ -165,8 +165,9 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
         valueListenable: _showInfo,
         builder: (BuildContext context, bool value, Widget? widget)  {
           return Visibility(
-              visible: _showInfo.value,
-              child: IconButton(
+            visible: _showInfo.value,
+            child: IconButton(
+              tooltip: "Informações",
               icon: Icon(Icons.info_outline),
               onPressed: () => Navigator.pushNamed(context, "/info"),
               color: Colors.white

@@ -18,6 +18,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
   
   Color _foreColorSelected = Colors.black;
   Color _backgroundColorSelected = Colors.yellow;
+  bool _showButtonOpenKeyboardOptions = false;
 
   HtmlEditorNote(this._screen);
 
@@ -28,11 +29,30 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
       callbacks: Callbacks(
         onInit: () async {
           _controllerEditor.setFullScreen();
+          _controllerEditor.execCommand('fontName', argument: 'arial');
           _controllerEditor.editorController!.evaluateJavascript(
-            source: "document.getElementsByClassName('note-editable')[0].style.backgroundColor='transparent';"
-          );
-          _controllerEditor.editorController!.evaluateJavascript(
-            source: "document.getElementsByClassName('note-placeholder')[0].style.color='black';"
+            source: """
+              var style = document.createElement('style');
+              style.type = 'text/css';
+              style.innerHTML = `
+                .table-bordered > tbody > tr > td {
+                  border-color: black !important;
+                }
+                
+                .note-placeholder {
+                  color: black !important;
+                }
+
+                .note-editable {
+                  background-color: transparent !important;
+                }
+
+                hr {
+                  border-color: black !important;
+                }
+              `;
+              document.getElementsByTagName('head')[0].appendChild(style);
+            """
           );
           if (_screen.id != null && _screen.anotacao!.observacao!.isNotEmpty) {
             setText(_screen.anotacao!.observacao!);
@@ -76,7 +96,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
               ['delete', ['deleteRow', 'deleteCol', 'deleteTable']],
             ],
           },
-        """
+        """,
       ),
       htmlToolbarOptions: HtmlToolbarOptions(
         toolbarPosition: ToolbarPosition.custom,
@@ -122,13 +142,11 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
               codeview: false,
               fullscreen: false,
             ),
-            FontSettingButtons(
-              fontSizeUnit: false
-            ),
             FontButtons(
               subscript: false,
-              superscript: false
+              superscript: false,
             ),
+            
             ParagraphButtons(
               caseConverter: false,
               textDirection: false
@@ -170,64 +188,76 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
     return ValueListenableBuilder<bool>(
       valueListenable: _screen.keyboardVisible,
       builder: (BuildContext context, bool value, Widget? widget) {
-        bool isShowOptions = value;
-        return Positioned(
-          child: Container(
-            width: isShowOptions ? null : 40.0,
-            height: isShowOptions ? null : 40.0,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(isShowOptions ? 0.0 : 50.0)),
-              color: Colors.white
+        if (value) {
+          bool isShowOptions = !_showButtonOpenKeyboardOptions;
+          return Positioned(
+            child: Container(
+              width: isShowOptions ? null : 40.0,
+              height: isShowOptions ? null : 40.0,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.all(Radius.circular(isShowOptions ? 0.0 : 50.0)),
+                color: isShowOptions ? Colors.white : Colors.grey[300]
+              ),
+              child: isShowOptions ? _showOptionsKeyboard() : _iconShowOptions()
             ),
-            child: isShowOptions ? _rowOptionsKeyboard() : _iconShowOptions()
-          ),
-          left: isShowOptions ? 0 : null,
-          right: isShowOptions ? 0 : 25,
-          bottom: isShowOptions ? MediaQuery.of(context).viewInsets.bottom : 10.0,
-        );
+            left: isShowOptions ? 0 : null,
+            right: isShowOptions ? 0 : 25,
+            bottom: isShowOptions ? MediaQuery.of(context).viewInsets.bottom : 10.0,
+          );
+        } else {
+          return SizedBox.shrink();
+        }
       }
     );
   }
 
-  Widget _rowOptionsKeyboard() {
-    return Row(
-      children: [
-        Expanded(
-          child: SizedBox(
-            child: ToolbarWidget(
-              controller: _controllerEditor,
-              htmlToolbarOptions: HtmlToolbarOptions(
-                buttonSelectedColor: Theme.of(_screen.context).primaryColor,
-                buttonFillColor: Theme.of(_screen.context).primaryColor.withOpacity(0.3),
-                defaultToolbarButtons: [
-                  ListButtons(
-                    listStyles: false
-                  ),
-                  InsertButtons()
-                ],
-                toolbarPosition: ToolbarPosition.belowEditor,
-                onButtonPressed: (ButtonType type, bool? status, Function()? updateStatus) async => await _buttonPressed(type),
-              ),
-              callbacks: null,
-            ),
+  Widget _showOptionsKeyboard() {
+    return ToolbarWidget(
+      controller: _controllerEditor,
+      htmlToolbarOptions: HtmlToolbarOptions(
+        customToolbarButtons: [
+          ToggleButtons(
+            renderBorder: false,
+            onPressed: (int index) {
+              _showButtonOpenKeyboardOptions = true;
+              _screen.keyboardVisible.emitChange();
+            },
+            children: [
+              Tooltip(
+                message: "Fechar barra de ferramentas",
+                preferBelow: false,
+                child: Icon(Icons.close),
+              )
+            ],
+            isSelected: [false]
+          )
+        ],
+        buttonSelectedColor: Theme.of(_screen.context).primaryColor,
+        buttonFillColor: Theme.of(_screen.context).primaryColor.withOpacity(0.3),
+        defaultToolbarButtons: [
+          ListButtons(
+            listStyles: false
           ),
-        ),
-        Tooltip(
-          message: "Fechar barra de ferramentas",
-          preferBelow: false,
-          child: IconButton(
-            onPressed: () => _screen.keyboardVisible.value = false,
-            icon: Icon(Icons.close),
-          ),
-        )
-      ],
+          InsertButtons()
+        ],
+        toolbarPosition: ToolbarPosition.belowEditor,
+        onButtonPressed: (ButtonType type, bool? status, Function()? updateStatus) async => await _buttonPressed(type),
+      ),
+      callbacks: null,
     );
   }
 
   Widget _iconShowOptions() {
-    return IconButton(
-      onPressed: () => _screen.keyboardVisible.value = true,
-      icon: Icon(Icons.arrow_upward)
+    return Tooltip(
+      message: "Exibir barra de ferramentas",
+      preferBelow: false,
+      child: IconButton(
+        onPressed: () {
+          _showButtonOpenKeyboardOptions = false;
+          _screen.keyboardVisible.emitChange();
+        },
+        icon: Icon(Icons.arrow_upward)
+      ),
     );
   }
   
@@ -278,17 +308,32 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                         )
                       ),
                       SizedBox(height: 10),
-                      TextField(
+                      TextFormField(
+                        validator: (String? value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Por favor, insira um texto para exibição!';
+                          }
+                          return null;
+                        },
                         controller: text,
                         focusNode: textFocus,
                         textInputAction: TextInputAction.next,
                         decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'Texto',
+                          hintText: "Texto",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                            borderSide: BorderSide(
+                              color: Theme.of(_screen.context).primaryColor
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                            borderSide: BorderSide(
+                              color: Theme.of(_screen.context).primaryColor
+                            ),
+                          ),
+                          errorMaxLines: 2
                         ),
-                        onSubmitted: (_) {
-                          urlFocus.requestFocus();
-                        },
                       ),
                       SizedBox(height: 20),
                       Text(
@@ -303,8 +348,19 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                         focusNode: urlFocus,
                         textInputAction: TextInputAction.done,
                         decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          hintText: 'URL',
+                          hintText: "URL",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                            borderSide: BorderSide(
+                              color: Theme.of(_screen.context).primaryColor
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                            borderSide: BorderSide(
+                              color: Theme.of(_screen.context).primaryColor
+                            ),
+                          ),
                         ),
                         validator: (String? value) {
                           if (value == null || value.isEmpty) {
@@ -322,7 +378,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Cancelar'),
+                  child: Text('Cancelar', style: TextStyle(color: Theme.of(context).primaryColor)),
                 ),
                 TextButton(
                   onPressed: () async {
@@ -332,7 +388,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                       print(await getText());
                     }
                   },
-                  child: Text('OK'),
+                  child: Text('OK', style: TextStyle(color: Theme.of(context).primaryColor)),
                 )
               ],
             );
@@ -427,17 +483,17 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                           ),
                         ),
                       ),
-                      suffixIcon: result != null ? 
-                        IconButton(
-                            icon: Icon(Icons.close),
-                            onPressed: () {
-                              setState(() {
-                                result = null;
-                                filename.text = '';
-                              });
-                            }
-                          )
-                        : SizedBox.shrink(),
+                    suffixIcon: result != null ? 
+                      IconButton(
+                        icon: Icon(Icons.close),
+                        onPressed: () {
+                          setState(() {
+                            result = null;
+                            filename.text = '';
+                          });
+                        }
+                      )
+                    : SizedBox.shrink(),
                     errorText: validateFailed,
                     errorMaxLines: 2,
                     border: InputBorder.none,
@@ -451,10 +507,21 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                   focusNode: urlFocus,
                   textInputAction: TextInputAction.done,
                   decoration: InputDecoration(
-                    border: OutlineInputBorder(),
                     hintText: 'URL',
                     errorText: validateFailed,
                     errorMaxLines: 2,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Theme.of(_screen.context).primaryColor
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      borderSide: BorderSide(
+                        color: Theme.of(_screen.context).primaryColor
+                      ),
+                    ),
                   ),
                 ),
               ]),
@@ -463,7 +530,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Cancelar'),
+                  child: Text('Cancelar', style: TextStyle(color: Theme.of(context).primaryColor)),
                 ),
                 TextButton(
                   onPressed: () async {
@@ -509,7 +576,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                         Navigator.of(context).pop();
                     }
                   },
-                  child: Text('OK'),
+                  child: Text('OK', style: TextStyle(color: Theme.of(context).primaryColor)),
                 )
               ],
             );
@@ -555,7 +622,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: Text('Cancelar'),
+                  child: Text('Cancelar', style: TextStyle(color: Theme.of(context).primaryColor)),
                 ),
                 TextButton(
                   onPressed: () async {
@@ -565,7 +632,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                       );
                     Navigator.of(context).pop();
                   },
-                  child: Text('OK'),
+                  child: Text('OK', style: TextStyle(color: Theme.of(context).primaryColor)),
                 )
               ],
             );
@@ -620,14 +687,14 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                     onPressed: () {
                       Navigator.of(context).pop(0);
                     },
-                    child: Text('Cancelar'),
+                    child: Text('Cancelar', style: TextStyle(color: Theme.of(context).primaryColor)),
                   ),
                   TextButton(
                     onPressed: () {
                       _clearColor(isBackgroundColor);
                       Navigator.of(context).pop(1);
                     },
-                    child: Text(isBackgroundColor ? 'Remover fundo' : 'Cor padrão')
+                    child: Text(isBackgroundColor ? 'Remover fundo' : 'Cor padrão', style: TextStyle(color: Theme.of(context).primaryColor))
                   ),
                   TextButton(
                     onPressed: () {
@@ -651,7 +718,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                       }
                       Navigator.of(context).pop(2);
                     },
-                    child: Text('Definir cor'),
+                    child: Text('Definir cor', style: TextStyle(color: Theme.of(context).primaryColor)),
                   )
                 ],
               )

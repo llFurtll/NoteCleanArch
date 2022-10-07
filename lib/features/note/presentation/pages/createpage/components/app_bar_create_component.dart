@@ -104,6 +104,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
 
   IconButton _iconOpenItens(bool close) {
     return IconButton(
+      tooltip: close ? "Fechar menu" : "Abrir menu",
       onPressed: () => close ? _showContainer.value = false : _showContainer.value = true,
       icon: Icon(close ? Icons.close : Icons.menu),
       color: Colors.black,
@@ -172,6 +173,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
 
   IconButton _iconLeading() {
     return IconButton(
+      tooltip: "Voltar",
       icon: Icon(
         Icons.arrow_back_ios,
         color: Colors.black
