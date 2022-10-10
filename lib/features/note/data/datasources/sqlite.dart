@@ -1,18 +1,19 @@
-import 'package:path/path.dart';
-
 import 'package:sqflite/sqflite.dart';
 
 import '../../data/datasources/datasource.dart';
 import '../../data/model/anotacao_model.dart';
-
+import '../../../../core/utils/init_database.dart';
 class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
   
   late Database _db;
+  final bool test;
+
+  SqliteDatasource({
+    required this.test
+  });
 
   Future<void> getConnection() async {
-    _db = await openDatabase(
-      join(await getDatabasesPath(), "note.db")
-    );
+    _db = await getDatabase(test);
   }
 
   Future<void> closeConnection() async {

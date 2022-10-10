@@ -1,15 +1,16 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'datasourcetest.dart';
-
 import '../../../features/note/data/model/anotacao_model.dart';
+import '../../../features/note/data/datasources/sqlite.dart';
+import '../../../core/utils/init_database.dart';
 import '../../utils/utils.dart';
 
 void main() {
-  late DatasourceTest datasourceTest;
+  late SqliteDatasource datasourceTest;
   
   setUp(() async {
-    datasourceTest = DatasourceTest();
+    await initDatabase(true);
+    datasourceTest = SqliteDatasource(test: true);
   });
 
   group(

@@ -8,7 +8,7 @@ import 'core/utils/init_database.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   registerDependencies();
-  await initDatabase();
+  await initDatabase(false);
   
   runApp(
     MaterialApp(

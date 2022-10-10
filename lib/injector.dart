@@ -9,7 +9,7 @@ import 'features/note/domain/usecases/crud_usecases.dart';
 void registerDependencies() {
   CompManagerInjector injector = CompManagerInjector();
 
-  injector.registerDependencie(SqliteDatasource());
+  injector.registerDependencie(SqliteDatasource(test: false));
   injector.registerDependencie(CrudRepository(datasourceBase: injector.getDependencie()));
   injector.registerDependencie(CrudUseCases(repository: injector.getDependencie()));
   injector.registerDependencie(ConfigUserRepository(datasourceBase: injector.getDependencie()));

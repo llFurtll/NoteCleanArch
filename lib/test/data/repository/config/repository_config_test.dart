@@ -1,15 +1,17 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:note/test/data/datasource/datasourcetest.dart';
-import 'package:note/test/data/repository/config/repository_configtest.dart';
+import '../../../../features/note/data/datasources/sqlite.dart';
+import '../../../../features/note/data/repositories/config_repository.dart';
+import '../../../../core/utils/init_database.dart';
 
 void main() {
-  late DatasourceTest datasourceTest;
-  late RepositoryConfigTest repositoryConfigTest;
+  late SqliteDatasource datasourceTest;
+  late ConfigUserRepository repositoryConfigTest;
 
   setUp(() async {
-    datasourceTest = DatasourceTest();
-    repositoryConfigTest = RepositoryConfigTest(datasourceBase: datasourceTest);
+    await initDatabase(true);
+    datasourceTest = SqliteDatasource(test: true);
+    repositoryConfigTest = ConfigUserRepository(datasourceBase: datasourceTest);
   });
 
   group(

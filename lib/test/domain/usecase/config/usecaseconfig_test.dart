@@ -1,18 +1,20 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:note/test/data/datasource/datasourcetest.dart';
-import 'package:note/test/data/repository/config/repository_configtest.dart';
-import 'package:note/test/domain/usecase/config/test_usecaseconfig.dart';
+import '../../../../features/note/data/datasources/sqlite.dart';
+import '../../../../features/note/data/repositories/config_repository.dart';
+import '../../../../features/note/domain/usecases/config_user_usecases.dart';
+import '../../../../core/utils/init_database.dart';
 
 void main() {
-  late UseCaseConfigTest useCaseConfigTest;
-  late DatasourceTest datasourceTest;
-  late RepositoryConfigTest repositoryConfigTest;
+  late ConfigUserUseCases useCaseConfigTest;
+  late SqliteDatasource datasourceTest;
+  late ConfigUserRepository repositoryConfigTest;
 
-  setUp(() {
-    datasourceTest = DatasourceTest();
-    repositoryConfigTest = RepositoryConfigTest(datasourceBase: datasourceTest);
-    useCaseConfigTest =  UseCaseConfigTest(repository: repositoryConfigTest);
+  setUp(() async {
+    await initDatabase(true);
+    datasourceTest = SqliteDatasource(test: true);
+    repositoryConfigTest = ConfigUserRepository(datasourceBase: datasourceTest);
+    useCaseConfigTest =  ConfigUserUseCases(configRepository: repositoryConfigTest);
   });
 
   group(

@@ -1,17 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../datasource/datasourcetest.dart';
-import '../../repository/crud/repositorytest.dart';
+import '../../../../features/note/data/datasources/sqlite.dart';
+import '../../../../features/note/data/repositories/crud_repository.dart';
 import '../../../utils/utils.dart';
 import '../../../../features/note/data/model/anotacao_model.dart';
+import '../../../../core/utils/init_database.dart';
 
 void main() {
-  late DatasourceTest datasourceTest;
-  late RepositoryTest repositoryTest;
+  late SqliteDatasource datasourceTest;
+  late CrudRepository repositoryTest;
 
   setUp(() async {
-    datasourceTest = DatasourceTest();
-    repositoryTest = RepositoryTest(datasourceBase: datasourceTest);
+    await initDatabase(true);
+    datasourceTest = SqliteDatasource(test: true);
+    repositoryTest = CrudRepository(datasourceBase: datasourceTest);
   });
 
   group(

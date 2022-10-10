@@ -1,20 +1,22 @@
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../../features/note/data/model/anotacao_model.dart';
-import '../../../data/datasource/datasourcetest.dart';
-import '../../../data/repository/crud/repositorytest.dart';
-import '../../../domain/usecase/crud/test_usecases.dart';
+import '../../../../features/note/data/datasources/sqlite.dart';
+import '../../../../features/note/data/repositories/crud_repository.dart';
+import '../../../../features/note/domain/usecases/crud_usecases.dart';
 import '../../../utils/utils.dart';
+import '../../../../core/utils/init_database.dart';
 
 void main() {
-  late UseCasesTest useCases;
-  late RepositoryTest crudRepository;
-  late DatasourceTest datasourceTest;
+  late CrudUseCases useCases;
+  late CrudRepository crudRepository;
+  late SqliteDatasource datasourceTest;
 
   setUp(() async {
-    datasourceTest = DatasourceTest();
-    crudRepository = RepositoryTest(datasourceBase: datasourceTest);
-    useCases = UseCasesTest(repository: crudRepository);
+    await initDatabase(true);
+    datasourceTest = SqliteDatasource(test: true);
+    crudRepository = CrudRepository(datasourceBase: datasourceTest);
+    useCases = CrudUseCases(repository: crudRepository);
   });
 
   group(
