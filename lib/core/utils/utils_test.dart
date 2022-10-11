@@ -29,11 +29,11 @@ Map<String, Object?> inserirAnotacao() {
   return insert;
 }
 
-Map<String, Object?> inserirConfigUsuario() {
-  Map<String, Object?> insert = Map();
+Map<String, Object?> updateConfigUser() {
+  Map<String, Object?> update = Map();
 
-  insert["path_foto"] = "https://teste.com.br/teste.jpg";
-  insert["nome"] = "Daniel Melonari";
+  update["path_foto"] = "https://teste.com.br/teste.jpg";
+  update["nome"] = "Daniel Melonari";
 
-  return insert;
+  return update;
 }

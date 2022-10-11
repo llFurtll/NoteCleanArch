@@ -2,12 +2,15 @@ import 'package:path/path.dart';
 
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'utils_test.dart';
 
 Future<void> initDatabase(bool test) async {
   if (test) {
+    sqfliteFfiInit();
     await databaseFactoryFfi.openDatabase(inMemoryDatabasePath, options: OpenDatabaseOptions(
       onCreate: _onCreate,
-      onUpgrade: _onUpgrade 
+      onUpgrade: _onUpgrade,
+      version: 1
     ));
   } else {
     await openDatabase(
@@ -24,6 +27,9 @@ Future<Database> getDatabase(bool test) async {
   if (test) {
     sqfliteFfiInit();
     _db = await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
+    await _db.insert("NOTE", inserirAnotacao());
+    await _db.insert("NOTE", inserirAnotacao());
+    await _db.update("CONFIGUSER", updateConfigUser());
   } else {
     _db = await openDatabase(join(await getDatabasesPath(), "note.db"));
   }
@@ -69,7 +75,7 @@ void _onUpgrade(Database db, int version, int newVersion) async {
     if (item["name"] == "cor") {
       await db.execute(
         """
-          CREATE TABLE IF NOT EXISTS NOTE(
+          CREATE TABLE IF NOT EXISTS NEW_NOTE(
             id INTEGER PRIMARY KEY,
             titulo TEXT NOT NULL,
             data DATETIME NOT NULL,

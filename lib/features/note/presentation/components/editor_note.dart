@@ -385,7 +385,6 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                     if (formKey.currentState!.validate()) {
                       _controllerEditor.insertLink(text.text, url.text, true);
                       Navigator.of(context).pop();
-                      print(await getText());
                     }
                   },
                   child: Text('OK', style: TextStyle(color: Theme.of(context).primaryColor)),

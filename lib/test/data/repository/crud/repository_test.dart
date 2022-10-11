@@ -2,9 +2,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../../../features/note/data/datasources/sqlite.dart';
 import '../../../../features/note/data/repositories/crud_repository.dart';
-import '../../../utils/utils.dart';
 import '../../../../features/note/data/model/anotacao_model.dart';
 import '../../../../core/utils/init_database.dart';
+import '../../../../core/utils/utils_test.dart';
 
 void main() {
   late SqliteDatasource datasourceTest;

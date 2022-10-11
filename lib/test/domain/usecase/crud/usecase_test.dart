@@ -4,8 +4,8 @@ import '../../../../features/note/data/model/anotacao_model.dart';
 import '../../../../features/note/data/datasources/sqlite.dart';
 import '../../../../features/note/data/repositories/crud_repository.dart';
 import '../../../../features/note/domain/usecases/crud_usecases.dart';
-import '../../../utils/utils.dart';
 import '../../../../core/utils/init_database.dart';
+import '../../../../core/utils/utils_test.dart';
 
 void main() {
   late CrudUseCases useCases;
@@ -89,7 +89,6 @@ void main() {
         List<AnotacaoModel?> listaAnotacao = await useCases.findWithDesc(desc: "teste desc");
         expect(listaAnotacao.length, 2);
       });
-
     }
   );
 }
