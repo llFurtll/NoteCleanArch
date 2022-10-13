@@ -63,6 +63,12 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
             _screen.focusTitle.unfocus();
           }
         },
+        onChangeContent: (String? text) {
+          print(text);
+          if (_controllerEditor.toolbar != null) {
+            _controllerEditor.toolbar!.updateToolbar(Map());
+          }
+        },
         onNavigationRequestMobile: (String url) async {
           Uri urlTo = Uri.parse(url);
           if (await canLaunchUrl(urlTo)) {
