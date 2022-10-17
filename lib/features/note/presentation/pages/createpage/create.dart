@@ -170,7 +170,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
             child: _home(),
           ),
         ),
-        _editor.optionsKeyboard()
+         _editor.optionsKeyboard()
       ],
     );
   }

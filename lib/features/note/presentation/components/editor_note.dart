@@ -63,12 +63,6 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
             _screen.focusTitle.unfocus();
           }
         },
-        onChangeContent: (String? text) {
-          print(text);
-          if (_controllerEditor.toolbar != null) {
-            _controllerEditor.toolbar!.updateToolbar(Map());
-          }
-        },
         onNavigationRequestMobile: (String url) async {
           Uri urlTo = Uri.parse(url);
           if (await canLaunchUrl(urlTo)) {
@@ -152,14 +146,12 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
               subscript: false,
               superscript: false,
             ),
-            
             ParagraphButtons(
               caseConverter: false,
               textDirection: false
             ),
             ColorButtons()
           ],
-          toolbarPosition: ToolbarPosition.aboveEditor,
           onButtonPressed: (ButtonType type, bool? status, Function()? updateStatus) async {
             if (type == ButtonType.foregroundColor || type == ButtonType.highlightColor) {
               bool isBackgroundColor = type == ButtonType.highlightColor;
@@ -198,6 +190,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
           bool isShowOptions = !_showButtonOpenKeyboardOptions;
           return Positioned(
             child: Container(
+              padding: isShowOptions ? EdgeInsets.all(5.0) : null,
               width: isShowOptions ? null : 40.0,
               height: isShowOptions ? null : 40.0,
               decoration: BoxDecoration(
@@ -218,39 +211,93 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
   }
 
   Widget _showOptionsKeyboard() {
-    return ToolbarWidget(
-      controller: _controllerEditor,
-      htmlToolbarOptions: HtmlToolbarOptions(
-        customToolbarButtons: [
-          ToggleButtons(
-            renderBorder: false,
-            onPressed: (int index) {
-              _showButtonOpenKeyboardOptions = true;
-              _screen.keyboardVisible.emitChange();
-            },
-            children: [
-              Tooltip(
-                message: "Fechar barra de ferramentas",
-                preferBelow: false,
-                child: Icon(Icons.close),
-              )
-            ],
-            isSelected: [false]
-          )
-        ],
-        buttonSelectedColor: Theme.of(_screen.context).primaryColor,
-        buttonFillColor: Theme.of(_screen.context).primaryColor.withOpacity(0.3),
-        defaultToolbarButtons: [
-          ListButtons(
-            listStyles: false
-          ),
-          InsertButtons()
-        ],
-        toolbarPosition: ToolbarPosition.belowEditor,
-        onButtonPressed: (ButtonType type, bool? status, Function()? updateStatus) async => await _buttonPressed(type),
-      ),
-      callbacks: null,
+    return IntrinsicHeight(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            ToggleButtons(
+              renderBorder: false,
+              isSelected: [false, false],
+              onPressed: (int index) {
+                if (index == 0) {
+                  _controllerEditor.execCommand("insertUnorderedList");
+                } else {
+                  _controllerEditor.execCommand("insertOrderedList");
+                }
+              },
+              children: [
+                Icon(Icons.format_list_bulleted),
+                Icon(Icons.format_list_numbered)
+              ],
+            ),
+            ToggleButtons(
+              isSelected: [false, false, false, false, false, false],
+              renderBorder: false,
+              onPressed: (int index) {
+              },
+              children: [
+                Icon(Icons.link),
+                Icon(Icons.image_outlined),
+                Icon(Icons.audiotrack_outlined),
+                Icon(Icons.videocam_outlined),
+                Icon(Icons.table_chart_outlined),
+                Icon(Icons.horizontal_rule),
+              ],
+            ),
+            VerticalDivider(indent: 2, endIndent: 2, color: Colors.grey),
+            ToggleButtons(
+              renderBorder: false,
+              onPressed: (int index) {
+                _showButtonOpenKeyboardOptions = true;
+                _screen.keyboardVisible.emitChange();
+              },
+              children: [
+                Tooltip(
+                  message: "Fechar barra de ferramentas",
+                  preferBelow: false,
+                  child: Icon(Icons.close),
+                )
+              ],
+              isSelected: [false]
+            ),
+          ],
+        ),
+      )
     );
+    // return ToolbarWidget(
+    //   controller: _controllerEditor,
+    //   htmlToolbarOptions: HtmlToolbarOptions(
+    //     customToolbarButtons: [
+    //       ToggleButtons(
+    //         renderBorder: false,
+    //         onPressed: (int index) {
+    //           _showButtonOpenKeyboardOptions = true;
+    //           _screen.keyboardVisible.emitChange();
+    //         },
+    //         children: [
+    //           Tooltip(
+    //             message: "Fechar barra de ferramentas",
+    //             preferBelow: false,
+    //             child: Icon(Icons.close),
+    //           )
+    //         ],
+    //         isSelected: [false]
+    //       )
+    //     ],
+    //     buttonSelectedColor: Theme.of(_screen.context).primaryColor,
+    //     buttonFillColor: Theme.of(_screen.context).primaryColor.withOpacity(0.3),
+    //     defaultToolbarButtons: [
+    //       ListButtons(
+    //         listStyles: false
+    //       ),
+    //       InsertButtons()
+    //     ],
+    //     toolbarPosition: ToolbarPosition.custom,
+    //     onButtonPressed: (ButtonType type, bool? status, Function()? updateStatus) async => await _buttonPressed(type),
+    //   ),
+    //   callbacks: null,
+    // );
   }
 
   Widget _iconShowOptions() {
