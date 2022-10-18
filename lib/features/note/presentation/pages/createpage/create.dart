@@ -119,6 +119,11 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
       maxLines: 2,
       keyboardType: TextInputType.multiline,
       focusNode: _focusTitle,
+      onTap: () {
+        if (_keyboardVisible.value) {
+          _keyboardVisible.value = false;
+        }
+      },
     );
   }
 
