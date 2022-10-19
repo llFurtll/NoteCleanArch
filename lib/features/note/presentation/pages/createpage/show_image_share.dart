@@ -91,21 +91,46 @@ class ShowImageShare extends StatelessWidget {
             ),
             padding: EdgeInsets.all(15.0),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Padding(
                   padding: EdgeInsets.only(left: 5.0),
                     child: Text(
-                    arguments.anotacaoModel.titulo!,
-                    style: TextStyle(
+                      arguments.anotacaoModel.titulo!,
+                      style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                       fontSize: 25.0
                     ),
                   ),
                 ),
-                Html(data: arguments.anotacaoModel.observacao!)
+                Html(
+                  data: """
+                    <html>
+                      <head>
+                        <style>
+                          .table {
+                              border-collapse: collapse;
+                          }
+                          
+                          .table tbody tr td {
+                              border: 1px solid black;
+                          }
+                          
+                          .table tbody tr td {
+                              padding: 5px;
+                              min-width: 500px !important;
+                              max-width: auto;
+                          }
+                        </style>
+                      </head>
+                      <body>
+                        ${arguments.anotacaoModel.observacao!}
+                      </body
+                    </html>
+                  """
+                )
               ],
             ),
           ),

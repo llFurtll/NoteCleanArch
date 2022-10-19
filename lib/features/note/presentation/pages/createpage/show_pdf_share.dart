@@ -185,6 +185,20 @@ class ShowPdfShare extends StatelessWidget {
               font-size: 25px;
               font-weight: bold;
             }
+
+            .banner .content .table {
+                 border-collapse: collapse;
+             }
+             
+             .banner .content .table tbody tr td {
+                 border: 1px solid black;
+             }
+             
+             .banner .content .table tbody tr td {
+                 padding: 3px;
+                 min-width: 100px;
+                 max-width: auto;
+             }
           </style>
         </head>
         <body>
