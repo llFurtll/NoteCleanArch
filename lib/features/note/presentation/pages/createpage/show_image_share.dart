@@ -61,6 +61,7 @@ class ShowImageShare extends StatelessWidget {
   Widget _buildCard(ArgumentsShare arguments) {
     final screen = arguments.screen as CreateNoteState;
     final showImage = arguments.showImage;
+    final sizeWidthScreen = MediaQuery.of(screen.context).size.width;
 
     return RepaintBoundary(
       key: _boundary,
@@ -111,17 +112,17 @@ class ShowImageShare extends StatelessWidget {
                       <head>
                         <style>
                           .table {
-                              border-collapse: collapse;
+                            border-spacing: 0;
+                            border-collapse: collapse;
                           }
                           
                           .table tbody tr td {
-                              border: 1px solid black;
+                            border: 1px solid black;
                           }
                           
                           .table tbody tr td {
-                              padding: 5px;
-                              min-width: 500px !important;
-                              max-width: auto;
+                            padding: 5px;
+                            max-width: auto;
                           }
                         </style>
                       </head>
