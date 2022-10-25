@@ -143,6 +143,8 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
               help: false,
               codeview: false,
               fullscreen: false,
+              copy: false,
+              paste: false
             ),
             FontButtons(
               subscript: false,
