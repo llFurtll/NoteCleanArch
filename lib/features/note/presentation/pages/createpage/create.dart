@@ -36,7 +36,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   final TextEditingController _title = TextEditingController();
 
   late AnotacaoModel? _anotacaoModel;
-  late CrudUseCases useCases;
+  late CrudUseCases _useCases;
   late AppBarCreateComponent _appBarCreateComponent;
   late ButtonSaveNoteComponent _buttonSaveNoteComponent;
   late IEditor _editor;
@@ -45,13 +45,13 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   void initState() {
     super.initState();
 
-    useCases = injector.getDependencie();
+    _useCases = injector.getDependencie();
     _appBarCreateComponent = AppBarCreateComponent(this);
     _buttonSaveNoteComponent = ButtonSaveNoteComponent(this);
 
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (widget.id != null) {
-        _anotacaoModel = await useCases.getByIdUseCase(id: widget.id!);
+        _anotacaoModel = await _useCases.getByIdUseCase(id: widget.id!);
         _title.text = _anotacaoModel!.titulo!;
 
         if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
