@@ -35,10 +35,12 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
               var style = document.createElement('style');
               style.type = 'text/css';
               style.innerHTML = `
-                .table-bordered > tbody > tr > td {
-                  border-color: black !important;
+                table,
+                table td {
+                    border-color: black !important;
+                    border-collapse: separate; /* This line */
                 }
-                
+
                 .note-placeholder {
                   color: black !important;
                 }

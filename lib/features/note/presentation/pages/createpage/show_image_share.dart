@@ -61,7 +61,6 @@ class ShowImageShare extends StatelessWidget {
   Widget _buildCard(ArgumentsShare arguments) {
     final screen = arguments.screen as CreateNoteState;
     final showImage = arguments.showImage;
-    final sizeWidthScreen = MediaQuery.of(screen.context).size.width;
 
     return RepaintBoundary(
       key: _boundary,
