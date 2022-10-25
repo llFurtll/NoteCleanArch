@@ -43,7 +43,7 @@ void main() {
       test("Testando o update", () async {
         int? update = await datasourceTest.update(
           anotacao: gerarAnotacao(
-            id: 2
+            id: 2,
             data: DateTime.now().toIso8601String(),
             situacao: 0,
             imagemFundo: "https",
@@ -58,7 +58,7 @@ void main() {
       test("Testando o updateSituacao", () async {
         int? update = await datasourceTest.updateSituacao(
           anotacao: gerarAnotacao(
-            id: 2
+            id: 2,
             data: DateTime.now().toIso8601String(),
             situacao: 0,
             imagemFundo: "https",
