@@ -55,8 +55,10 @@ class SpeakMicComponent implements IComponent<CreateNoteState, ValueListenableBu
   void event() async {
     bool response = false;
 
+    bool isFocusTitle = _screen.focusTitle.hasFocus;
+
     response = await _showDialogListen();
-    if (_screen.focusTitle.hasFocus) {
+    if (isFocusTitle) {
       _screen.title.text += _textSpeak;
     } else {
       _screen.editor.insertText(_textSpeak);
