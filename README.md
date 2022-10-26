@@ -32,9 +32,11 @@
 - [x] Register annotation using device microphone
 - [x] Annotation sharing. (PDF and Image)
 - [x] Update version Flutter
-- [ ] New features in note creation. (Bold, Italics, etc)
+- [x] New features in note creation. (Bold, Italics, etc)
+- [ ] Create Note customization settings
 - [ ] Encryption backup service
 - [ ] Application internationalization
+- [ ] Update version Flutter to 3
 
 ### :man:  Dev
 <a href="https://www.linkedin.com/in/daniel-melonari-5413a7197/" target="_blank">
