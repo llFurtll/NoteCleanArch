@@ -34,6 +34,7 @@
 - [x] Update version Flutter
 - [x] New features in note creation. (Bold, Italics, etc)
 - [ ] Create Note customization settings
+- [ ] Create notification mechanism for annotations
 - [ ] Encryption backup service
 - [ ] Application internationalization
 - [ ] Update version Flutter to 3
