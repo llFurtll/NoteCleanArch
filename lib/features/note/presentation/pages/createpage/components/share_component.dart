@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 
 import '../create.dart';
 import '../arguments/arguments_share.dart';
+import '../show_image_share.dart';
+import '../show_pdf_share.dart';
 
 class ShareComponent implements IComponent<CreateNoteState, Container, void> {
 
@@ -38,7 +40,7 @@ class ShareComponent implements IComponent<CreateNoteState, Container, void> {
               final showImage = await _showDialogImage();
 
               Navigator.of(_screen.context).pushNamed(
-                "/share/pdf",
+                ShowPdfShare.routeShowPdfShare,
                 arguments:
                   ArgumentsShare(anotacaoModel: _screen.anotacao!, screen: _screen, showImage: showImage!)
               );
@@ -54,7 +56,7 @@ class ShareComponent implements IComponent<CreateNoteState, Container, void> {
               final showImage = await _showDialogImage();
 
               Navigator.of(_screen.context).pushNamed(
-                "/share/image",
+                ShowImageShare.routeShowImageShare,
                 arguments:
                   ArgumentsShare(anotacaoModel: _screen.anotacao!, screen: _screen, showImage: showImage!)
               );

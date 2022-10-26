@@ -11,6 +11,8 @@ import 'components/button_add_note_component.dart';
 import '../../../../../core/notifiers/change_notifier_global.dart';
 
 class Home extends StatefulWidget {
+  static String routeHome = "/home";
+
   @override
   HomeState createState() => HomeState();
 }

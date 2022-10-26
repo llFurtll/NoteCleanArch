@@ -12,6 +12,7 @@ import '../../../../domain/usecases/config_user_usecases.dart';
 import 'list_component.dart';
 import 'alter_photo_profile_component.dart';
 import '../../../../../../core/notifiers/change_notifier_global.dart';
+import '../info.dart';
 
 class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
 
@@ -169,7 +170,7 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
             child: IconButton(
               tooltip: "Informações",
               icon: Icon(Icons.info_outline),
-              onPressed: () => Navigator.pushNamed(context, "/info"),
+              onPressed: () => Navigator.pushNamed(context, Info.routeInfo),
               color: Colors.white
             ),
           );

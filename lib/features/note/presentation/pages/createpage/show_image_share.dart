@@ -13,6 +13,8 @@ import '../createpage/create.dart';
 import '../../components/show_message.dart';
 
 class ShowImageShare extends StatelessWidget {
+  static final String routeShowImageShare = "/share/image";
+
   final GlobalKey _boundary = GlobalKey();
 
   @override

@@ -17,6 +17,7 @@ import '../../components/show_message.dart';
 
 // ignore: must_be_immutable
 class ShowPdfShare extends StatelessWidget {
+  static String routeShowPdfShare = "/share/pdf";
 
   @override
   Widget build(BuildContext context) {

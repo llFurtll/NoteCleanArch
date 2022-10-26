@@ -16,6 +16,8 @@ import '../../components/editor_note.dart';
 
 // ignore: must_be_immutable
 class CreateNote extends StatefulWidget {
+  static String routeCreate = "/create";
+
   int? id;
 
   CreateNote({this.id});
