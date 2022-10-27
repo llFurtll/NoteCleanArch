@@ -8,9 +8,9 @@ import 'package:numberpicker/numberpicker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 
-import '../../../../../../../core/adapters/ieditor.dart';
-import '../../../../../../../core/widgets/show_message.dart';
-import '../create.dart';
+import '../../../features/note/presentation/pages/createpage/principal/create.dart';
+import '../../widgets/show_message.dart';
+import '../interfaces/ieditor.dart';
 
 class HtmlEditorNote implements IEditor<CreateNoteState> {
   final CreateNoteState _screen;
