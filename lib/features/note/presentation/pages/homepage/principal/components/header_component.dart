@@ -6,14 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 
+import '../../../../../../../../core/notifiers/change_notifier_global.dart';
+import '../../../../../../configuracao/presentation/principal/configuracao.dart';
+import '../../../../../domain/usecases/config_user_usecases.dart';
 import '../home.dart';
+import '../../info/info.dart';
 import 'alter_name_component.dart';
-import '../../../../../../domain/usecases/config_user_usecases.dart';
 import 'list_component.dart';
 import 'alter_photo_profile_component.dart';
-import '../../../../../../../../core/notifiers/change_notifier_global.dart';
-import '../../info/info.dart';
-import '../../configuracao/configuracao.dart';
 
 class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
 

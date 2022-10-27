@@ -8,13 +8,13 @@ import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/core/conversable.dart';
 
-import '../../../../../components/show_message.dart';
-import '../home.dart';
-import '../../../../../../domain/usecases/crud_usecases.dart';
-import '../../../../createpage/create.dart';
-import '../../../../../../data/model/anotacao_model.dart';
-import 'header_component.dart';
 import '../../../../../../../../core/notifiers/change_notifier_global.dart';
+import '../../../../../../../core/widgets/show_message.dart';
+import '../../../../../domain/usecases/crud_usecases.dart';
+import '../../../../../data/model/anotacao_model.dart';
+import '../../../createpage/principal/create.dart';
+import '../home.dart';
+import 'header_component.dart';
 
 class CardComponent extends IComponent<HomeState, ValueListenableBuilder, void> {
 

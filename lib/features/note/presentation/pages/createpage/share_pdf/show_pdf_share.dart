@@ -11,9 +11,9 @@ import 'package:share_plus/share_plus.dart';
 import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-import './arguments/arguments_share.dart';
-import 'create.dart';
-import '../../components/show_message.dart';
+import '../../../../../../core/widgets/show_message.dart';
+import '../arguments/arguments_share.dart';
+import '../principal/create.dart';
 
 // ignore: must_be_immutable
 class ShowPdfShare extends StatelessWidget {

@@ -6,12 +6,12 @@ import 'package:compmanager/core/compmanager_notifier_list.dart';
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 
-import '../../../../../../data/model/anotacao_model.dart';
-import '../../../../../../domain/usecases/crud_usecases.dart';
-import '../../../../../components/animated_list.dart';
+import '../../../../../../../../core/notifiers/change_notifier_global.dart';
+import '../../../../../../../core/widgets/animated_list.dart';
+import '../../../../../data/model/anotacao_model.dart';
+import '../../../../../domain/usecases/crud_usecases.dart';
 import '../home.dart';
 import 'card_component.dart';
-import '../../../../../../../../core/notifiers/change_notifier_global.dart';
 
 class ListComponent implements IComponent<HomeState, Widget, void> {
 

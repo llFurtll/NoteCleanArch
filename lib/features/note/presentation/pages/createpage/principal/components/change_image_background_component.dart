@@ -12,10 +12,10 @@ import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/core/compmanager_notifier_list.dart';
 
-import '../../createpage/create.dart';
-import '../../../../domain/usecases/crud_usecases.dart';
+import '../create.dart';
+import '../../../../../domain/usecases/crud_usecases.dart';
 import 'app_bar_create_component.dart';
-import '../../../../../../core/notifiers/change_notifier_global.dart';
+import '../../../../../../../core/notifiers/change_notifier_global.dart';
 
 class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Container, Future<bool>> {
 

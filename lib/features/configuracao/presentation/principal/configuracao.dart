@@ -66,7 +66,7 @@ class ConfiguracaoState extends State<Configuracao> implements IScreen {
 
   Widget _buildInfo() {
     return Text(
-      "Na página de configurações é possível realizar algumas customizações no Note.",
+      "Aqui nas configurações é possível realizar algumas customizações no Note.",
       style: TextStyle(
         fontSize: 20.0,
         fontWeight: FontWeight.bold

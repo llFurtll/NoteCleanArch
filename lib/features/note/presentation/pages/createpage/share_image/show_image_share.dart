@@ -8,9 +8,9 @@ import 'package:path_provider/path_provider.dart';
 import 'dart:ui' as ui;
 import 'package:share_plus/share_plus.dart';
 
-import './arguments/arguments_share.dart';
-import '../createpage/create.dart';
-import '../../components/show_message.dart';
+import '../../../../../../core/widgets/show_message.dart';
+import '../arguments/arguments_share.dart';
+import '../principal/create.dart';
 
 class ShowImageShare extends StatelessWidget {
   static final String routeShowImageShare = "/share/image";

@@ -6,13 +6,14 @@ import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/domain/interfaces/iscreen.dart';
 
-import '../../../data/model/anotacao_model.dart';
-import '../../../domain/usecases/crud_usecases.dart';
-import '../../../presentation/pages/createpage/components/app_bar_create_component.dart';
+
+import '../../../../../../core/notifiers/change_notifier_global.dart';
+import '../../../../../../core/adapters/ieditor.dart';
+import '../../../../data/model/anotacao_model.dart';
+import '../../../../domain/usecases/crud_usecases.dart';
+import 'widgets/editor_note.dart';
+import 'components/app_bar_create_component.dart';
 import 'components/button_save_note_component.dart';
-import '../../../../../core/notifiers/change_notifier_global.dart';
-import '../../adapters/editor/ieditor.dart';
-import '../../components/editor_note.dart';
 
 // ignore: must_be_immutable
 class CreateNote extends StatefulWidget {
