@@ -7,7 +7,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../home.dart';
-import '../../../../domain/usecases/config_user_usecases.dart';
+import '../../../../../../domain/usecases/config_user_usecases.dart';
 import '../components/header_component.dart';
 
 class AlterPhotoProfileComponent implements IComponent<HomeState, AlertDialog, Future<bool>> {

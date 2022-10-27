@@ -3,7 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-import '../../components/show_message.dart';
+import '../../../../components/show_message.dart';
 
 class Info extends StatelessWidget {
   static String routeInfo = "/info";

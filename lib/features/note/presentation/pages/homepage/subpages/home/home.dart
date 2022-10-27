@@ -8,7 +8,7 @@ import 'package:compmanager/domain/interfaces/iscreen.dart';
 import 'components/header_component.dart';
 import 'components/list_component.dart';
 import 'components/button_add_note_component.dart';
-import '../../../../../core/notifiers/change_notifier_global.dart';
+import '../../../../../../../core/notifiers/change_notifier_global.dart';
 
 class Home extends StatefulWidget {
   static String routeHome = "/home";

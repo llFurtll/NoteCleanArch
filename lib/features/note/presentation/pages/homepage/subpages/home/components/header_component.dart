@@ -8,11 +8,12 @@ import 'package:compmanager/domain/interfaces/icomponent.dart';
 
 import '../home.dart';
 import 'alter_name_component.dart';
-import '../../../../domain/usecases/config_user_usecases.dart';
+import '../../../../../../domain/usecases/config_user_usecases.dart';
 import 'list_component.dart';
 import 'alter_photo_profile_component.dart';
-import '../../../../../../core/notifiers/change_notifier_global.dart';
-import '../info.dart';
+import '../../../../../../../../core/notifiers/change_notifier_global.dart';
+import '../../info/info.dart';
+import '../../configuracao/configuracao.dart';
 
 class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
 
@@ -21,16 +22,15 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
   final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   final ChangeNotifierGlobal<String?> _userNameNotifier = ChangeNotifierGlobal("Digite seu nome aqui :)");
-  final ChangeNotifierGlobal<bool> _showInfo = ChangeNotifierGlobal(true);
-
-  ChangeNotifierGlobal<String?> _imagePath = ChangeNotifierGlobal("");
-  Timer? _debounce;
+  final ChangeNotifierGlobal<bool> _showMenu = ChangeNotifierGlobal(true);
   
   late final ConfigUserUseCases _configUserUseCases;
   late final AlterNameComponent _alterNameComponent;
   late final ListComponent _listComponent;
   late final AlterPhotoProfileComponent _alterPhotoProfileComponent;
 
+  ChangeNotifierGlobal<String?> _imagePath = ChangeNotifierGlobal("");
+  Timer? _debounce;
   bool _showName = false;
 
   HeaderComponent(this._screen) {
@@ -163,20 +163,47 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
   List<Widget> _actions() {
     return [
       ValueListenableBuilder(
-        valueListenable: _showInfo,
+        valueListenable: _showMenu,
         builder: (BuildContext context, bool value, Widget? widget)  {
           return Visibility(
-            visible: _showInfo.value,
-            child: IconButton(
-              tooltip: "Informações",
-              icon: Icon(Icons.info_outline),
-              onPressed: () => Navigator.pushNamed(context, Info.routeInfo),
-              color: Colors.white
-            ),
+            visible: _showMenu.value,
+            child: _buildPopup()
           );
         },
       ),
     ];
+  }
+
+  PopupMenuButton _buildPopup() {
+    return PopupMenuButton<int>(
+      shape: ContinuousRectangleBorder(
+        borderRadius: BorderRadius.all(
+              Radius.circular(20.0),
+        ),
+      ),
+      tooltip: "Menu",
+      itemBuilder: (BuildContext context) => [
+        PopupMenuItem(
+          value: 1,
+          child: Text("Configurações"),
+        ),
+        PopupMenuDivider(),
+        PopupMenuItem(
+          value: 2,
+          child: Text("Sobre o desenvolvedor")
+        )
+      ],
+      onSelected: (int index) {
+        switch (index) {
+          case 1:
+            Navigator.of(_screen.context).pushNamed(Configuracao.routeConfiguracao);
+            break;
+          default:
+            Navigator.of(_screen.context).pushNamed(Info.routeInfo);
+            break;
+        }
+      },
+    );
   }
 
   void _verifySize(BoxConstraints constraints) {
@@ -184,10 +211,10 @@ class HeaderComponent implements IComponent<HomeState, SliverAppBar, void> {
     var _top = constraints.biggest.height;
     if (_top == _height + 50) {
       _showName = true;
-      Future.delayed(Duration(milliseconds: 50), () => _showInfo.value = false);
+      Future.delayed(Duration(milliseconds: 50), () => _showMenu.value = false);
     } else {
       _showName = false;
-      Future.delayed(Duration(milliseconds: 50), () => _showInfo.value = true);
+      Future.delayed(Duration(milliseconds: 50), () => _showMenu.value = true);
     }
   }
 

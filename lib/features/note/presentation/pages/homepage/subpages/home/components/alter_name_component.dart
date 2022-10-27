@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 
-import '../../../../domain/usecases/config_user_usecases.dart';
-import '../../homepage/home.dart';
+import '../../../../../../domain/usecases/config_user_usecases.dart';
+import '../home.dart';
 import 'header_component.dart';
 
 class AlterNameComponent implements IComponent<HomeState, Padding, void> {

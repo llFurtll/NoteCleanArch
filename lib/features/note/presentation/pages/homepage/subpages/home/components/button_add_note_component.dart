@@ -4,7 +4,7 @@ import 'package:animations/animations.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 
 import '../home.dart';
-import '../../createpage/create.dart';
+import '../../../../createpage/create.dart';
 
 class ButtonAddNoteComponent implements IComponent<HomeState, OpenContainer, void> {
   final HomeState _screen;
