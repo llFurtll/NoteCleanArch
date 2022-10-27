@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 
+import '../../../../../../../core/notifiers/change_notifier_global.dart';
 import '../create.dart';
 import 'change_image_background_component.dart';
 import 'speak_mic_component.dart';
-import '../../../../../../../core/notifiers/change_notifier_global.dart';
 import 'share_component.dart';
 
 class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize, void> {

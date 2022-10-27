@@ -1,8 +1,8 @@
 import 'package:sqflite/sqflite.dart';
 
+import '../../../../core/utils/init_database.dart';
 import '../../data/datasources/datasource.dart';
 import '../../data/model/anotacao_model.dart';
-import '../../../../core/utils/init_database.dart';
 class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
   
   late Database _db;

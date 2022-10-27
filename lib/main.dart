@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import './injector.dart';
 import 'features/note/presentation/pages/splashscreen/principal/splash.dart';
-import './routes.dart';
 import 'core/utils/init_database.dart';
+import 'routes.dart';
+import 'injector.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

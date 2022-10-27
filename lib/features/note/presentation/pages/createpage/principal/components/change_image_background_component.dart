@@ -5,17 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:path_provider/path_provider.dart';
-
 import 'package:image_picker/image_picker.dart';
 
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/core/compmanager_notifier_list.dart';
 
-import '../create.dart';
-import '../../../../../domain/usecases/crud_usecases.dart';
-import 'app_bar_create_component.dart';
 import '../../../../../../../core/notifiers/change_notifier_global.dart';
+import '../../../../../domain/usecases/crud_usecases.dart';
+import '../create.dart';
+import 'app_bar_create_component.dart';
 
 class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Container, Future<bool>> {
 
