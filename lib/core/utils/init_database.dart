@@ -67,6 +67,17 @@ void _onCreate(Database db, int version) async {
       SELECT ID FROM CONFIGUSER WHERE ID = 1
     )
   """);
+
+  await db.execute(
+    """
+      CREATE TABLE IF NOT EXISTS CONFIGNOTE(
+        id INTEGER PRIMARY KEY,
+        identificador TEXT NOT NULL,
+        valor INT NOT NULL,
+        modulo TEXT NOT NULL
+      )
+    """
+  );
 }
 
 void _onUpgrade(Database db, int version, int newVersion) async {
