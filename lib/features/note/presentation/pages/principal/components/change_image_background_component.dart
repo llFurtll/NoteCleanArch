@@ -12,7 +12,7 @@ import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/core/compmanager_notifier_list.dart';
 
 import '../../../../../../../core/notifiers/change_notifier_global.dart';
-import '../../../../domain/usecases/crud_usecases.dart';
+import '../../../../domain/usecases/note_usecase.dart';
 import '../create.dart';
 import 'app_bar_create_component.dart';
 
@@ -24,7 +24,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
   final ImagePicker _imagePicker = ImagePicker();
   final CompManagerNotifierList<Widget> _assetsImages = CompManagerNotifierList([]);
 
-  late final CrudUseCases _useCases;
+  late final NoteUseCase _noteUseCase;
   late final AppBarCreateComponent _appBarCreateComponent;
 
   ChangeImageBackgroundComponent(this._screen) {
@@ -82,7 +82,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
 
   @override
   void init() {
-    _useCases = injector.getDependencie();
+    _noteUseCase = injector.getDependencie();
     _appBarCreateComponent = _screen.getComponent(AppBarCreateComponent) as AppBarCreateComponent;
   }
 
@@ -280,7 +280,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
               onPressed: () async {
                 File(pathImage).delete();
 
-                int? update = await _useCases.removeBackgroundNote(image: pathImage);
+                int? update = await _noteUseCase.removeBackgroundNote(image: pathImage);
                 await _loadImages();
                 _appBarCreateComponent.removeBackground = false;
                 _appBarCreateComponent.changeMenuItens();

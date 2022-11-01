@@ -1,10 +1,10 @@
 import '../../data/model/anotacao_model.dart';
-import '../repositories/irepository.dart';
+import '../repositories/inote_repository.dart';
 
-class CrudUseCases {
-  IRepository<AnotacaoModel> repository;
+class NoteUseCase {
+  INoteRepository<AnotacaoModel> repository;
 
-  CrudUseCases({required this.repository});
+  NoteUseCase({required this.repository});
 
   Future<int?> insertUseCase({required AnotacaoModel anotacao}) async {
     return await repository.insert(anotacao: anotacao);

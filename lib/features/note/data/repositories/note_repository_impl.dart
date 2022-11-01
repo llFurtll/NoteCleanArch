@@ -1,12 +1,12 @@
-import '../../data/datasources/datasource.dart';
+import '../../data/datasources/note_datasource.dart';
 import '../../data/model/anotacao_model.dart';
-import '../../domain/repositories/irepository.dart';
+import '../../domain/repositories/inote_repository.dart';
 
-class CrudRepository implements IRepository<AnotacaoModel> {
+class NoteRepositoryImpl implements INoteRepository<AnotacaoModel> {
 
-  DatasourceBase<AnotacaoModel> datasourceBase;
+  NoteDataSource<AnotacaoModel> datasourceBase;
 
-  CrudRepository({required this.datasourceBase});
+  NoteRepositoryImpl({required this.datasourceBase});
 
   @override
   Future<int?> insert({required AnotacaoModel anotacao}) async {

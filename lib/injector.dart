@@ -8,9 +8,9 @@ import 'features/config_user/data/datasources/config_user_datasource.dart';
 import 'features/config_user/data/repositories/config_user_repository_impl.dart';
 import 'features/config_user/domain/usecases/config_user_use_case.dart';
 
-import 'features/note/data/datasources/sqlite.dart';
-import 'features/note/data/repositories/crud_repository.dart';
-import 'features/note/domain/usecases/crud_usecases.dart';
+import 'features/note/data/datasources/note_datasource.dart';
+import 'features/note/data/repositories/note_repository_impl.dart';
+import 'features/note/domain/usecases/note_usecase.dart';
 
 import 'features/config_app/data/datasources/config_app_datasource.dart';
 import 'features/config_app/data/repositories/config_app_repository_impl.dart';
@@ -30,9 +30,9 @@ void registerDependencies() {
   injector.registerDependencie(ConfigUserUseCase(repository: injector.getDependencie()));
 
   // Criação da anotação
-  injector.registerDependencie(SqliteDatasource(test: false));
-  injector.registerDependencie(CrudRepository(datasourceBase: injector.getDependencie()));
-  injector.registerDependencie(CrudUseCases(repository: injector.getDependencie()));
+  injector.registerDependencie(NoteDataSourceImpl(test: false));
+  injector.registerDependencie(NoteRepositoryImpl(datasourceBase: injector.getDependencie()));
+  injector.registerDependencie(NoteUseCase(repository: injector.getDependencie()));
 
   // Configuração da aplicação
   injector.registerDependencie(ConfigAppDataSourceImpl(test: false));

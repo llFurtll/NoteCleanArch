@@ -11,7 +11,7 @@ import '../../../../../../core/adapters/implementatios/editor_note.dart';
 import '../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../../../core/adapters/interfaces/ieditor.dart';
 import '../../../data/model/anotacao_model.dart';
-import '../../../domain/usecases/crud_usecases.dart';
+import '../../../domain/usecases/note_usecase.dart';
 import 'components/app_bar_create_component.dart';
 import 'components/button_save_note_component.dart';
 
@@ -39,7 +39,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   final TextEditingController _title = TextEditingController();
 
   late AnotacaoModel? _anotacaoModel;
-  late CrudUseCases _useCases;
+  late NoteUseCase _noteUseCase;
   late AppBarCreateComponent _appBarCreateComponent;
   late ButtonSaveNoteComponent _buttonSaveNoteComponent;
   late IEditor _editor;
@@ -48,13 +48,13 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   void initState() {
     super.initState();
 
-    _useCases = injector.getDependencie();
+    _noteUseCase = injector.getDependencie();
     _appBarCreateComponent = AppBarCreateComponent(this);
     _buttonSaveNoteComponent = ButtonSaveNoteComponent(this);
 
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (widget.id != null) {
-        _anotacaoModel = await _useCases.getByIdUseCase(id: widget.id!);
+        _anotacaoModel = await _noteUseCase.getByIdUseCase(id: widget.id!);
         _title.text = _anotacaoModel!.titulo!;
 
         if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {

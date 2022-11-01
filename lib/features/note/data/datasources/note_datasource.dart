@@ -1,14 +1,23 @@
 import 'package:sqflite/sqflite.dart';
 
 import '../../../../core/utils/init_database.dart';
-import '../../data/datasources/datasource.dart';
+import '../../domain/entities/anotacao.dart';
 import '../../data/model/anotacao_model.dart';
-class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
+
+abstract class NoteDataSource<T extends Anotacao> {
+  Future<T?> getById({required int id});
+  Future<int?> insert({required T anotacao});
+  Future<int?> update({required T anotacao});
+  Future<int?> updateSituacao({required T anotacao});
+  Future<int?> removeBackgroundNote({required String image});
+}
+
+class NoteDataSourceImpl implements NoteDataSource<AnotacaoModel> {
   
   late Database _db;
   final bool test;
 
-  SqliteDatasource({
+  NoteDataSourceImpl({
     required this.test
   });
 

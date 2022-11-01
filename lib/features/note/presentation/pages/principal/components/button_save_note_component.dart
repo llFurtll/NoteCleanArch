@@ -6,7 +6,7 @@ import 'package:compmanager/core/conversable.dart';
 
 import '../../../../../../../core/widgets/show_message.dart';
 import '../../../../data/model/anotacao_model.dart';
-import '../../../../domain/usecases/crud_usecases.dart';
+import '../../../../domain/usecases/note_usecase.dart';
 import '../create.dart';
 import 'app_bar_create_component.dart';
 
@@ -16,7 +16,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
   final CreateNoteState _screen;
   final Conversable _conversable = Conversable();
 
-  late final CrudUseCases _useCases;
+  late final NoteUseCase _noteUseCase;
   late final AppBarCreateComponent _appBarCreateComponent;
 
   ButtonSaveNoteComponent(this._screen) {
@@ -73,7 +73,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
 
   @override
   void init() {
-    _useCases = _injector.getDependencie();
+    _noteUseCase = _injector.getDependencie();
     _appBarCreateComponent = _screen.getComponent(AppBarCreateComponent) as AppBarCreateComponent;
   }
 
@@ -90,7 +90,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
       situacao: 1,
     );
 
-    int? insert = await _useCases.insertUseCase(anotacao: anotacaoModel);
+    int? insert = await _noteUseCase.insertUseCase(anotacao: anotacaoModel);
 
     if (insert != 0) {
       MessageDefaultSystem.showMessage(
@@ -103,12 +103,12 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
       _appBarCreateComponent.showShare = true;
       _appBarCreateComponent.changeMenuItens();
 
-      _screen.anotacao = await _useCases.getByIdUseCase(id: _screen.id!);
+      _screen.anotacao = await _noteUseCase.getByIdUseCase(id: _screen.id!);
     }
   }
 
   void _updateNote(AnotacaoModel anotacao) async {
-    int? updated = await _useCases.updateUseCase(anotacao: anotacao);
+    int? updated = await _noteUseCase.updateUseCase(anotacao: anotacao);
 
     if (updated != 0) {
       MessageDefaultSystem.showMessage(
