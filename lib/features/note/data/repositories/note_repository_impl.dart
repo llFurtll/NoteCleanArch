@@ -1,30 +1,30 @@
 import '../../data/datasources/note_datasource.dart';
-import '../../data/model/anotacao_model.dart';
+import '../../data/model/note_model.dart';
 import '../../domain/repositories/inote_repository.dart';
 
-class NoteRepositoryImpl implements INoteRepository<AnotacaoModel> {
+class NoteRepositoryImpl implements INoteRepository<NoteModel> {
 
-  NoteDataSource<AnotacaoModel> datasourceBase;
+  NoteDataSource<NoteModel> datasourceBase;
 
   NoteRepositoryImpl({required this.datasourceBase});
 
   @override
-  Future<int?> insert({required AnotacaoModel anotacao}) async {
+  Future<int?> insert({required NoteModel anotacao}) async {
     return await datasourceBase.insert(anotacao: anotacao);
   }
   
   @override
-  Future<int?> update({required AnotacaoModel anotacao}) async {
+  Future<int?> update({required NoteModel anotacao}) async {
     return await datasourceBase.update(anotacao: anotacao);
   }
 
   @override
-  Future<AnotacaoModel?> getById({required int id}) async {
+  Future<NoteModel?> getById({required int id}) async {
     return await datasourceBase.getById(id: id);
   }
 
   @override
-  Future<int?> updateSituacao({required AnotacaoModel anotacao}) async {
+  Future<int?> updateSituacao({required NoteModel anotacao}) async {
     return await datasourceBase.updateSituacao(anotacao: anotacao);
   }
 

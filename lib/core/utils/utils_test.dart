@@ -1,11 +1,10 @@
-import '../../features/note/data/model/anotacao_model.dart';
-import '../../features/note/domain/entities/anotacao.dart';
+import '../../features/note/data/model/note_model.dart';
 
-Anotacao gerarAnotacao(
+NoteModel gerarAnotacao(
   {int id = 0, String data = "",
   int situacao = 1, String imagemFundo = "", String observacao = "", String titulo = ""}
   ) {
-    AnotacaoModel anotacao =  new AnotacaoModel(
+    NoteModel anotacao =  new NoteModel(
       id: id,
       data: data,
       situacao: situacao,

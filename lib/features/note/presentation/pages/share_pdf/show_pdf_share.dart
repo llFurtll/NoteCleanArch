@@ -4,7 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:note/features/note/data/model/anotacao_model.dart';
+import 'package:note/features/note/data/model/note_model.dart';
 import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -113,7 +113,7 @@ class ShowPdfShare extends StatelessWidget {
       dirShare.createSync(recursive: true);
     }
 
-    final backgroundImage = arguments.anotacaoModel.imagemFundo!;
+    final backgroundImage = arguments.noteModel.imagemFundo!;
     final showImage = arguments.showImage;
     String image = "";
 
@@ -132,7 +132,7 @@ class ShowPdfShare extends StatelessWidget {
       }
     }
 
-    String html = _generateHtml(showImage && image.isNotEmpty, image, arguments.anotacaoModel);
+    String html = _generateHtml(showImage && image.isNotEmpty, image, arguments.noteModel);
 
     File pdf = await FlutterHtmlToPdf.convertFromHtmlContent(
       html,
@@ -143,7 +143,7 @@ class ShowPdfShare extends StatelessWidget {
     return pdf.readAsBytes();
   }
 
-  String _generateHtml(bool showImage, String image, AnotacaoModel anotacaoModel) {
+  String _generateHtml(bool showImage, String image, NoteModel anotacaoModel) {
     String title = anotacaoModel.titulo!;
     String observacao = anotacaoModel.observacao!;
     return """

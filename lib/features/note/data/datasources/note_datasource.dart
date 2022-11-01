@@ -1,10 +1,10 @@
 import 'package:sqflite/sqflite.dart';
 
 import '../../../../core/utils/init_database.dart';
-import '../../domain/entities/anotacao.dart';
-import '../../data/model/anotacao_model.dart';
+import '../../domain/entities/note.dart';
+import '../../data/model/note_model.dart';
 
-abstract class NoteDataSource<T extends Anotacao> {
+abstract class NoteDataSource<T extends Note> {
   Future<T?> getById({required int id});
   Future<int?> insert({required T anotacao});
   Future<int?> update({required T anotacao});
@@ -12,7 +12,7 @@ abstract class NoteDataSource<T extends Anotacao> {
   Future<int?> removeBackgroundNote({required String image});
 }
 
-class NoteDataSourceImpl implements NoteDataSource<AnotacaoModel> {
+class NoteDataSourceImpl implements NoteDataSource<NoteModel> {
   
   late Database _db;
   final bool test;
@@ -30,7 +30,7 @@ class NoteDataSourceImpl implements NoteDataSource<AnotacaoModel> {
   }
 
   @override
-  Future<AnotacaoModel> getById({required int id}) async {
+  Future<NoteModel> getById({required int id}) async {
     await getConnection();
     
     List<Map> note = await _db.rawQuery(
@@ -40,7 +40,7 @@ class NoteDataSourceImpl implements NoteDataSource<AnotacaoModel> {
       [id]
     );
 
-    AnotacaoModel anotacao = AnotacaoModel.fromJson(note[0]);
+    NoteModel anotacao = NoteModel.fromJson(note[0]);
 
     await closeConnection();
 
@@ -48,7 +48,7 @@ class NoteDataSourceImpl implements NoteDataSource<AnotacaoModel> {
   }
 
   @override
-  Future<int?> insert({required AnotacaoModel anotacao}) async {
+  Future<int?> insert({required NoteModel anotacao}) async {
     await getConnection();
 
     int? insert;
@@ -66,7 +66,7 @@ class NoteDataSourceImpl implements NoteDataSource<AnotacaoModel> {
   }
 
   @override
-  Future<int?> update({required AnotacaoModel anotacao}) async {
+  Future<int?> update({required NoteModel anotacao}) async {
     await getConnection();
 
     int update;
@@ -87,7 +87,7 @@ class NoteDataSourceImpl implements NoteDataSource<AnotacaoModel> {
   }
 
   @override
-  Future<int?> updateSituacao({required AnotacaoModel anotacao}) async {
+  Future<int?> updateSituacao({required NoteModel anotacao}) async {
     await getConnection();
 
     int update;

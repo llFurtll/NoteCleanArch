@@ -5,7 +5,7 @@ import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/core/conversable.dart';
 
 import '../../../../../../../core/widgets/show_message.dart';
-import '../../../../data/model/anotacao_model.dart';
+import '../../../../data/model/note_model.dart';
 import '../../../../domain/usecases/note_usecase.dart';
 import '../create.dart';
 import 'app_bar_create_component.dart';
@@ -82,7 +82,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
   }
 
   void _insertNote(String title, String content) async {
-    AnotacaoModel anotacaoModel = AnotacaoModel(
+    NoteModel noteModel = NoteModel(
       observacao: content,
       titulo: title,
       data: DateTime.now().toIso8601String(),
@@ -90,7 +90,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
       situacao: 1,
     );
 
-    int? insert = await _noteUseCase.insertUseCase(anotacao: anotacaoModel);
+    int? insert = await _noteUseCase.insertUseCase(anotacao: noteModel);
 
     if (insert != 0) {
       MessageDefaultSystem.showMessage(
@@ -107,7 +107,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
     }
   }
 
-  void _updateNote(AnotacaoModel anotacao) async {
+  void _updateNote(NoteModel anotacao) async {
     int? updated = await _noteUseCase.updateUseCase(anotacao: anotacao);
 
     if (updated != 0) {

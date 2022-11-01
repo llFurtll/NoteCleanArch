@@ -1,6 +1,6 @@
-import '../../domain/entities/config.dart';
+import '../../domain/entities/config_user.dart';
 
-class ConfigUserModel extends Config {
+class ConfigUserModel extends ConfigUser {
   ConfigUserModel(
     {
       String? pathFoto,
@@ -15,8 +15,8 @@ class ConfigUserModel extends Config {
     );
   }
 
-  static Config fromModel(ConfigUserModel configModel) {
-    return Config(
+  static ConfigUser fromModel(ConfigUserModel configModel) {
+    return ConfigUser(
       pathFoto: configModel.pathFoto,
       nome: configModel.nome
     );

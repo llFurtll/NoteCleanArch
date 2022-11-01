@@ -1,13 +1,13 @@
 import 'package:compmanager/domain/interfaces/iscreen.dart';
 
-import '../../../data/model/anotacao_model.dart';
+import '../../../data/model/note_model.dart';
 class ArgumentsShare {
-  final AnotacaoModel anotacaoModel;
+  final NoteModel noteModel;
   final IScreen screen;
   final bool showImage;
 
   ArgumentsShare({
-    required this.anotacaoModel,
+    required this.noteModel,
     required this.screen,
     required this.showImage
   });

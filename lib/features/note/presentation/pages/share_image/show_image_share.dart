@@ -99,7 +99,7 @@ class ShowImageShare extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(left: 5.0),
                     child: Text(
-                      arguments.anotacaoModel.titulo!,
+                      arguments.noteModel.titulo!,
                       style: TextStyle(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
@@ -128,7 +128,7 @@ class ShowImageShare extends StatelessWidget {
                         </style>
                       </head>
                       <body>
-                        ${arguments.anotacaoModel.observacao!}
+                        ${arguments.noteModel.observacao!}
                       </body
                     </html>
                   """

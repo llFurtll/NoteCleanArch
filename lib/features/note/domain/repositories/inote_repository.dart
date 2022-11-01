@@ -1,6 +1,6 @@
-import '../entities/anotacao.dart';
+import '../entities/note.dart';
 
-abstract class INoteRepository<T extends Anotacao> {
+abstract class INoteRepository<T extends Note> {
   Future<int?> insert({required T anotacao});
   Future<int?> update({required T anotacao});
   Future<int?> updateSituacao({required T anotacao});

@@ -1,24 +1,24 @@
-import '../../data/model/anotacao_model.dart';
+import '../../data/model/note_model.dart';
 import '../repositories/inote_repository.dart';
 
 class NoteUseCase {
-  INoteRepository<AnotacaoModel> repository;
+  INoteRepository<NoteModel> repository;
 
   NoteUseCase({required this.repository});
 
-  Future<int?> insertUseCase({required AnotacaoModel anotacao}) async {
+  Future<int?> insertUseCase({required NoteModel anotacao}) async {
     return await repository.insert(anotacao: anotacao);
   }
 
-  Future<int?> updateUseCase({required AnotacaoModel anotacao}) async {
+  Future<int?> updateUseCase({required NoteModel anotacao}) async {
     return await repository.update(anotacao: anotacao);
   }
 
-  Future<AnotacaoModel?> getByIdUseCase({required int id}) async {
+  Future<NoteModel?> getByIdUseCase({required int id}) async {
     return await repository.getById(id: id);
   }
 
-  Future<int?> updateSituacaoUseCase({required AnotacaoModel anotacao}) async {
+  Future<int?> updateSituacaoUseCase({required NoteModel anotacao}) async {
     anotacao.situacao = anotacao.situacao == 1 ? 0 : 1;
     return await repository.updateSituacao(anotacao: anotacao);
   }

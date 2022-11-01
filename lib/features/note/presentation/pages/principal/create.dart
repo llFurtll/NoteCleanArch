@@ -10,7 +10,7 @@ import 'package:compmanager/domain/interfaces/iscreen.dart';
 import '../../../../../../core/adapters/implementatios/editor_note.dart';
 import '../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../../../core/adapters/interfaces/ieditor.dart';
-import '../../../data/model/anotacao_model.dart';
+import '../../../data/model/note_model.dart';
 import '../../../domain/usecases/note_usecase.dart';
 import 'components/app_bar_create_component.dart';
 import 'components/button_save_note_component.dart';
@@ -38,7 +38,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   final FocusNode _focusTitle = FocusNode();
   final TextEditingController _title = TextEditingController();
 
-  late AnotacaoModel? _anotacaoModel;
+  late NoteModel? _anotacaoModel;
   late NoteUseCase _noteUseCase;
   late AppBarCreateComponent _appBarCreateComponent;
   late ButtonSaveNoteComponent _buttonSaveNoteComponent;
@@ -221,11 +221,11 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
     _pathImageNotifier.value = path;
   }
 
-  AnotacaoModel? get anotacao {
+  NoteModel? get anotacao {
     return _anotacaoModel!;
   }
 
-  set anotacao(AnotacaoModel? anotacao) {
+  set anotacao(NoteModel? anotacao) {
     _anotacaoModel = anotacao;
   }
 
