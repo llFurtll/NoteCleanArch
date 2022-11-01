@@ -5,8 +5,8 @@ import 'features/home/presentation/info/info.dart';
 import 'features/note/presentation/pages/principal/create.dart';
 import 'features/note/presentation/pages/share_image/show_image_share.dart';
 import 'features/note/presentation/pages/share_pdf/show_pdf_share.dart';
-import 'features/configuracao/presentation/principal/configuracao.dart';
-import 'features/configuracao/presentation/edit/edit_config.dart';
+import 'features/configuracao/presentation/pages/principal/configuracao.dart';
+import 'features/configuracao/presentation/pages/edit/edit_config.dart';
 
 Map<String, Widget Function(BuildContext)> routes() {
   return {

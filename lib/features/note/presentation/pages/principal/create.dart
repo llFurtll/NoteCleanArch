@@ -10,8 +10,8 @@ import 'package:compmanager/domain/interfaces/iscreen.dart';
 import '../../../../../../core/adapters/implementatios/editor_note.dart';
 import '../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../../../core/adapters/interfaces/ieditor.dart';
-import '../../../../data/model/anotacao_model.dart';
-import '../../../../domain/usecases/crud_usecases.dart';
+import '../../../data/model/anotacao_model.dart';
+import '../../../domain/usecases/crud_usecases.dart';
 import 'components/app_bar_create_component.dart';
 import 'components/button_save_note_component.dart';
 
