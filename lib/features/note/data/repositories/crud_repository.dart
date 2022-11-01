@@ -9,11 +9,6 @@ class CrudRepository implements IRepository<AnotacaoModel> {
   CrudRepository({required this.datasourceBase});
 
   @override
-  Future<int?> delete({required int id}) async {
-      return await datasourceBase.delete(id: id);
-  }
-  
-  @override
   Future<int?> insert({required AnotacaoModel anotacao}) async {
     return await datasourceBase.insert(anotacao: anotacao);
   }
@@ -21,11 +16,6 @@ class CrudRepository implements IRepository<AnotacaoModel> {
   @override
   Future<int?> update({required AnotacaoModel anotacao}) async {
     return await datasourceBase.update(anotacao: anotacao);
-  }
-
-  @override
-  Future<List<AnotacaoModel?>> findAll() async {
-    return await datasourceBase.findAll();
   }
 
   @override
@@ -42,10 +32,5 @@ class CrudRepository implements IRepository<AnotacaoModel> {
   Future<int?> removeBackgroundNote({required String image}) async {
     int? update = await datasourceBase.removeBackgroundNote(image: image);
     return update;
-  }
-
-  @override
-  Future<List<AnotacaoModel?>> findWithDesc({String desc = ""}) async {
-    return await datasourceBase.findWithDesc(desc: desc);
   }
 }

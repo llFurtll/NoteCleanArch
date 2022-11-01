@@ -13,14 +13,6 @@ class CrudUseCases {
   Future<int?> updateUseCase({required AnotacaoModel anotacao}) async {
     return await repository.update(anotacao: anotacao);
   }
-  
-  Future<int?> deleteUseCase({required int id}) async {
-    return await repository.delete(id: id);
-  }
-
-  Future<List<AnotacaoModel?>> findAlluseCase() async {
-    return await repository.findAll();
-  }
 
   Future<AnotacaoModel?> getByIdUseCase({required int id}) async {
     return await repository.getById(id: id);
@@ -34,9 +26,5 @@ class CrudUseCases {
   Future<int?> removeBackgroundNote({required String image}) async {
     int? update = await repository.removeBackgroundNote(image: image);
     return update;
-  }
-
-  Future<List<AnotacaoModel?>> findWithDesc({String desc = ""}) async {
-    return await repository.findWithDesc(desc: desc);
   }
 }

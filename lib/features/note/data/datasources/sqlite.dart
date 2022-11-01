@@ -21,23 +21,6 @@ class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
   }
 
   @override
-  Future<List<AnotacaoModel>> findAll() async {
-    await getConnection();
-
-    List<AnotacaoModel> listAnotacao = [];
-    
-    List<Map> listNote = await _db.rawQuery("SELECT * FROM NOTE WHERE SITUACAO = 1 ORDER BY DATA DESC");
-
-    listNote.forEach((elemento) {
-      listAnotacao.add(AnotacaoModel.fromJson(elemento));
-    });
-
-    await closeConnection();
-
-    return listAnotacao;
-  }
-
-  @override
   Future<AnotacaoModel> getById({required int id}) async {
     await getConnection();
     
@@ -71,21 +54,6 @@ class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
     await closeConnection();
 
     return insert;
-  }
-
-  @override
-  Future<int?> delete({required int id}) async {
-    await getConnection();
-
-    int? delete;
-
-    delete = await _db.rawDelete(
-      "DELETE FROM NOTE WHERE ID = ?", [id]
-    );
-
-    await closeConnection();
-
-    return delete;
   }
 
   @override
@@ -143,85 +111,5 @@ class SqliteDatasource implements DatasourceBase<AnotacaoModel> {
     await closeConnection();
 
     return update;
-  }
-
-  @override
-  Future<List<AnotacaoModel?>> findWithDesc({String desc = ""}) async {
-    await getConnection();
-
-    List<AnotacaoModel> listAnotacao = [];
-    
-    List<Map> listNote = await _db.rawQuery(
-      "SELECT * FROM NOTE WHERE SITUACAO = 1 AND TITULO LIKE '%$desc%' ORDER BY DATA DESC"
-    );
-
-    listNote.forEach((elemento) {
-      listAnotacao.add(AnotacaoModel.fromJson(elemento));
-    });
-
-    await closeConnection();
-
-    return listAnotacao;
-  }
-
-  @override
-  Future<String?> getImage() async {
-    await getConnection();
-
-    List<Map> result = await _db.rawQuery(
-      "SELECT PATH_FOTO FROM CONFIGUSER WHERE ID = 1"
-    );
-
-
-    await closeConnection();
-
-    if (result.length > 0) {
-      return result.first['path_foto'];
-    } else {
-      return null;
-    }
-  }
-
-  @override
-  Future<String?> getName() async {
-    await getConnection();
-
-    List<Map> result = await _db.rawQuery(
-      "SELECT NOME FROM CONFIGUSER WHERE ID = 1"
-    );
-
-    await closeConnection();
-
-    if (result.length > 0) {
-      return result.first['nome'];
-    } else {
-      return null;
-    }
-  }
-
-  @override
-  Future<int?> updateImage({required String pathImage}) async {
-    await getConnection();
-
-    int? updated = await _db.rawUpdate(
-      "UPDATE CONFIGUSER SET PATH_FOTO = ? WHERE ID = 1", [pathImage]
-    );
-
-    await closeConnection();
-
-    return updated;
-  }
-
-  @override
-  Future<int?> updateName({required String name}) async {
-    await getConnection();
-
-    int? updated = await _db.rawUpdate(
-      "UPDATE CONFIGUSER SET NOME = ? WHERE ID = 1", [name]
-    );
-
-    await closeConnection();
-
-    return updated;
   }
 }

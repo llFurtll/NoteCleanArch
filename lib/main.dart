@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'features/note/presentation/pages/splashscreen/principal/splash.dart';
+import 'features/splashscreen/presentation/pages/principal/splash.dart';
 import 'core/utils/init_database.dart';
 import 'routes.dart';
 import 'injector.dart';
