@@ -15,7 +15,7 @@ class HomeAnotacaoModel extends HomeAnotacao {
       id: json["id"],
       titulo: json["titulo"],
       data: json["data"],
-      imagemFundo: json["imagemFundo"]
+      imagemFundo: json["imagem_fundo"]
     );
   }
   

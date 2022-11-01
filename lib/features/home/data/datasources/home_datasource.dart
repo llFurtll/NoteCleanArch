@@ -32,7 +32,7 @@ class HomeDataSourceImpl implements HomeDataSource {
 
     List<HomeAnotacaoModel> listAnotacao = [];
     
-    List<Map> listNote = await _db.rawQuery("SELECT ID, TITULO, DATA, PATH_FOTO FROM NOTE WHERE SITUACAO = 1 ORDER BY DATA DESC");
+    List<Map> listNote = await _db.rawQuery("SELECT ID, TITULO, DATA, IMAGEM_FUNDO FROM NOTE WHERE SITUACAO = 1 ORDER BY DATA DESC");
 
     listNote.forEach((elemento) {
       listAnotacao.add(HomeAnotacaoModel.fromJson(elemento));
@@ -49,7 +49,7 @@ class HomeDataSourceImpl implements HomeDataSource {
 
     List<HomeAnotacaoModel> listAnotacao = [];
 
-    List<Map> listNote = await _db.rawQuery("SELECT ID, TITULO, DATA, PATH_FOTO FROM NOTE WHERE SITUACAO = 1 AND TITULO LIKE '%$desc%' ORDER BY DATA DESC");
+    List<Map> listNote = await _db.rawQuery("SELECT ID, TITULO, DATA, IMAGEM_FUNDO FROM NOTE WHERE SITUACAO = 1 AND TITULO LIKE '%$desc%' ORDER BY DATA DESC");
 
     listNote.forEach((elemento) {
       listAnotacao.add(HomeAnotacaoModel.fromJson(elemento));
