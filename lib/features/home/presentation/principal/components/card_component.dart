@@ -10,7 +10,7 @@ import 'package:compmanager/core/conversable.dart';
 
 import '../../../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../../../../core/widgets/show_message.dart';
-import '../../../../note/presentation/pages/createpage/principal/create.dart';
+import '../../../../note/presentation/pages/principal/create.dart';
 import '../../../domain/entities/home_anotacao.dart';
 import '../../../domain/usecases/home_use_case.dart';
 import '../home_list.dart';

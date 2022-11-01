@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 
-import '../../../../note/presentation/pages/createpage/principal/create.dart';
+import '../../../../note/presentation/pages/principal/create.dart';
 import '../home_list.dart';
 
 class ButtonAddNoteComponent implements IComponent<HomeListState, OpenContainer, void> {
