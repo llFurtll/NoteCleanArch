@@ -8,9 +8,9 @@ import 'features/note/data/datasources/sqlite.dart';
 import 'features/note/data/repositories/crud_repository.dart';
 import 'features/note/domain/usecases/crud_usecases.dart';
 
-import 'features/configuracao/data/datasources/config_note_datasource.dart';
-import 'features/configuracao/data/repositories/config_note_repository_impl.dart';
-import 'features/configuracao/domain/usecases/use_case_config_note.dart';
+import 'features/config_app/data/datasources/config_app_datasource.dart';
+import 'features/config_app/data/repositories/config_app_repository_impl.dart';
+import 'features/config_app/domain/usecases/config_app_use_case.dart';
 
 void registerDependencies() {
   CompManagerInjector injector = CompManagerInjector();
@@ -26,7 +26,7 @@ void registerDependencies() {
   injector.registerDependencie(CrudUseCases(repository: injector.getDependencie()));
 
   // Módulo de configuração do note
-  injector.registerDependencie(ConfigNoteDataSourceImpl(test: false));
-  injector.registerDependencie(ConfigNoteRepositoryImpl(dataSource: injector.getDependencie()));
-  injector.registerDependencie(UseCaseConfigNote(repository: injector.getDependencie()));
+  injector.registerDependencie(ConfigAppDataSourceImpl(test: false));
+  injector.registerDependencie(ConfigAppRepositoryImpl(dataSource: injector.getDependencie()));
+  injector.registerDependencie(ConfigAppUseCase(repository: injector.getDependencie()));
 }

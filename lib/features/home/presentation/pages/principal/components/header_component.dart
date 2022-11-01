@@ -7,7 +7,7 @@ import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 
 import '../../../../../../core/notifiers/change_notifier_global.dart';
-import '../../../../../configuracao/presentation/pages/principal/configuracao.dart';
+import '../../../../../config_app/presentation/pages/principal/configuracao.dart';
 import '../../../../../config_user/domain/usecases/config_user_use_case.dart';
 import '../../info/info.dart';
 import '../home_list.dart';

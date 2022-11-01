@@ -70,7 +70,7 @@ void _onCreate(Database db, int version) async {
 
   await db.execute(
     """
-      CREATE TABLE IF NOT EXISTS CONFIGNOTE(
+      CREATE TABLE IF NOT EXISTS CONFIGAPP(
         id INTEGER PRIMARY KEY,
         identificador TEXT NOT NULL,
         valor INT NOT NULL,

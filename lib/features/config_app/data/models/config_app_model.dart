@@ -1,6 +1,6 @@
-import '../../domain/entities/config_note.dart';
+import '../../domain/entities/config_app.dart';
 
-class ConfigNoteModel implements ConfigNote {
+class ConfigAppModel implements ConfigApp {
   @override
   int? id;
 
@@ -13,7 +13,7 @@ class ConfigNoteModel implements ConfigNote {
   @override
   int? valor;
 
-  ConfigNoteModel({
+  ConfigAppModel({
     this.id,
     this.identificador,
     this.modulo,
@@ -21,8 +21,8 @@ class ConfigNoteModel implements ConfigNote {
   });
   
   @override
-  factory ConfigNoteModel.fromJson(Map json) {
-    return ConfigNoteModel(
+  factory ConfigAppModel.fromJson(Map json) {
+    return ConfigAppModel(
       id: json["id"],
       identificador: json["identificador"],
       modulo: json["modulo"],

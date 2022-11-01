@@ -1,6 +1,6 @@
-import '../entities/config_note.dart';
+import '../entities/config_app.dart';
 
-abstract class IConfigNoteRepository<T extends ConfigNote> {
+abstract class IConfigAppRepository<T extends ConfigApp> {
   Future<int?> updateConfig({required T config});
   Future<T?> getConfig({required String identificador});
   Future<Map<String?, int?>> getAllConfigsByModulo({required String modulo});

@@ -12,7 +12,7 @@ import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/core/compmanager_notifier_list.dart';
 
 import '../../../../../../../core/notifiers/change_notifier_global.dart';
-import '../../../../../domain/usecases/crud_usecases.dart';
+import '../../../../domain/usecases/crud_usecases.dart';
 import '../create.dart';
 import 'app_bar_create_component.dart';
 

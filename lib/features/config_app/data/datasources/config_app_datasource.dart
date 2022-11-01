@@ -1,20 +1,20 @@
 import 'package:sqflite/sqflite.dart';
 
 import '../../../../core/utils/init_database.dart';
-import '../models/config_note_model.dart';
-import '../../domain/entities/config_note.dart';
+import '../models/config_app_model.dart';
+import '../../domain/entities/config_app.dart';
 
-abstract class IConfigNoteDataSource<T extends ConfigNote> {
+abstract class IConfigAppDataSource<T extends ConfigApp> {
   Future<int?> updateConfig({required T config});
   Future<T?> getConfig({required String identificador});
   Future<Map<String?, int?>> getAllConfigsByModulo({required String modulo});
 }
 
-class ConfigNoteDataSourceImpl implements IConfigNoteDataSource<ConfigNoteModel> {
+class ConfigAppDataSourceImpl implements IConfigAppDataSource<ConfigAppModel> {
   late Database _db;
   final bool test;
 
-  ConfigNoteDataSourceImpl({
+  ConfigAppDataSourceImpl({
     required this.test
   });
 
@@ -32,10 +32,10 @@ class ConfigNoteDataSourceImpl implements IConfigNoteDataSource<ConfigNoteModel>
 
     Map<String?, int?> response = {};
 
-    List<Map> result = await _db.rawQuery("SELECT * FROM CONFIGNOTE WHERE MODULO = ?", [ modulo ]);
+    List<Map> result = await _db.rawQuery("SELECT * FROM CONFIGAPP WHERE MODULO = ?", [ modulo ]);
 
     result.forEach((element) {
-      ConfigNoteModel config = ConfigNoteModel.fromJson(element);
+      ConfigAppModel config = ConfigAppModel.fromJson(element);
       response[config.identificador] = config.valor;
     });
 
@@ -45,12 +45,12 @@ class ConfigNoteDataSourceImpl implements IConfigNoteDataSource<ConfigNoteModel>
   }
 
   @override
-  Future<ConfigNoteModel?> getConfig({required String identificador}) async {
+  Future<ConfigAppModel?> getConfig({required String identificador}) async {
     await getConnection();
 
-    List<Map> result = await _db.rawQuery("SELECT * FROM CONFIGNOTE WHERE IDENTIFICADOR = ?", [ identificador ]);
+    List<Map> result = await _db.rawQuery("SELECT * FROM CONFIGAPP WHERE IDENTIFICADOR = ?", [ identificador ]);
 
-    ConfigNoteModel? config = ConfigNoteModel.fromJson(result[0]);
+    ConfigAppModel? config = ConfigAppModel.fromJson(result[0]);
 
     await closeConnection();
 
@@ -58,10 +58,10 @@ class ConfigNoteDataSourceImpl implements IConfigNoteDataSource<ConfigNoteModel>
   }
 
   @override
-  Future<int?> updateConfig({required ConfigNoteModel config}) async {
+  Future<int?> updateConfig({required ConfigAppModel config}) async {
     await getConnection();
 
-    int? update = await _db.rawUpdate("UPDATE CONFIGNOTE SET VALOR = ? WHERE IDENTIFICADOR = ?", [ config.valor, config.identificador ]);
+    int? update = await _db.rawUpdate("UPDATE CONFIGAPP SET VALOR = ? WHERE IDENTIFICADOR = ?", [ config.valor, config.identificador ]);
 
     await closeConnection();
 

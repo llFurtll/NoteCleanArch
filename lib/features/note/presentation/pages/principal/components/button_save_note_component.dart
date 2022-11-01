@@ -5,8 +5,8 @@ import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/core/conversable.dart';
 
 import '../../../../../../../core/widgets/show_message.dart';
-import '../../../../../data/model/anotacao_model.dart';
-import '../../../../../domain/usecases/crud_usecases.dart';
+import '../../../../data/model/anotacao_model.dart';
+import '../../../../domain/usecases/crud_usecases.dart';
 import '../create.dart';
 import 'app_bar_create_component.dart';
 
