@@ -8,8 +8,8 @@ import 'package:compmanager/domain/interfaces/icomponent.dart';
 
 import '../../../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../../../../core/widgets/animated_list.dart';
-import '../../../domain/usecases/home_use_case.dart';
-import '../../../domain/entities/home_anotacao.dart';
+import '../../../../domain/usecases/home_use_case.dart';
+import '../../../../domain/entities/home_anotacao.dart';
 import '../home_list.dart';
 import 'card_component.dart';
 

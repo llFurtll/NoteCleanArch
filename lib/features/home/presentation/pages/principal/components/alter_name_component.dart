@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 
-import '../../../../config_user/domain/usecases/config_user_use_case.dart';
+import '../../../../../config_user/domain/usecases/config_user_use_case.dart';
 import '../home_list.dart';
 import 'header_component.dart';
 

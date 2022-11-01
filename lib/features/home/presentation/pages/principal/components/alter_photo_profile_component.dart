@@ -6,7 +6,7 @@ import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../../config_user/domain/usecases/config_user_use_case.dart';
+import '../../../../../config_user/domain/usecases/config_user_use_case.dart';
 import '../home_list.dart';
 import '../components/header_component.dart';
 

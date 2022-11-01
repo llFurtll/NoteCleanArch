@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'features/home/presentation/principal/home_list.dart';
-import 'features/home/presentation/info/info.dart';
+import 'features/home/presentation/pages/principal/home_list.dart';
+import 'features/home/presentation/pages/info/info.dart';
 import 'features/note/presentation/pages/principal/create.dart';
 import 'features/note/presentation/pages/share_image/show_image_share.dart';
 import 'features/note/presentation/pages/share_pdf/show_pdf_share.dart';
