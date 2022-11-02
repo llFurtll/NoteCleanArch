@@ -31,4 +31,15 @@ class NoteModel extends Note {
       situacao: noteModel.situacao
     );
   }
+
+  NoteModel fromNote(Note note) {
+    return NoteModel(
+      id: note.id,
+      titulo: note.titulo,
+      data: note.data,
+      imagemFundo: note.imagemFundo,
+      observacao: note.observacao,
+      situacao: note.situacao
+    );
+  }
 }

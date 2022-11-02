@@ -5,7 +5,7 @@ import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/core/conversable.dart';
 
 import '../../../../../../../core/widgets/show_message.dart';
-import '../../../../data/model/note_model.dart';
+import '../../../../domain/entities/note.dart';
 import '../../../../domain/usecases/note_usecase.dart';
 import '../create.dart';
 import 'app_bar_create_component.dart';
@@ -59,10 +59,10 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
       if (_screen.id == null) {
         _insertNote(title, content);
       } else {
-        _screen.anotacao!.observacao = content;
-        _screen.anotacao!.imagemFundo = _screen.pathImage;
-        _screen.anotacao!.titulo = title;
-        _updateNote(_screen.anotacao!);
+        _screen.note.observacao = content;
+        _screen.note.imagemFundo = _screen.pathImage;
+        _screen.note.titulo = title;
+        _updateNote(_screen.note);
       }
 
       _conversable.callScreen("home")!.receive("refresh", "");
@@ -82,7 +82,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
   }
 
   void _insertNote(String title, String content) async {
-    NoteModel noteModel = NoteModel(
+    Note note = Note(
       observacao: content,
       titulo: title,
       data: DateTime.now().toIso8601String(),
@@ -90,7 +90,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
       situacao: 1,
     );
 
-    int? insert = await _noteUseCase.insertUseCase(anotacao: noteModel);
+    int? insert = await _noteUseCase.insertUseCase(note: note);
 
     if (insert != 0) {
       MessageDefaultSystem.showMessage(
@@ -107,8 +107,8 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
     }
   }
 
-  void _updateNote(NoteModel anotacao) async {
-    int? updated = await _noteUseCase.updateUseCase(anotacao: anotacao);
+  void _updateNote(Note note) async {
+    int? updated = await _noteUseCase.updateUseCase(note: note);
 
     if (updated != 0) {
       MessageDefaultSystem.showMessage(

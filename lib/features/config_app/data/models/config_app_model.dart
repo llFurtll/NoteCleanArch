@@ -1,24 +1,11 @@
 import '../../domain/entities/config_app.dart';
-
-class ConfigAppModel implements ConfigApp {
-  @override
-  int? id;
-
-  @override
-  String? identificador;
-
-  @override
-  String? modulo;
-
-  @override
-  int? valor;
-
+class ConfigAppModel extends ConfigApp {
   ConfigAppModel({
-    this.id,
-    this.identificador,
-    this.modulo,
-    this.valor
-  });
+    int? id,
+    String? identificador,
+    String? modulo,
+    int? valor
+  }) : super(id: id, identificador: identificador, modulo: modulo, valor: valor);
   
   @override
   factory ConfigAppModel.fromJson(Map json) {

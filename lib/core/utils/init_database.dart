@@ -10,12 +10,12 @@ Future<void> initDatabase(bool test) async {
     await databaseFactoryFfi.openDatabase(inMemoryDatabasePath, options: OpenDatabaseOptions(
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
-      version: 1
+      version: 2
     ));
   } else {
     await openDatabase(
       join(await getDatabasesPath(), "note.db"),
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade
     );
@@ -78,6 +78,8 @@ void _onCreate(Database db, int version) async {
       )
     """
   );
+
+  _createConfigByModulo(db);
 }
 
 void _onUpgrade(Database db, int version, int newVersion) async {
@@ -106,6 +108,49 @@ void _onUpgrade(Database db, int version, int newVersion) async {
       await db.execute("DROP TABLE IF EXISTS NOTE");
       await db.execute("ALTER TABLE NEW_NOTE RENAME TO NOTE");
       break;
+    }
+  }
+}
+
+Future<void> _createConfigByModulo(Database db) async {
+  Map<String, List<String>> configs = {};
+
+  configs["NOTE"] = [
+    "MOSTRAREVERTERPRODUZIRALTERACOES",
+    "MOSTRANEGRITO",
+    "MOSTRAITALICO",
+    "MOSTRASUBLINHADO",
+    "MOSTRASUBLINADOERISCADO",
+    "MOSTRAALINHAMENTOESQUERDA",
+    "MOSTRAALINHAMENTOCENTRO",
+    "MOSTRAALINHAMENTODIREITA",
+    "MOSTRAJUSTIFICADO",
+    "MOSTRATABULACAODIREITA",
+    "MOSTRATABULACAOESQUERDA",
+    "MOSTRAESPACAMENTOLINHAS",
+    "MOSTRACORLETRA",
+    "MOSTRACORFUNDOLETRA",
+    "MOSTRALISTAPONTO",
+    "MOSTRALINHANUMERICA",
+    "MOSTRALINK",
+    "MOSTRAFOTO",
+    "MOSTRAAUDIO",
+    "MOSTRAVIDEO",
+    "MOSTRATABELA",
+    "MOSTRASEPARADOR"
+  ];
+
+  for (String modulo in configs.keys) {
+    List<String>? items = configs[modulo];
+    for (String item in items!) {
+      await db.execute(
+        """
+          INSERT INTO CONFIGAPP (modulo, identificador, valor)
+          SELECT '$modulo', '$item', 1 WHERE NOT EXISTS (
+            SELECT ID FROM CONFIGAPP WHERE modulo = $modulo AND identificador = $item
+          )
+        """
+      );
     }
   }
 }

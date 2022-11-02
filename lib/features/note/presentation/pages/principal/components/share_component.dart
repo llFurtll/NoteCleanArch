@@ -42,7 +42,7 @@ class ShareComponent implements IComponent<CreateNoteState, Container, void> {
               Navigator.of(_screen.context).pushNamed(
                 ShowPdfShare.routeShowPdfShare,
                 arguments:
-                  ArgumentsShare(noteModel: _screen.anotacao!, screen: _screen, showImage: showImage!)
+                  ArgumentsShare(note: _screen.note, screen: _screen, showImage: showImage!)
               );
             },
             child: Text("Compartilhar anotação como PDF", style: TextStyle(fontSize: 16.0)),
@@ -58,7 +58,7 @@ class ShareComponent implements IComponent<CreateNoteState, Container, void> {
               Navigator.of(_screen.context).pushNamed(
                 ShowImageShare.routeShowImageShare,
                 arguments:
-                  ArgumentsShare(noteModel: _screen.anotacao!, screen: _screen, showImage: showImage!)
+                  ArgumentsShare(note: _screen.note, screen: _screen, showImage: showImage!)
               );
             },
             child: Text("Compartilhar anotação como imagem", style: TextStyle(fontSize: 16.0)),
@@ -110,7 +110,7 @@ class ShareComponent implements IComponent<CreateNoteState, Container, void> {
 
   Future<bool?> _showDialogImage() async {
 
-    if (_screen.anotacao!.imagemFundo!.isEmpty) {
+    if (_screen.note.imagemFundo!.isEmpty) {
       return false;
     }
 

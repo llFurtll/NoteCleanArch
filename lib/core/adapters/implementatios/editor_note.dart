@@ -56,8 +56,8 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
               document.getElementsByTagName('head')[0].appendChild(style);
             """
           );
-          if (_screen.id != null && _screen.anotacao!.observacao!.isNotEmpty) {
-            setText(_screen.anotacao!.observacao!);
+          if (_screen.id != null && _screen.note.observacao!.isNotEmpty) {
+            setText(_screen.note.observacao!);
           }
         },
         onFocus: () {
@@ -149,6 +149,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
             FontButtons(
               subscript: false,
               superscript: false,
+              clearAll: false
             ),
             ParagraphButtons(
               caseConverter: false,

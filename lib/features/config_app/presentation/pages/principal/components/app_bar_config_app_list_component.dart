@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 
-import '../configuracao.dart';
+import '../config_app_list.dart';
 
-class AppBarConfiguracaoComponent implements IComponent<ConfiguracaoState, PreferredSize, Future<bool>> {
-  final ConfiguracaoState _screen;
+class AppBarConfigAppListComponent implements IComponent<ConfigAppListState, PreferredSize, Future<bool>> {
+  final ConfigAppListState _screen;
 
   final String _title = "Configurações";
 
-  AppBarConfiguracaoComponent(this._screen);
+  AppBarConfigAppListComponent(this._screen);
 
   @override
   Future<bool> afterEvent() async {

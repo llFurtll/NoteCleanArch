@@ -4,15 +4,15 @@ import '../../../../core/utils/init_database.dart';
 import '../../domain/entities/note.dart';
 import '../../data/model/note_model.dart';
 
-abstract class NoteDataSource<T extends Note> {
-  Future<T?> getById({required int id});
-  Future<int?> insert({required T anotacao});
-  Future<int?> update({required T anotacao});
-  Future<int?> updateSituacao({required T anotacao});
+abstract class NoteDataSource {
+  Future<NoteModel> getById({required int id});
+  Future<int?> insert({required Note note});
+  Future<int?> update({required Note note});
+  Future<int?> updateSituacao({required Note note});
   Future<int?> removeBackgroundNote({required String image});
 }
 
-class NoteDataSourceImpl implements NoteDataSource<NoteModel> {
+class NoteDataSourceImpl implements NoteDataSource {
   
   late Database _db;
   final bool test;
@@ -48,7 +48,7 @@ class NoteDataSourceImpl implements NoteDataSource<NoteModel> {
   }
 
   @override
-  Future<int?> insert({required NoteModel anotacao}) async {
+  Future<int?> insert({required Note note}) async {
     await getConnection();
 
     int? insert;
@@ -57,7 +57,7 @@ class NoteDataSourceImpl implements NoteDataSource<NoteModel> {
       """INSERT INTO NOTE(titulo, data, situacao, imagem_fundo, observacao)
           VALUES(?, ?, ?, ?, ?)
       """,
-      [anotacao.titulo, anotacao.data, anotacao.situacao, anotacao.imagemFundo, anotacao.observacao]
+      [note.titulo, note.data, note.situacao, note.imagemFundo, note.observacao]
     );
 
     await closeConnection();
@@ -66,7 +66,7 @@ class NoteDataSourceImpl implements NoteDataSource<NoteModel> {
   }
 
   @override
-  Future<int?> update({required NoteModel anotacao}) async {
+  Future<int?> update({required Note note}) async {
     await getConnection();
 
     int update;
@@ -76,8 +76,8 @@ class NoteDataSourceImpl implements NoteDataSource<NoteModel> {
       UPDATE NOTE SET TITULO = ?, DATA = ?, SITUACAO = ?, IMAGEM_FUNDO = ?, OBSERVACAO = ? WHERE ID = ?
       """,
       [
-        anotacao.titulo, anotacao.data, anotacao.situacao,
-        anotacao.imagemFundo, anotacao.observacao, anotacao.id
+        note.titulo, note.data, note.situacao,
+        note.imagemFundo, note.observacao, note.id
       ]
     );
 
@@ -87,7 +87,7 @@ class NoteDataSourceImpl implements NoteDataSource<NoteModel> {
   }
 
   @override
-  Future<int?> updateSituacao({required NoteModel anotacao}) async {
+  Future<int?> updateSituacao({required Note note}) async {
     await getConnection();
 
     int update;
@@ -97,7 +97,7 @@ class NoteDataSourceImpl implements NoteDataSource<NoteModel> {
       UPDATE NOTE SET SITUACAO = ? WHERE ID = ?
       """,
       [
-        anotacao.situacao, anotacao.id
+        note.situacao, note.id
       ]
     );
 

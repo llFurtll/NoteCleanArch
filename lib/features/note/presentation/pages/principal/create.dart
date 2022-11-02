@@ -10,7 +10,7 @@ import 'package:compmanager/domain/interfaces/iscreen.dart';
 import '../../../../../../core/adapters/implementatios/editor_note.dart';
 import '../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../../../core/adapters/interfaces/ieditor.dart';
-import '../../../data/model/note_model.dart';
+import '../../../domain/entities/note.dart';
 import '../../../domain/usecases/note_usecase.dart';
 import 'components/app_bar_create_component.dart';
 import 'components/button_save_note_component.dart';
@@ -38,7 +38,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   final FocusNode _focusTitle = FocusNode();
   final TextEditingController _title = TextEditingController();
 
-  late NoteModel? _anotacaoModel;
+  late Note _note;
   late NoteUseCase _noteUseCase;
   late AppBarCreateComponent _appBarCreateComponent;
   late ButtonSaveNoteComponent _buttonSaveNoteComponent;
@@ -54,11 +54,11 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
 
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (widget.id != null) {
-        _anotacaoModel = await _noteUseCase.getByIdUseCase(id: widget.id!);
-        _title.text = _anotacaoModel!.titulo!;
+        _note = await _noteUseCase.getByIdUseCase(id: widget.id!);
+        _title.text = _note.titulo!;
 
-        if (_anotacaoModel!.imagemFundo != null && _anotacaoModel!.imagemFundo!.isNotEmpty) {
-          _pathImageNotifier.value = _anotacaoModel!.imagemFundo!;
+        if (_note.imagemFundo != null && _note.imagemFundo!.isNotEmpty) {
+          _pathImageNotifier.value = _note.imagemFundo!;
           _appBarCreateComponent.removeBackground = true;
         }
 
@@ -221,12 +221,12 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
     _pathImageNotifier.value = path;
   }
 
-  NoteModel? get anotacao {
-    return _anotacaoModel!;
+  Note get note {
+    return _note;
   }
 
-  set anotacao(NoteModel? anotacao) {
-    _anotacaoModel = anotacao;
+  set anotacao(Note note) {
+    _note = note;
   }
 
   int? get id {

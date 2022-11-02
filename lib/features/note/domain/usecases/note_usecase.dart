@@ -1,26 +1,26 @@
-import '../../data/model/note_model.dart';
+import '../entities/note.dart';
 import '../repositories/inote_repository.dart';
 
 class NoteUseCase {
-  INoteRepository<NoteModel> repository;
+  INoteRepository repository;
 
   NoteUseCase({required this.repository});
 
-  Future<int?> insertUseCase({required NoteModel anotacao}) async {
-    return await repository.insert(anotacao: anotacao);
+  Future<int?> insertUseCase({required Note note}) async {
+    return await repository.insert(note: note);
   }
 
-  Future<int?> updateUseCase({required NoteModel anotacao}) async {
-    return await repository.update(anotacao: anotacao);
+  Future<int?> updateUseCase({required Note note}) async {
+    return await repository.update(note: note);
   }
 
-  Future<NoteModel?> getByIdUseCase({required int id}) async {
+  Future<Note> getByIdUseCase({required int id}) async {
     return await repository.getById(id: id);
   }
 
-  Future<int?> updateSituacaoUseCase({required NoteModel anotacao}) async {
-    anotacao.situacao = anotacao.situacao == 1 ? 0 : 1;
-    return await repository.updateSituacao(anotacao: anotacao);
+  Future<int?> updateSituacaoUseCase({required Note note}) async {
+    note.situacao = note.situacao == 1 ? 0 : 1;
+    return await repository.updateSituacao(note: note);
   }
 
   Future<int?> removeBackgroundNote({required String image}) async {

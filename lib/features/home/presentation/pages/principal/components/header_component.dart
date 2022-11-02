@@ -7,7 +7,7 @@ import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 
 import '../../../../../../core/notifiers/change_notifier_global.dart';
-import '../../../../../config_app/presentation/pages/principal/configuracao.dart';
+import '../../../../../config_app/presentation/pages/principal/config_app_list.dart';
 import '../../../../../config_user/domain/usecases/config_user_use_case.dart';
 import '../../info/info.dart';
 import '../home_list.dart';
@@ -196,7 +196,7 @@ class HeaderComponent implements IComponent<HomeListState, SliverAppBar, void> {
       onSelected: (int index) {
         switch (index) {
           case 1:
-            Navigator.of(_screen.context).pushNamed(Configuracao.routeConfiguracao);
+            Navigator.of(_screen.context).pushNamed(ConfigAppList.routeConfigAppList);
             break;
           default:
             Navigator.of(_screen.context).pushNamed(Info.routeInfo);

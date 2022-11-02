@@ -3,18 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/domain/interfaces/iscreen.dart';
 
-import '../edit/edit_config.dart';
-import 'components/app_bar_configuracao_component.dart';
+import '../edit/config_app_edit.dart';
+import 'components/app_bar_config_app_list_component.dart';
 
-class Configuracao extends StatefulWidget {
-  static String routeConfiguracao = "/configuracao";
+class ConfigAppList extends StatefulWidget {
+  static String routeConfigAppList = "/conf/app/list";
 
   @override
-  ConfiguracaoState createState() => ConfiguracaoState();
+  ConfigAppListState createState() => ConfigAppListState();
 }
 
-class ConfiguracaoState extends State<Configuracao> implements IScreen {
-  late final AppBarConfiguracaoComponent _appBarConfiguracaoComponent;
+class ConfigAppListState extends State<ConfigAppList> implements IScreen {
+  late final AppBarConfigAppListComponent _appBarConfigAppListComponent;
 
   @override
   List<IComponent> listComponents = [];
@@ -22,13 +22,13 @@ class ConfiguracaoState extends State<Configuracao> implements IScreen {
   @override
   void initState() {
     super.initState();
-    _appBarConfiguracaoComponent = AppBarConfiguracaoComponent(this);
+    _appBarConfigAppListComponent = AppBarConfigAppListComponent(this);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _appBarConfiguracaoComponent.constructor(),
+      appBar: _appBarConfigAppListComponent.constructor(),
       body: Container(
         padding: EdgeInsets.all(10.0),
         child: Column(
@@ -38,7 +38,7 @@ class ConfiguracaoState extends State<Configuracao> implements IScreen {
             _buildDivider(),
             _buildSecao([
               _itemSecao("Configurações de anotações", Icon(Icons.note), () {
-                Navigator.of(context).pushNamed(EditConfig.routeEditConfig);
+                Navigator.of(context).pushNamed(ConfigAppEdit.routeConfigAppEdit, arguments: "NOTE");
               }),
             ])
           ],
@@ -84,14 +84,11 @@ class ConfiguracaoState extends State<Configuracao> implements IScreen {
       ),
       clipBehavior: Clip.antiAlias,
       elevation: 5.0,
-      child: Container(
-        padding: EdgeInsets.all(10.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            ...widgets.map((element) => element)
-          ],
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          ...widgets.map((element) => element)
+        ],
       ),
     );
   }
@@ -99,25 +96,28 @@ class ConfiguracaoState extends State<Configuracao> implements IScreen {
   Widget _itemSecao(String title, Icon icon, Function() onTap) {
     return InkWell(
       onTap: onTap,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Wrap(
-            spacing: 10.0,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              icon,
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 15.0,
-                  fontWeight: FontWeight.bold
-                ),
-              )
-            ],
-          ),
-          Icon(Icons.arrow_forward_outlined)
-        ],
+      child: Container(
+        margin: EdgeInsets.all(10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Wrap(
+              spacing: 10.0,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                icon,
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 15.0,
+                    fontWeight: FontWeight.bold
+                  ),
+                )
+              ],
+            ),
+            Icon(Icons.arrow_forward_outlined)
+          ],
+        ),
       ),
     );
   }
