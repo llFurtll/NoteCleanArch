@@ -22,8 +22,11 @@ class ConfigAppEditState extends State<ConfigAppEdit> implements IScreen {
   @override
   void initState() {
     super.initState();
-    _appBarConfigAppEditComponent = AppBarConfigAppEditComponent(this);
-    _listConfigAppEditComponent = ListConfigAppEditComponent(this);
+    Future.delayed(Duration(seconds: 0), () {
+      String modulo = ModalRoute.of(context)!.settings.arguments as String;
+      _appBarConfigAppEditComponent = AppBarConfigAppEditComponent(this, modulo: modulo);
+      _listConfigAppEditComponent = ListConfigAppEditComponent(this, modulo: modulo);
+    });
   }
  
   @override

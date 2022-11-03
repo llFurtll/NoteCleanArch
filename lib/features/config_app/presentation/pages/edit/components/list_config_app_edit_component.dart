@@ -8,10 +8,12 @@ import '../config_app_edit.dart';
 class ListConfigAppEditComponent implements IComponent<ConfigAppEditState, ListView, void> {
   final ConfigAppEditState _screen;
   final CompManagerInjector _injector = CompManagerInjector();
+  final String modulo;
+  final List<ItemConfigAppEdit> _listaConfigsWidgets = [];
 
   late final ConfigAppUseCase _configAppUseCase;
 
-  ListConfigAppEditComponent(this._screen) {
+  ListConfigAppEditComponent(this._screen, {required this.modulo}) {
     init();
   }
 
@@ -27,16 +29,8 @@ class ListConfigAppEditComponent implements IComponent<ConfigAppEditState, ListV
 
   @override
   ListView constructor() {
-    List<ItemConfigAppEdit> listaWidgets = [];
-    Future.sync(() async {
-      Map<String?, int?> configs = await _carregarConfigs();
-      for (var identificador in configs.keys) {
-        listaWidgets.add(ItemConfigAppEdit(identificador: identificador!, valor: configs[identificador]!));
-      }
-    });
-
     return ListView(
-      children: listaWidgets
+      children: _listaConfigsWidgets
     );
   }
 
@@ -53,12 +47,14 @@ class ListConfigAppEditComponent implements IComponent<ConfigAppEditState, ListV
   @override
   void init() {
     _configAppUseCase = _injector.getDependencie();
+    _carregarConfigs();
   }
 
-  Future<Map<String?, int?>> _carregarConfigs() async {
-    final String modulo = ModalRoute.of(_screen.context)!.settings.arguments as String;
+  Future<void> _carregarConfigs() async {
     Map<String?, int?> configs = await _configAppUseCase.getAllConfigs(modulo: modulo);
-    return configs;
+    for (var identificador in configs.keys) {
+      _listaConfigsWidgets.add(ItemConfigAppEdit(identificador: identificador!, valor: configs[identificador]!));
+    }
   }
 }
 

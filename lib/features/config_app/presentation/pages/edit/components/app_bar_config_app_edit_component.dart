@@ -5,10 +5,11 @@ import '../config_app_edit.dart';
 
 class AppBarConfigAppEditComponent implements IComponent<ConfigAppEditState, PreferredSize, void> {
   final ConfigAppEditState _screen;
+  final String modulo;
   
   String _title = "";
 
-  AppBarConfigAppEditComponent(this._screen);
+  AppBarConfigAppEditComponent(this._screen, {required this.modulo});
 
   @override
   void afterEvent() {
@@ -22,7 +23,6 @@ class AppBarConfigAppEditComponent implements IComponent<ConfigAppEditState, Pre
 
   @override
   PreferredSize constructor() {
-    final String modulo = ModalRoute.of(_screen.context)!.settings.arguments as String;
     switch (modulo) {
       case "NOTE":
         _title = "Configurações de anotação";
