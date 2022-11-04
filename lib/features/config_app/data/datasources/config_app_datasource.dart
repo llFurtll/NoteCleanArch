@@ -4,13 +4,13 @@ import '../../../../core/utils/init_database.dart';
 import '../models/config_app_model.dart';
 import '../../domain/entities/config_app.dart';
 
-abstract class IConfigAppDataSource<T extends ConfigApp> {
-  Future<int?> updateConfig({required T config});
-  Future<T?> getConfig({required String identificador});
+abstract class IConfigAppDataSource {
+  Future<int?> updateConfig({required ConfigApp config});
+  Future<ConfigAppModel?> getConfig({required String identificador});
   Future<Map<String?, int?>> getAllConfigsByModulo({required String modulo});
 }
 
-class ConfigAppDataSourceImpl implements IConfigAppDataSource<ConfigAppModel> {
+class ConfigAppDataSourceImpl implements IConfigAppDataSource {
   late Database _db;
   final bool test;
 
@@ -58,7 +58,7 @@ class ConfigAppDataSourceImpl implements IConfigAppDataSource<ConfigAppModel> {
   }
 
   @override
-  Future<int?> updateConfig({required ConfigAppModel config}) async {
+  Future<int?> updateConfig({required ConfigApp config}) async {
     await getConnection();
 
     int? update = await _db.rawUpdate("UPDATE CONFIGAPP SET VALOR = ? WHERE IDENTIFICADOR = ?", [ config.valor, config.identificador ]);

@@ -1,16 +1,16 @@
 import '../repositories/iconfig_app_repository.dart';
-import '../../data/models/config_app_model.dart';
+import '../entities/config_app.dart';
 
 class ConfigAppUseCase {
-  final IConfigAppRepository<ConfigAppModel> repository;
+  final IConfigAppRepository repository;
 
   ConfigAppUseCase({required this.repository});
 
-  Future<int?> updateConfig({required ConfigAppModel config}) {
+  Future<int?> updateConfig({required ConfigApp config}) {
     return repository.updateConfig(config: config);
   }
 
-  Future<ConfigAppModel?> getConfig({required String identificador}) {
+  Future<ConfigApp?> getConfig({required String identificador}) {
     return repository.getConfig(identificador: identificador);
   }
 

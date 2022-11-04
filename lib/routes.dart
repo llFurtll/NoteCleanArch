@@ -16,6 +16,8 @@ Map<String, Widget Function(BuildContext)> routes() {
     ShowImageShare.routeShowImageShare: (context) => ShowImageShare(),
     ShowPdfShare.routeShowPdfShare: (context) => ShowPdfShare(),
     ConfigAppList.routeConfigAppList: (context) => ConfigAppList(),
-    ConfigAppEdit.routeConfigAppEdit: (context) => ConfigAppEdit()
+    ConfigAppEdit.routeConfigAppEdit: (context) => ConfigAppEdit(
+      ModalRoute.of(context)!.settings.arguments as String
+    )
   };
 }

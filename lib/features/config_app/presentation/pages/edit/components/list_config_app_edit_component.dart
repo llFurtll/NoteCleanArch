@@ -2,18 +2,19 @@ import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:flutter/material.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 
+import '../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../domain/usecases/config_app_use_case.dart';
 import '../config_app_edit.dart';
 
-class ListConfigAppEditComponent implements IComponent<ConfigAppEditState, ListView, void> {
+class ListConfigAppEditComponent implements IComponent<ConfigAppEditState, ValueListenableBuilder, void> {
   final ConfigAppEditState _screen;
   final CompManagerInjector _injector = CompManagerInjector();
-  final String modulo;
-  final List<ItemConfigAppEdit> _listaConfigsWidgets = [];
+  final ChangeNotifierGlobal<List<ItemConfigAppEdit>> _listaConfigsWidgets = ChangeNotifierGlobal([]);
 
   late final ConfigAppUseCase _configAppUseCase;
+  late final String modulo;
 
-  ListConfigAppEditComponent(this._screen, {required this.modulo}) {
+  ListConfigAppEditComponent(this._screen) {
     init();
   }
 
@@ -28,9 +29,18 @@ class ListConfigAppEditComponent implements IComponent<ConfigAppEditState, ListV
   }
 
   @override
-  ListView constructor() {
-    return ListView(
-      children: _listaConfigsWidgets
+  ValueListenableBuilder constructor() {
+    return ValueListenableBuilder<List<ItemConfigAppEdit>>(
+      valueListenable: _listaConfigsWidgets,
+      builder: (BuildContext context, List<ItemConfigAppEdit> value, Widget? widget) {
+        if (value.isEmpty) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        return ListView(
+          children: value,
+        );
+      }
     );
   }
 
@@ -45,16 +55,24 @@ class ListConfigAppEditComponent implements IComponent<ConfigAppEditState, ListV
   }
 
   @override
-  void init() {
+  void init() async {
+    _screen.addComponent(this);
     _configAppUseCase = _injector.getDependencie();
-    _carregarConfigs();
+    await _carregarConfigs();
   }
 
   Future<void> _carregarConfigs() async {
+    modulo = _screen.widget.modulo!;
     Map<String?, int?> configs = await _configAppUseCase.getAllConfigs(modulo: modulo);
     for (var identificador in configs.keys) {
-      _listaConfigsWidgets.add(ItemConfigAppEdit(identificador: identificador!, valor: configs[identificador]!));
+      _listaConfigsWidgets.value.add(ItemConfigAppEdit(identificador: identificador!, valor: configs[identificador]!));
     }
+
+    _listaConfigsWidgets.emitChange();
+  }
+
+  List<ItemConfigAppEdit> get listaConfigs {
+    return _listaConfigsWidgets.value;
   }
 }
 
@@ -71,15 +89,27 @@ class ItemConfigAppEdit extends StatelessWidget {
       children: [
         Wrap(
           alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
           spacing: 5.0,
           children: [
-            Text(_getDescription(identificador)),
+            Text(
+              _getDescription(identificador),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0
+              ),
+            ),
             Icon(_getIconConfig(identificador))
           ],
         ),
-        Switch(
-          value: valor == 1,
-          onChanged: (bool value) => value ? valor = 1 : valor = 0
+        StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Switch(
+              value: valor == 1,
+              onChanged: (bool value) => setState(() => value ? valor = 1 : valor = 0),
+              activeColor: Theme.of(context).primaryColor,
+            );
+          }
         )
       ],
     );

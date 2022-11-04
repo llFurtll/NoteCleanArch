@@ -1,9 +1,10 @@
-import '../models/config_app_model.dart';
 import '../datasources/config_app_datasource.dart';
+import '../models/config_app_model.dart';
 import '../../domain/repositories/iconfig_app_repository.dart';
+import '../../domain/entities/config_app.dart';
 
-class ConfigAppRepositoryImpl implements IConfigAppRepository<ConfigAppModel> {
-  final IConfigAppDataSource<ConfigAppModel> dataSource;
+class ConfigAppRepositoryImpl implements IConfigAppRepository {
+  final IConfigAppDataSource dataSource;
 
   ConfigAppRepositoryImpl({required this.dataSource});
 
@@ -13,12 +14,13 @@ class ConfigAppRepositoryImpl implements IConfigAppRepository<ConfigAppModel> {
   }
 
   @override
-  Future<ConfigAppModel?> getConfig({required String identificador}) async {
-    return await dataSource.getConfig(identificador: identificador);
+  Future<ConfigApp?> getConfig({required String identificador}) async {
+    ConfigAppModel? configAppModel = await dataSource.getConfig(identificador: identificador);
+    return ConfigAppModel.fromModel(configAppModel!);
   }
 
   @override
-  Future<int?> updateConfig({required ConfigAppModel config}) async {
+  Future<int?> updateConfig({required ConfigApp config}) async {
     return await dataSource.updateConfig(config: config);
   }
 }

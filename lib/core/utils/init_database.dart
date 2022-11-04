@@ -147,7 +147,7 @@ Future<void> _createConfigByModulo(Database db) async {
         """
           INSERT INTO CONFIGAPP (modulo, identificador, valor)
           SELECT '$modulo', '$item', 1 WHERE NOT EXISTS (
-            SELECT ID FROM CONFIGAPP WHERE modulo = $modulo AND identificador = $item
+            SELECT ID FROM CONFIGAPP WHERE modulo = '$modulo' AND identificador = '$item'
           )
         """
       );

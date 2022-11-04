@@ -7,7 +7,6 @@ class ConfigAppModel extends ConfigApp {
     int? valor
   }) : super(id: id, identificador: identificador, modulo: modulo, valor: valor);
   
-  @override
   factory ConfigAppModel.fromJson(Map json) {
     return ConfigAppModel(
       id: json["id"],
@@ -16,4 +15,13 @@ class ConfigAppModel extends ConfigApp {
       valor: json["valor"]
     );
   }
+
+  static ConfigApp fromModel(ConfigAppModel configAppModel) {
+    return ConfigApp(
+      id: configAppModel.id,
+      identificador: configAppModel.identificador,
+      modulo: configAppModel.modulo,
+      valor: configAppModel.valor
+    );
+  }  
 }

@@ -1,4 +1,4 @@
-abstract class ConfigApp {
+class ConfigApp {
   int? id;
   String? identificador;
   int? valor;

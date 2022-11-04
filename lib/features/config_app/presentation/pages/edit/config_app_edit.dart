@@ -8,13 +8,17 @@ import 'components/list_config_app_edit_component.dart';
 class ConfigAppEdit extends StatefulWidget {
   static String routeConfigAppEdit = "/cofig/app/edit";
 
+  final String? modulo;
+
+  const ConfigAppEdit(this.modulo);
+
   @override
   ConfigAppEditState createState() => ConfigAppEditState();
 }
 
 class ConfigAppEditState extends State<ConfigAppEdit> implements IScreen {
   @override
-  List<IComponent<IScreen, dynamic, dynamic>> listComponents = [];
+  List<IComponent> listComponents = [];
 
   late final AppBarConfigAppEditComponent _appBarConfigAppEditComponent;
   late final ListConfigAppEditComponent _listConfigAppEditComponent;
@@ -22,11 +26,8 @@ class ConfigAppEditState extends State<ConfigAppEdit> implements IScreen {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 0), () {
-      String modulo = ModalRoute.of(context)!.settings.arguments as String;
-      _appBarConfigAppEditComponent = AppBarConfigAppEditComponent(this, modulo: modulo);
-      _listConfigAppEditComponent = ListConfigAppEditComponent(this, modulo: modulo);
-    });
+    _listConfigAppEditComponent = ListConfigAppEditComponent(this);
+    _appBarConfigAppEditComponent = AppBarConfigAppEditComponent(this);
   }
  
   @override
