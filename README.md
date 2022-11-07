@@ -31,7 +31,7 @@
 - [x] Refactor code
 - [x] Register annotation using device microphone
 - [x] Annotation sharing. (PDF and Image)
-- [x] Update version Flutter
+- [x] Update version Flutter 2.10.5
 - [x] New features in note creation. (Bold, Italics, etc)
 - [ ] Create Note customization settings
 - [ ] Create notification mechanism for annotations
