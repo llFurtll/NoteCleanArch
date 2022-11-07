@@ -2,6 +2,8 @@ import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../../../core/widgets/show_loading.dart';
+import '../../../../../../core/widgets/show_message.dart';
 import '../../../../domain/usecases/config_app_use_case.dart';
 import '../../../../domain/entities/config_app.dart';
 import '../config_app_edit.dart';
@@ -81,6 +83,10 @@ class AppBarConfigAppEditComponent implements IComponent<ConfigAppEditState, Pre
   Widget _actionSave() {
     return TextButton(
       onPressed: () async {
+        bool houveErro = false;
+
+        showLoading(_screen.context);
+
         for (var item in _listConfigAppEditComponent.listaConfigs) {
           ConfigApp configApp = ConfigApp(
             id: null,
@@ -88,7 +94,21 @@ class AppBarConfigAppEditComponent implements IComponent<ConfigAppEditState, Pre
             modulo: _modulo,
             valor: item.valor
           );
+          
           int? update = await _configAppUseCase.updateConfig(config: configApp);
+
+          if (update == null || update == 0) {
+            houveErro = true;
+            break;
+          }
+        }
+
+        Navigator.of(_screen.context).pop();
+
+        if (houveErro) {
+          showMessage(_screen.context, "Erro ao salvar as configurações, tente novamente!");
+        } else {
+          showMessage(_screen.context, "Configurações atualizadas com sucesso!");
         }
       },
       child: Text("Salvar"),

@@ -250,12 +250,11 @@ class CardComponent extends IComponent<HomeListState, ValueListenableBuilder, vo
     int? delete = await _homeUseCase.deleteById(id: _anotacao.id!);
     
     if (delete == 1) {
-      MessageDefaultSystem.showMessage(
-        _screen.context,
-        "Anotacão deletada com sucesso!"
-      );
+      showMessage(_screen.context, "Anotacão deletada com sucesso!");
 
       _conversable.callScreen("home")!.receive("refresh", "");
+    } else {
+      showMessage(_screen.context, "Erro ao deletar a anotação!");
     }
   }
 

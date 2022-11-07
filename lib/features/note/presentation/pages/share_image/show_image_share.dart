@@ -9,6 +9,7 @@ import 'dart:ui' as ui;
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../../../core/widgets/show_message.dart';
+import '../../../../../../core/widgets/show_loading.dart';
 import '../arguments/arguments_share.dart';
 import '../principal/create.dart';
 
@@ -141,26 +142,8 @@ class ShowImageShare extends StatelessWidget {
     );
   }
 
-  void _showLoading(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          elevation: 0.0,
-          backgroundColor: Colors.transparent,
-          children: [
-            Center(
-              child: CircularProgressIndicator(),
-            )
-          ],
-        );
-      }
-    );
-  }
-
   void _shareFile(ArgumentsShare arguments, BuildContext context) async {
-    _showLoading(context);
+    showLoading(context);
 
     final screen = arguments.screen as CreateNoteState;
     final response = await _createImageShare(screen);
@@ -170,7 +153,7 @@ class ShowImageShare extends StatelessWidget {
     if (response.isNotEmpty) {
       Share.shareFiles([response]);
     } else {
-      MessageDefaultSystem.showMessage(context, "Não foi possível gerar a imagem!");
+      showMessage(context, "Não foi possível gerar a imagem!");
     }
   }
 

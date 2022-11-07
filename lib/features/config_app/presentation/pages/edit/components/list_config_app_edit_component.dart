@@ -64,8 +64,11 @@ class ListConfigAppEditComponent implements IComponent<ConfigAppEditState, Value
   Future<void> _carregarConfigs() async {
     modulo = _screen.widget.modulo!;
     Map<String?, int?> configs = await _configAppUseCase.getAllConfigs(modulo: modulo);
+    int count = 1;
+    int max = configs.keys.length;
     for (var identificador in configs.keys) {
-      _listaConfigsWidgets.value.add(ItemConfigAppEdit(identificador: identificador!, valor: configs[identificador]!));
+      _listaConfigsWidgets.value.add(ItemConfigAppEdit(identificador: identificador!, valor: configs[identificador]!, showDivider: count < max));
+      count++;
     }
 
     _listaConfigsWidgets.emitChange();
@@ -79,46 +82,56 @@ class ListConfigAppEditComponent implements IComponent<ConfigAppEditState, Value
 class ItemConfigAppEdit extends StatelessWidget {
   String identificador;
   int valor;
+  bool showDivider;
 
-  ItemConfigAppEdit({required this.identificador, required this.valor});
+  ItemConfigAppEdit({required this.identificador, required this.valor, required this.showDivider});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
       children: [
-        Wrap(
-          alignment: WrapAlignment.center,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 5.0,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(
-              _getDescription(identificador),
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0
+            Container(
+              width: MediaQuery.of(context).size.width * 0.8,
+                child: Wrap(
+                alignment: WrapAlignment.start,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 5.0,
+                children: [
+                  Text(
+                    _getDescription(identificador),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold
+                    ),
+                    maxLines: 2,
+                  ),
+                  ..._getIconConfig(identificador).map((widget) => widget.runtimeType == IconData ? Icon(widget) : widget),
+                ],
               ),
             ),
-            Icon(_getIconConfig(identificador))
+            StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                return Switch(
+                  value: valor == 1,
+                  onChanged: (bool value) => setState(() => value ? valor = 1 : valor = 0),
+                  activeColor: Theme.of(context).primaryColor,
+                );
+              }
+            ),
           ],
         ),
-        StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Switch(
-              value: valor == 1,
-              onChanged: (bool value) => setState(() => value ? valor = 1 : valor = 0),
-              activeColor: Theme.of(context).primaryColor,
-            );
-          }
-        )
-      ],
+        showDivider ? SizedBox(child: Divider(color: Colors.black)) : SizedBox.shrink()
+      ]
     );
   }
 
   String _getDescription(String identificador) {
     switch (identificador) {
       case "MOSTRAREVERTERPRODUZIRALTERACOES":
-        return "Exibir botões de desfazer/refazer";
+        return "Exibir botões de desfazer/refazer?";
       case "MOSTRANEGRITO":
         return "Exibir botão de negrito?";
       case "MOSTRAITALICO":
@@ -139,6 +152,8 @@ class ItemConfigAppEdit extends StatelessWidget {
         return "Exibir botão aumentar recuo?";
       case "MOSTRATABULACAOESQUERDA":
         return "Exibir botão diminuir recuo?";
+      case "MOSTRAESPACAMENTOLINHAS":
+        return "Exibir opção de espaçamento entre linhas?";
       case "MOSTRACORLETRA":
         return "Exibir botão cor da fonte?";
       case "MOSTRACORFUNDOLETRA":
@@ -164,52 +179,54 @@ class ItemConfigAppEdit extends StatelessWidget {
     return "";
   }
 
-  IconData? _getIconConfig(String identificador) {
+  List<dynamic> _getIconConfig(String identificador) {
     switch (identificador) {
       case "MOSTRAREVERTERPRODUZIRALTERACOES":
-        return null;
+        return [Icons.undo, Icons.redo];
       case "MOSTRANEGRITO":
-        return Icons.format_bold;
+        return [Icons.format_bold];
       case "MOSTRAITALICO":
-        return Icons.format_italic;
+        return [Icons.format_italic];
       case "MOSTRASUBLINHADO":
-        return Icons.format_underlined;
+        return [Icons.format_underlined];
       case "MOSTRASUBLINADOERISCADO":
-        return Icons.format_strikethrough;
+        return [Icons.format_strikethrough];
       case "MOSTRAALINHAMENTOESQUERDA":
-        return Icons.format_align_left;
+        return [Icons.format_align_left];
       case "MOSTRAALINHAMENTOCENTRO":
-        return Icons.format_align_center;
+        return [Icons.format_align_center];
       case "MOSTRAALINHAMENTODIREITA":
-        return Icons.format_align_right;
+        return [Icons.format_align_right];
       case "MOSTRAJUSTIFICADO":
-        return Icons.format_align_justify;
+        return [Icons.format_align_justify];
       case "MOSTRATABULACAODIREITA":
-        return Icons.format_indent_increase_sharp;
+        return [Icons.format_indent_increase_sharp];
       case "MOSTRATABULACAOESQUERDA":
-        return Icons.format_indent_decrease;
+        return [Icons.format_indent_decrease];
+      case "MOSTRAESPACAMENTOLINHAS":
+        return [Text("1.0", style: TextStyle(fontWeight: FontWeight.bold))];
       case "MOSTRACORLETRA":
-        return Icons.format_color_text;
+        return [Icons.format_color_text];
       case "MOSTRACORFUNDOLETRA":
-        return Icons.format_color_fill;
+        return [Icons.format_color_fill];
       case "MOSTRALISTAPONTO":
-        return Icons.list;
+        return [Icons.list];
       case "MOSTRALINHANUMERICA":
-        return Icons.format_list_numbered;
+        return [Icons.format_list_numbered];
       case "MOSTRALINK":
-        return Icons.link;
+        return [Icons.link];
       case "MOSTRAFOTO":
-        return Icons.image_outlined;
+        return [Icons.image_outlined];
       case "MOSTRAAUDIO":
-        return Icons.audiotrack_outlined;
+        return [Icons.audiotrack_outlined];
       case "MOSTRAVIDEO":
-        return Icons.videocam_outlined;
+        return [Icons.videocam_outlined];
       case "MOSTRATABELA":
-        return Icons.table_chart_outlined;
+        return [Icons.table_chart_outlined];
       case "MOSTRASEPARADOR":
-        return Icons.horizontal_rule;
+        return [Icons.horizontal_rule];
     }
 
-    return null;
+    return [SizedBox.shrink()];
   }
 }

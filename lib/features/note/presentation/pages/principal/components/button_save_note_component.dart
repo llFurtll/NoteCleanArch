@@ -67,7 +67,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
 
       _conversable.callScreen("home")!.receive("refresh", "");
     } else {
-      MessageDefaultSystem.showMessage(_screen.context, "Título não pode estar vazio!");
+      showMessage(_screen.context, "Título não pode estar vazio!");
     }
   }
 
@@ -93,10 +93,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
     int? insert = await _noteUseCase.insertUseCase(note: note);
 
     if (insert != 0) {
-      MessageDefaultSystem.showMessage(
-        _screen.context,
-        "Anotacão cadastrada com sucesso!"
-      );
+      showMessage(_screen.context, "Anotacão cadastrada com sucesso!");
 
       _screen.id = insert!;
 
@@ -104,6 +101,8 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
       _appBarCreateComponent.changeMenuItens();
 
       _screen.anotacao = await _noteUseCase.getByIdUseCase(id: _screen.id!);
+    } else {
+      showMessage(_screen.context, "Erro ao cadastrar a anotação, tente novamente!");
     }
   }
 
@@ -111,10 +110,9 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
     int? updated = await _noteUseCase.updateUseCase(note: note);
 
     if (updated != 0) {
-      MessageDefaultSystem.showMessage(
-        _screen.context,
-        "Anotacão atualizada com sucesso!"
-      );
+      showMessage(_screen.context,"Anotacão atualizada com sucesso!");
+    } else {
+      showMessage(_screen.context, "Erro ao atualizar a anotação, tente novamente!");
     }
   }
 }

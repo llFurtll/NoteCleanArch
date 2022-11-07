@@ -11,6 +11,7 @@ import 'package:flutter_html_to_pdf/flutter_html_to_pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import '../../../../../../core/widgets/show_message.dart';
+import '../../../../../core/widgets/show_loading.dart';
 import '../../../domain/entities/note.dart';
 import '../arguments/arguments_share.dart';
 import '../principal/create.dart';
@@ -53,7 +54,7 @@ class ShowPdfShare extends StatelessWidget {
     return [
       IconButton(
         onPressed: () async {
-          _showLoading(context);
+          showLoading(context);
 
           final response = await _shareFile(arguments.screen as CreateNoteState);
 
@@ -62,7 +63,7 @@ class ShowPdfShare extends StatelessWidget {
           if (response.isNotEmpty) {
             Share.shareFiles([response]);
           } else {
-            MessageDefaultSystem.showMessage(context, "Não foi possível gerar o pdf!");
+            showMessage(context, "Não foi possível gerar o pdf!");
           }
         },
         icon: Icon(Icons.share),
@@ -85,24 +86,6 @@ class ShowPdfShare extends StatelessWidget {
     } catch (e) {
       return "";
     }
-  }
-
-  void _showLoading(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return SimpleDialog(
-          elevation: 0.0,
-          backgroundColor: Colors.transparent,
-          children: [
-            Center(
-              child: CircularProgressIndicator(),
-            )
-          ],
-        );
-      }
-    );
   }
 
   Future<Uint8List> makePdf(ArgumentsShare arguments, CreateNoteState screen) async {

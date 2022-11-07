@@ -70,7 +70,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
           if (await canLaunchUrl(urlTo)) {
             await launchUrl(urlTo);
           } else {
-            MessageDefaultSystem.showMessage(_screen.context, "Link inserido não é válido!");
+            showMessage(_screen.context, "Link inserido não é válido!");
           }
 
           return NavigationActionPolicy.CANCEL;

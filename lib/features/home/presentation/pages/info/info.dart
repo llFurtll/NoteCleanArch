@@ -139,10 +139,7 @@ class Info extends StatelessWidget {
     if (await canLaunchUrl(newUrl)) {
       await launchUrl(newUrl);
     } else {
-      MessageDefaultSystem.showMessage(
-        context,
-        "Não foi possível abrir o link!"
-      );
+      showMessage(context, "Não foi possível abrir o link!");
     }
   }
 
