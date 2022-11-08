@@ -66,7 +66,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
       }
     });
 
-    _editor = HtmlEditorNote(this);
+    _editor = HtmlEditorNote(this, injector.getDependencie());
 
     WidgetsBinding.instance?.addObserver(this);
   }

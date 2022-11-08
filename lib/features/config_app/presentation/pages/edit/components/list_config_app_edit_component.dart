@@ -138,7 +138,7 @@ class ItemConfigAppEdit extends StatelessWidget {
         return "Exibir botão de itálico?";
       case "MOSTRASUBLINHADO":
         return "Exibir botão de sublinhado?";
-      case "MOSTRASUBLINADOERISCADO":
+      case "MOSTRARISCADO":
         return "Exibir botão de sublinhado e riscado?";
       case "MOSTRAALINHAMENTOESQUERDA":
         return "Exibir botão alinhar à esquerda?";
@@ -189,7 +189,7 @@ class ItemConfigAppEdit extends StatelessWidget {
         return [Icons.format_italic];
       case "MOSTRASUBLINHADO":
         return [Icons.format_underlined];
-      case "MOSTRASUBLINADOERISCADO":
+      case "MOSTRARISCADO":
         return [Icons.format_strikethrough];
       case "MOSTRAALINHAMENTOESQUERDA":
         return [Icons.format_align_left];

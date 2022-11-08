@@ -9,18 +9,26 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 
 import '../../../features/note/presentation/pages/principal/create.dart';
+import '../../../features/config_app/domain/usecases/config_app_use_case.dart';
 import '../../widgets/show_message.dart';
 import '../interfaces/ieditor.dart';
 
 class HtmlEditorNote implements IEditor<CreateNoteState> {
   final CreateNoteState _screen;
   final HtmlEditorController _controllerEditor = HtmlEditorController();
-  
+
+  late final ConfigAppUseCase _configAppUseCase;
+
+  Map<String?, int?> _configs = {};
   Color _foreColorSelected = Colors.black;
   Color _backgroundColorSelected = Colors.yellow;
   bool _showButtonOpenKeyboardOptions = false;
 
-  HtmlEditorNote(this._screen);
+  HtmlEditorNote(this._screen, this._configAppUseCase) {
+    Future.sync(() async {
+      _configs = await _configAppUseCase.getAllConfigs(modulo: "NOTE");
+    });
+  }
 
   @override
   Widget constructor() {
@@ -138,8 +146,8 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
           buttonFillColor: Theme.of(_screen.context).primaryColor.withOpacity(0.3),
           defaultToolbarButtons: [
             OtherButtons(
-              redo: true,
-              undo: true,
+              redo: (_configs["MOSTRAREVERTERPRODUZIRALTERACOES"] ?? 1) == 1,
+              undo: (_configs["MOSTRAREVERTERPRODUZIRALTERACOES"] ?? 1) == 1,
               help: false,
               codeview: false,
               fullscreen: false,
@@ -147,15 +155,28 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
               paste: false
             ),
             FontButtons(
+              bold: (_configs["MOSTRANEGRITO"] ?? 1) == 1,
+              italic: (_configs["MOSTRAITALICO"] ?? 1) == 1,
+              underline: (_configs["MOSTRASUBLINHADO"] ?? 1) == 1,
+              strikethrough: (_configs["MOSTRARISCADO"] ?? 1) == 1,
               subscript: false,
               superscript: false,
               clearAll: false
             ),
             ParagraphButtons(
+              alignLeft: (_configs["MOSTRAALINHAMENTOESQUERDA"] ?? 1) == 1,
+              alignCenter: (_configs["MOSTRAALINHAMENTOCENTRO"] ?? 1) == 1,
+              alignRight: (_configs["MOSTRAALINHAMENTODIREITA"] ?? 1) == 1,
+              alignJustify: (_configs["MOSTRAJUSTIFICADO"] ?? 1) == 1,
+              increaseIndent: (_configs["MOSTRATABULACAODIREITA"] ?? 1) == 1,
+              decreaseIndent: (_configs["MOSTRATABULACAOESQUERDA"] ?? 1) == 1,
               caseConverter: false,
               textDirection: false
             ),
-            ColorButtons()
+            ColorButtons(
+              foregroundColor: (_configs["MOSTRACORLETRA"] ?? 1) == 1,
+              highlightColor: (_configs["MOSTRACORFUNDOLETRA"] ?? 1) == 1
+            )
           ],
           onButtonPressed: (ButtonType type, bool? status, Function()? updateStatus) async {
             if (type == ButtonType.foregroundColor || type == ButtonType.highlightColor) {
