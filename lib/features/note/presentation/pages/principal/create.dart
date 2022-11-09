@@ -9,7 +9,7 @@ import 'package:compmanager/domain/interfaces/iscreen.dart';
 
 import '../../../../../../core/adapters/implementatios/editor_note.dart';
 import '../../../../../../core/notifiers/change_notifier_global.dart';
-import '../../../../../../core/adapters/interfaces/ieditor.dart';
+import '../../../../config_app/domain/usecases/config_app_use_case.dart';
 import '../../../domain/entities/note.dart';
 import '../../../domain/usecases/note_usecase.dart';
 import 'components/app_bar_create_component.dart';
@@ -35,20 +35,23 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   final CompManagerInjector injector = CompManagerInjector();
   final ChangeNotifierGlobal<String> _pathImageNotifier = ChangeNotifierGlobal("");
   final ChangeNotifierGlobal<bool> _keyboardVisible = ChangeNotifierGlobal(false);
+  final ChangeNotifierGlobal<bool> _carregandoConfigs = ChangeNotifierGlobal(true);
   final FocusNode _focusTitle = FocusNode();
   final TextEditingController _title = TextEditingController();
 
   late Note _note;
   late NoteUseCase _noteUseCase;
+  late ConfigAppUseCase _configAppUseCase;
   late AppBarCreateComponent _appBarCreateComponent;
   late ButtonSaveNoteComponent _buttonSaveNoteComponent;
-  late IEditor _editor;
+  late HtmlEditorNote _editor;
 
   @override
   void initState() {
     super.initState();
 
     _noteUseCase = injector.getDependencie();
+    _configAppUseCase = injector.getDependencie();
     _appBarCreateComponent = AppBarCreateComponent(this);
     _buttonSaveNoteComponent = ButtonSaveNoteComponent(this);
 
@@ -61,12 +64,13 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
           _pathImageNotifier.value = _note.imagemFundo!;
           _appBarCreateComponent.removeBackground = true;
         }
-
         _appBarCreateComponent.showShare = true;
       }
-    });
 
-    _editor = HtmlEditorNote(this, injector.getDependencie());
+      Map<String?, int?> configs = await _configAppUseCase.getAllConfigs(modulo: "NOTE");
+      _editor = HtmlEditorNote(this, configs);
+      _carregandoConfigs.value = false;
+    });
 
     WidgetsBinding.instance?.addObserver(this);
   }
@@ -89,7 +93,16 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
       appBar: _appBarCreateComponent.constructor(),
-      body: _body(),
+      body: ValueListenableBuilder(
+        valueListenable: _carregandoConfigs,
+        builder: (BuildContext context, bool value, Widget? widget) {
+          if (value) {
+            return Center(child: CircularProgressIndicator());
+          } else {
+            return _body();
+          }
+        },
+      ),
       floatingActionButton: _buttonSaveNoteComponent.constructor(),
     );
   }
@@ -241,7 +254,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
     return _focusTitle;
   }
 
-  IEditor get editor {
+  HtmlEditorNote get editor {
     return _editor;
   }
 

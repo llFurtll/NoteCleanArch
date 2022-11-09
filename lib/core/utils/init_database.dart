@@ -79,7 +79,7 @@ void _onCreate(Database db, int version) async {
     """
   );
 
-  _createConfigByModulo(db);
+  await _createConfigByModulo(db);
 }
 
 void _onUpgrade(Database db, int version, int newVersion) async {

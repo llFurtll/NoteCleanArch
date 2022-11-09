@@ -9,26 +9,19 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 
 import '../../../features/note/presentation/pages/principal/create.dart';
-import '../../../features/config_app/domain/usecases/config_app_use_case.dart';
 import '../../widgets/show_message.dart';
 import '../interfaces/ieditor.dart';
 
 class HtmlEditorNote implements IEditor<CreateNoteState> {
   final CreateNoteState _screen;
   final HtmlEditorController _controllerEditor = HtmlEditorController();
+  final Map<String?, int?> configs;
 
-  late final ConfigAppUseCase _configAppUseCase;
-
-  Map<String?, int?> _configs = {};
   Color _foreColorSelected = Colors.black;
   Color _backgroundColorSelected = Colors.yellow;
   bool _showButtonOpenKeyboardOptions = false;
 
-  HtmlEditorNote(this._screen, this._configAppUseCase) {
-    Future.sync(() async {
-      _configs = await _configAppUseCase.getAllConfigs(modulo: "NOTE");
-    });
-  }
+  HtmlEditorNote(this._screen, this.configs);
 
   @override
   Widget constructor() {
@@ -136,6 +129,8 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
 
   @override
   Widget options() {
+    bool redoUndo = (configs["MOSTRAREVERTERPRODUZIRALTERACOES"] ?? 1) == 1;
+
     return Container(
       color: Colors.white,
       child: ToolbarWidget(
@@ -146,8 +141,8 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
           buttonFillColor: Theme.of(_screen.context).primaryColor.withOpacity(0.3),
           defaultToolbarButtons: [
             OtherButtons(
-              redo: (_configs["MOSTRAREVERTERPRODUZIRALTERACOES"] ?? 1) == 1,
-              undo: (_configs["MOSTRAREVERTERPRODUZIRALTERACOES"] ?? 1) == 1,
+              redo: redoUndo,
+              undo: redoUndo,
               help: false,
               codeview: false,
               fullscreen: false,
@@ -155,27 +150,28 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
               paste: false
             ),
             FontButtons(
-              bold: (_configs["MOSTRANEGRITO"] ?? 1) == 1,
-              italic: (_configs["MOSTRAITALICO"] ?? 1) == 1,
-              underline: (_configs["MOSTRASUBLINHADO"] ?? 1) == 1,
-              strikethrough: (_configs["MOSTRARISCADO"] ?? 1) == 1,
+              bold: (configs["MOSTRANEGRITO"] ?? 1) == 1,
+              italic: (configs["MOSTRAITALICO"] ?? 1) == 1,
+              underline: (configs["MOSTRASUBLINHADO"] ?? 1) == 1,
+              strikethrough: (configs["MOSTRARISCADO"] ?? 1) == 1,
               subscript: false,
               superscript: false,
               clearAll: false
             ),
             ParagraphButtons(
-              alignLeft: (_configs["MOSTRAALINHAMENTOESQUERDA"] ?? 1) == 1,
-              alignCenter: (_configs["MOSTRAALINHAMENTOCENTRO"] ?? 1) == 1,
-              alignRight: (_configs["MOSTRAALINHAMENTODIREITA"] ?? 1) == 1,
-              alignJustify: (_configs["MOSTRAJUSTIFICADO"] ?? 1) == 1,
-              increaseIndent: (_configs["MOSTRATABULACAODIREITA"] ?? 1) == 1,
-              decreaseIndent: (_configs["MOSTRATABULACAOESQUERDA"] ?? 1) == 1,
+              alignLeft: (configs["MOSTRAALINHAMENTOESQUERDA"] ?? 1) == 1,
+              alignCenter: (configs["MOSTRAALINHAMENTOCENTRO"] ?? 1) == 1,
+              alignRight: (configs["MOSTRAALINHAMENTODIREITA"] ?? 1) == 1,
+              alignJustify: (configs["MOSTRAJUSTIFICADO"] ?? 1) == 1,
+              increaseIndent: (configs["MOSTRATABULACAODIREITA"] ?? 1) == 1,
+              decreaseIndent: (configs["MOSTRATABULACAOESQUERDA"] ?? 1) == 1,
+              lineHeight: (configs["MOSTRAESPACAMENTOLINHAS"] ?? 1) == 1,
               caseConverter: false,
               textDirection: false
             ),
             ColorButtons(
-              foregroundColor: (_configs["MOSTRACORLETRA"] ?? 1) == 1,
-              highlightColor: (_configs["MOSTRACORFUNDOLETRA"] ?? 1) == 1
+              foregroundColor: (configs["MOSTRACORLETRA"] ?? 1) == 1,
+              highlightColor: (configs["MOSTRACORFUNDOLETRA"] ?? 1) == 1
             )
           ],
           onButtonPressed: (ButtonType type, bool? status, Function()? updateStatus) async {
@@ -235,18 +231,59 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
     );
   }
 
+  void _addListIcon(List<bool> listSelected, List<Widget> icons, Icon icon, bool validate) {
+    if (validate) {
+      listSelected.add(false);
+      icons.add(icon);
+    }
+  }
+
   Widget _showOptionsKeyboard() {
+    bool mostraListaPontilhada = (configs["MOSTRALISTAPONTO"] ?? 1) == 1;
+    bool mostraListaNumerica = (configs["MOSTRALINHANUMERICA"] ?? 1) == 1;
+    bool mostraLink = (configs["MOSTRALINK"] ?? 1) == 1;
+    bool mostraFoto = (configs["MOSTRAFOTO"] ?? 1) == 1;
+    bool mostraAudio = (configs["MOSTRAAUDIO"] ?? 1) == 1;
+    bool mostraVideo = (configs["MOSTRAVIDEO"] ?? 1) == 1;
+    bool mostraTabela = (configs["MOSTRATABELA"] ?? 1) == 1;
+    bool mostraSeparador = (configs["MOSTRASEPARADOR"] ?? 1) == 1;
+
+    if (
+      !mostraListaPontilhada && !mostraListaNumerica &&
+      !mostraLink && !mostraFoto && !mostraAudio &&
+      !mostraVideo && !mostraTabela && !mostraSeparador
+    ) {
+      return SizedBox.shrink();
+    }
+
+    List<bool> isSelectedLista = [];
+    List<Widget> iconsLista = [];
+
+    List<bool> isSelectedButtonsMedia = [];
+    List<Widget> iconsButtosnMedia = [];
+
+    _addListIcon(isSelectedLista, iconsLista, Icon(Icons.format_list_bulleted), mostraListaPontilhada);
+    _addListIcon(isSelectedLista, iconsLista, Icon(Icons.format_list_numbered), mostraListaNumerica);
+
+    _addListIcon(isSelectedButtonsMedia, iconsButtosnMedia, Icon(Icons.link), mostraLink);
+    _addListIcon(isSelectedButtonsMedia, iconsButtosnMedia, Icon(Icons.image_outlined), mostraFoto);
+    _addListIcon(isSelectedButtonsMedia, iconsButtosnMedia, Icon(Icons.audiotrack_outlined), mostraAudio);
+    _addListIcon(isSelectedButtonsMedia, iconsButtosnMedia, Icon(Icons.videocam_outlined), mostraVideo);
+    _addListIcon(isSelectedButtonsMedia, iconsButtosnMedia, Icon(Icons.table_chart_outlined), mostraTabela);
+    _addListIcon(isSelectedButtonsMedia, iconsButtosnMedia, Icon(Icons.horizontal_rule), mostraSeparador);
+
     return SingleChildScrollView(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          iconsLista.length > 0 ?
           ToggleButtons(
             constraints: BoxConstraints.tightFor(
               height: 34,
               width: 34
             ),
             renderBorder: false,
-            isSelected: [false, false],
+            isSelected: isSelectedLista,
             onPressed: (int index) {
               if (index == 0) {
                 _controllerEditor.execCommand("insertUnorderedList");
@@ -254,21 +291,20 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                 _controllerEditor.execCommand("insertOrderedList");
               }
             },
-            children: [
-              Icon(Icons.format_list_bulleted),
-              Icon(Icons.format_list_numbered)
-            ],
-          ),
+            children: iconsLista,
+          ) : SizedBox.shrink(),
+          iconsLista.length > 0 ?
           SizedBox(
             height: 40.0,
             child: VerticalDivider(indent: 2, endIndent: 2, color: Colors.grey),
-          ),
+          ) : SizedBox.shrink(),
+          iconsButtosnMedia.length > 0 ?
           ToggleButtons(
             constraints: BoxConstraints.tightFor(
               height: 34,
               width: 34
             ),
-            isSelected: [false, false, false, false, false, false],
+            isSelected: isSelectedButtonsMedia,
             renderBorder: false,
             onPressed: (int index) async {
               ButtonType type;
@@ -296,19 +332,13 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
               
               await _buttonPressed(type);
             },
-            children: [
-              Icon(Icons.link),
-              Icon(Icons.image_outlined),
-              Icon(Icons.audiotrack_outlined),
-              Icon(Icons.videocam_outlined),
-              Icon(Icons.table_chart_outlined),
-              Icon(Icons.horizontal_rule),
-            ],
-          ),
+            children: iconsButtosnMedia,
+          ) : SizedBox.shrink(),
+          iconsButtosnMedia.length > 0 ?
           SizedBox(
             height: 40.0,
             child: VerticalDivider(indent: 2, endIndent: 2, color: Colors.grey),
-          ),
+          ) : SizedBox.shrink(),
           ToggleButtons(
             constraints: BoxConstraints.tightFor(
               height: 34,
