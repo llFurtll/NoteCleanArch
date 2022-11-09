@@ -44,6 +44,12 @@ class HomeListState extends State<HomeList> implements IScreen  {
   }
 
   @override
+  void didChangeDependencies() {
+    
+    super.didChangeDependencies();
+  }
+
+  @override
   void dispose() {
     _customController.dispose();
     _headerComponent.dispose();

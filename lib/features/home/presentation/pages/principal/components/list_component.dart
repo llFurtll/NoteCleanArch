@@ -8,6 +8,7 @@ import 'package:compmanager/domain/interfaces/icomponent.dart';
 
 import '../../../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../../../../core/widgets/animated_list.dart';
+import '../../../../../../core/dependencies/repository_injection.dart';
 import '../../../../domain/usecases/home_use_case.dart';
 import '../../../../domain/entities/home_anotacao.dart';
 import '../home_list.dart';
@@ -19,8 +20,6 @@ class ListComponent implements IComponent<HomeListState, Widget, void> {
   final ChangeNotifierGlobal<bool> _carregandoNotifier = ChangeNotifierGlobal(true);
   final CompManagerNotifierList<Widget> _listaCardNoteNotifier = CompManagerNotifierList([]);
   final HomeListState _screen;
-
-  late HomeUseCase _homeUseCase;
 
   ListComponent(this._screen) {
     init();
@@ -89,7 +88,6 @@ class ListComponent implements IComponent<HomeListState, Widget, void> {
   @override
   void init() async {
     _screen.addComponent(this);
-    _homeUseCase = injector.getDependencie<HomeUseCase>();
     getNotes("");
   }
 
@@ -99,13 +97,15 @@ class ListComponent implements IComponent<HomeListState, Widget, void> {
   }
 
   Future<void> getNotes(String desc) async {
+    final homeUseCase = HomeUseCase(repository: RepositoryInjection.of(_screen.context)!.homeRepository);
+
     _carregandoNotifier.value = true;
 
     List<HomeAnotacao> _listaAnotacao = [];
     if (desc.isNotEmpty) {
-      _listaAnotacao = await _homeUseCase.findWithDesc(desc: desc);
+      _listaAnotacao = await homeUseCase.findWithDesc(desc: desc);
     } else {
-      _listaAnotacao = await _homeUseCase.findAll();
+      _listaAnotacao = await homeUseCase.findAll();
     }
 
     _listaCardNoteNotifier.value.clear();

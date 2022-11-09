@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 
+import '../../../../../../core/dependencies/repository_injection.dart';
 import '../../../../../config_user/domain/usecases/config_user_use_case.dart';
 import '../home_list.dart';
 import 'header_component.dart';
@@ -10,11 +10,9 @@ import 'header_component.dart';
 class AlterNameComponent implements IComponent<HomeListState, Padding, void> {
 
   final HomeListState _screen;
-  final CompManagerInjector _injector = CompManagerInjector();
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _name = TextEditingController();
-  
-  late final ConfigUserUseCase _configUserUseCase;
+
   late final HeaderComponent _headerComponent;
 
   AlterNameComponent(this._screen) {
@@ -94,7 +92,9 @@ class AlterNameComponent implements IComponent<HomeListState, Padding, void> {
                 ),
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    int? update = await _configUserUseCase.updateName(name: _name.text);
+                    final configUserUseCase = ConfigUserUseCase(repository: RepositoryInjection.of(_screen.context)!.configUserRepository);
+
+                    int? update = await configUserUseCase.updateName(name: _name.text);
 
                     if (update != 0) {
                       Navigator.of(_screen.context).pop();
@@ -128,7 +128,6 @@ class AlterNameComponent implements IComponent<HomeListState, Padding, void> {
 
   @override
   void init() {
-    _configUserUseCase = _injector.getDependencie();
     _headerComponent = _screen.getComponent(HeaderComponent) as HeaderComponent;
   }
 

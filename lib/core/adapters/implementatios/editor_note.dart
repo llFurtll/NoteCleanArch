@@ -130,6 +130,27 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
   @override
   Widget options() {
     bool redoUndo = (configs["MOSTRAREVERTERPRODUZIRALTERACOES"] ?? 1) == 1;
+    bool bold = (configs["MOSTRANEGRITO"] ?? 1) == 1;
+    bool italic = (configs["MOSTRAITALICO"] ?? 1) == 1;
+    bool underline = (configs["MOSTRASUBLINHADO"] ?? 1) == 1;
+    bool strikethrough = (configs["MOSTRARISCADO"] ?? 1) == 1;
+    bool alignLeft = (configs["MOSTRAALINHAMENTOESQUERDA"] ?? 1) == 1;
+    bool alignCenter = (configs["MOSTRAALINHAMENTOCENTRO"] ?? 1) == 1;
+    bool alignRight = (configs["MOSTRAALINHAMENTODIREITA"] ?? 1) == 1;
+    bool alignJustify = (configs["MOSTRAJUSTIFICADO"] ?? 1) == 1;
+    bool increaseIndent = (configs["MOSTRATABULACAODIREITA"] ?? 1) == 1;
+    bool decreaseIndent = (configs["MOSTRATABULACAOESQUERDA"] ?? 1) == 1;
+    bool lineHeight = (configs["MOSTRAESPACAMENTOLINHAS"] ?? 1) == 1;
+    bool foregroundColor = (configs["MOSTRACORLETRA"] ?? 1) == 1;
+    bool highlightColor = (configs["MOSTRACORFUNDOLETRA"] ?? 1) == 1;
+
+    if (
+      !redoUndo && !bold && !italic && !underline && !strikethrough &&
+      !alignLeft && !alignCenter && !alignRight && !alignJustify && !increaseIndent && !decreaseIndent &&
+      !lineHeight && !foregroundColor && !highlightColor
+    ) {
+      return SizedBox.shrink();
+    }
 
     return Container(
       color: Colors.white,
@@ -150,28 +171,28 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
               paste: false
             ),
             FontButtons(
-              bold: (configs["MOSTRANEGRITO"] ?? 1) == 1,
-              italic: (configs["MOSTRAITALICO"] ?? 1) == 1,
-              underline: (configs["MOSTRASUBLINHADO"] ?? 1) == 1,
-              strikethrough: (configs["MOSTRARISCADO"] ?? 1) == 1,
+              bold: bold,
+              italic: italic,
+              underline: underline,
+              strikethrough: strikethrough,
               subscript: false,
               superscript: false,
               clearAll: false
             ),
             ParagraphButtons(
-              alignLeft: (configs["MOSTRAALINHAMENTOESQUERDA"] ?? 1) == 1,
-              alignCenter: (configs["MOSTRAALINHAMENTOCENTRO"] ?? 1) == 1,
-              alignRight: (configs["MOSTRAALINHAMENTODIREITA"] ?? 1) == 1,
-              alignJustify: (configs["MOSTRAJUSTIFICADO"] ?? 1) == 1,
-              increaseIndent: (configs["MOSTRATABULACAODIREITA"] ?? 1) == 1,
-              decreaseIndent: (configs["MOSTRATABULACAOESQUERDA"] ?? 1) == 1,
-              lineHeight: (configs["MOSTRAESPACAMENTOLINHAS"] ?? 1) == 1,
+              alignLeft: alignLeft,
+              alignCenter: alignCenter,
+              alignRight: alignRight,
+              alignJustify: alignJustify,
+              increaseIndent: increaseIndent,
+              decreaseIndent: decreaseIndent,
+              lineHeight: lineHeight,
               caseConverter: false,
               textDirection: false
             ),
             ColorButtons(
-              foregroundColor: (configs["MOSTRACORLETRA"] ?? 1) == 1,
-              highlightColor: (configs["MOSTRACORFUNDOLETRA"] ?? 1) == 1
+              foregroundColor: foregroundColor,
+              highlightColor: highlightColor
             )
           ],
           onButtonPressed: (ButtonType type, bool? status, Function()? updateStatus) async {
@@ -274,7 +295,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
 
     return SingleChildScrollView(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           iconsLista.length > 0 ?
           ToggleButtons(
