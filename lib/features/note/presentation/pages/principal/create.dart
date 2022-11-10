@@ -2,13 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/domain/interfaces/iscreen.dart';
 
 
 import '../../../../../../core/adapters/implementatios/editor_note.dart';
 import '../../../../../../core/notifiers/change_notifier_global.dart';
+import '../../../../../core/dependencies/repository_injection.dart';
 import '../../../../config_app/domain/usecases/config_app_use_case.dart';
 import '../../../domain/entities/note.dart';
 import '../../../domain/usecases/note_usecase.dart';
@@ -32,7 +32,6 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   @override
   List<IComponent> listComponents = [];
 
-  final CompManagerInjector injector = CompManagerInjector();
   final ChangeNotifierGlobal<String> _pathImageNotifier = ChangeNotifierGlobal("");
   final ChangeNotifierGlobal<bool> _keyboardVisible = ChangeNotifierGlobal(false);
   final ChangeNotifierGlobal<bool> _carregandoConfigs = ChangeNotifierGlobal(true);
@@ -40,8 +39,6 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   final TextEditingController _title = TextEditingController();
 
   late Note _note;
-  late NoteUseCase _noteUseCase;
-  late ConfigAppUseCase _configAppUseCase;
   late AppBarCreateComponent _appBarCreateComponent;
   late ButtonSaveNoteComponent _buttonSaveNoteComponent;
   late HtmlEditorNote _editor;
@@ -50,14 +47,13 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   void initState() {
     super.initState();
 
-    _noteUseCase = injector.getDependencie();
-    _configAppUseCase = injector.getDependencie();
     _appBarCreateComponent = AppBarCreateComponent(this);
     _buttonSaveNoteComponent = ButtonSaveNoteComponent(this);
 
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (widget.id != null) {
-        _note = await _noteUseCase.getByIdUseCase(id: widget.id!);
+        final noteUseCase = NoteUseCase(repository: RepositoryInjection.of(context)!.noteRepository);
+        _note = await noteUseCase.getByIdUseCase(id: widget.id!);
         _title.text = _note.titulo!;
 
         if (_note.imagemFundo != null && _note.imagemFundo!.isNotEmpty) {
@@ -67,7 +63,9 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
         _appBarCreateComponent.showShare = true;
       }
 
-      Map<String?, int?> configs = await _configAppUseCase.getAllConfigs(modulo: "NOTE");
+
+      final configAppUseCase = ConfigAppUseCase(repository: RepositoryInjection.of(context)!.configAppRepository);
+      Map<String?, int?> configs = await configAppUseCase.getAllConfigs(modulo: "NOTE");
       _editor = HtmlEditorNote(this, configs);
       _carregandoConfigs.value = false;
     });

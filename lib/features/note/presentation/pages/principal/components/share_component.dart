@@ -1,10 +1,10 @@
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:flutter/material.dart';
 
-import '../create.dart';
 import '../../arguments/arguments_share.dart';
 import '../../share_image/show_image_share.dart';
 import '../../share_pdf/show_pdf_share.dart';
+import '../create.dart';
 
 class ShareComponent implements IComponent<CreateNoteState, Container, void> {
 

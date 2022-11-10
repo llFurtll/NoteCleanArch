@@ -9,6 +9,7 @@ import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/core/conversable.dart';
 
 import '../../../../../../../../core/notifiers/change_notifier_global.dart';
+import '../../../../../../core/dependencies/repository_injection.dart';
 import '../../../../../../../core/widgets/show_message.dart';
 import '../../../../../note/presentation/pages/principal/create.dart';
 import '../../../../domain/entities/home_anotacao.dart';
@@ -23,8 +24,7 @@ class CardComponent extends IComponent<HomeListState, ValueListenableBuilder, vo
   final HomeListState _screen;
   final HomeAnotacao _anotacao;
   final ChangeNotifierGlobal<double> _offset = ChangeNotifierGlobal(0.0);
-  
-  late final HomeUseCase _homeUseCase;
+
   late final HeaderComponent _headerComponent;
 
   bool _visibilityButtons = false;
@@ -87,7 +87,6 @@ class CardComponent extends IComponent<HomeListState, ValueListenableBuilder, vo
 
   @override
   void init() {
-    _homeUseCase = _injector.getDependencie();
     _headerComponent = _screen.getComponent(HeaderComponent) as HeaderComponent;
   }
 
@@ -247,7 +246,9 @@ class CardComponent extends IComponent<HomeListState, ValueListenableBuilder, vo
   }
 
   void _removeNote() async {
-    int? delete = await _homeUseCase.deleteById(id: _anotacao.id!);
+    final homeUseCase = HomeUseCase(repository: RepositoryInjection.of(_screen.context)!.homeRepository);
+
+    int? delete = await homeUseCase.deleteById(id: _anotacao.id!);
     
     if (delete == 1) {
       showMessage(_screen.context, "Anotacão deletada com sucesso!");

@@ -1,14 +1,14 @@
-import 'package:compmanager/core/conversable.dart';
 import 'package:flutter/material.dart';
 
+import 'package:compmanager/core/conversable.dart';
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/domain/interfaces/iscreen.dart';
 
+import '../../../../../../../core/notifiers/change_notifier_global.dart';
 import 'components/header_component.dart';
 import 'components/list_component.dart';
 import 'components/button_add_note_component.dart';
-import '../../../../../../../core/notifiers/change_notifier_global.dart';
 
 class HomeList extends StatefulWidget {
   static String routeHome = "/home";
@@ -36,17 +36,16 @@ class HomeListState extends State<HomeList> implements IScreen  {
   void initState() {
     super.initState();
     
-    _headerComponent = HeaderComponent(this);
     _listComponent = ListComponent(this);
+    _headerComponent = HeaderComponent(this);
     _buttonAddNoteComponent = ButtonAddNoteComponent(this);
 
-    _conversable.addScren("home", this);
-  }
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      _listComponent.getNotes("");
+      _headerComponent.loadName();
+    });
 
-  @override
-  void didChangeDependencies() {
-    
-    super.didChangeDependencies();
+    _conversable.addScren("home", this);
   }
 
   @override

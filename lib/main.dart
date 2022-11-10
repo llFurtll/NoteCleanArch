@@ -12,11 +12,9 @@ import 'features/config_user/data/repositories/config_user_repository_impl.dart'
 import 'features/home/data/repositories/home_repository_impl.dart';
 import 'features/note/data/repositories/note_repository_impl.dart';
 import 'routes.dart';
-import 'injector.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  registerDependencies();
   await initDatabase(false);
   
   runApp(

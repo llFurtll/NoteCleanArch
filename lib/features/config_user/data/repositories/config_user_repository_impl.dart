@@ -1,5 +1,5 @@
-import '../datasources/config_user_datasource.dart';
 import '../../domain/repositories/iconfig_user_repository.dart';
+import '../datasources/config_user_datasource.dart';
 
 class ConfigUserRepositoryImpl implements IConfigUserRepository {
   final ConfigUserDataSource dataSource;

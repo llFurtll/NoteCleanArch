@@ -1,5 +1,6 @@
-import '../repositories/iconfig_app_repository.dart';
+
 import '../entities/config_app.dart';
+import '../repositories/iconfig_app_repository.dart';
 
 class ConfigAppUseCase {
   final IConfigAppRepository repository;

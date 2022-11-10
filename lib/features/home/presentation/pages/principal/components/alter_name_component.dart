@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
-
 import 'package:compmanager/domain/interfaces/icomponent.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../../../core/dependencies/repository_injection.dart';
 import '../../../../../config_user/domain/usecases/config_user_use_case.dart';

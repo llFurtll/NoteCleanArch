@@ -1,17 +1,15 @@
-import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:flutter/material.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 
 import '../../../../../../core/notifiers/change_notifier_global.dart';
+import '../../../../../../core/dependencies/repository_injection.dart';
 import '../../../../domain/usecases/config_app_use_case.dart';
 import '../config_app_edit.dart';
 
 class ListConfigAppEditComponent implements IComponent<ConfigAppEditState, ValueListenableBuilder, void> {
   final ConfigAppEditState _screen;
-  final CompManagerInjector _injector = CompManagerInjector();
   final ChangeNotifierGlobal<List<ItemConfigAppEdit>> _listaConfigsWidgets = ChangeNotifierGlobal([]);
 
-  late final ConfigAppUseCase _configAppUseCase;
   late final String modulo;
 
   ListConfigAppEditComponent(this._screen) {
@@ -57,13 +55,16 @@ class ListConfigAppEditComponent implements IComponent<ConfigAppEditState, Value
   @override
   void init() async {
     _screen.addComponent(this);
-    _configAppUseCase = _injector.getDependencie();
-    await _carregarConfigs();
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+      await _carregarConfigs();
+    });
   }
 
   Future<void> _carregarConfigs() async {
     modulo = _screen.widget.modulo!;
-    Map<String?, int?> configs = await _configAppUseCase.getAllConfigs(modulo: modulo);
+    final configAppUseCase = ConfigAppUseCase(repository: RepositoryInjection.of(_screen.context)!.configAppRepository);
+
+    Map<String?, int?> configs = await configAppUseCase.getAllConfigs(modulo: modulo);
     int count = 1;
     int max = configs.keys.length;
     for (var identificador in configs.keys) {

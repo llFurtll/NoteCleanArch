@@ -1,8 +1,8 @@
 import 'package:sqflite/sqflite.dart';
 
 import '../../../../core/utils/init_database.dart';
-import '../../domain/entities/note.dart';
 import '../../data/model/note_model.dart';
+import '../../domain/entities/note.dart';
 
 abstract class NoteDataSource {
   Future<NoteModel> getById({required int id});

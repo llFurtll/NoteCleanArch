@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
+import 'package:flutter/material.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 import '../../../../../../../core/notifiers/change_notifier_global.dart';
-import '../create.dart';
 import '../components/app_bar_create_component.dart';
+import '../create.dart';
 
 class SpeakMicComponent implements IComponent<CreateNoteState, ValueListenableBuilder, void> {
 

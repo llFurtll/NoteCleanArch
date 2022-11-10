@@ -1,11 +1,13 @@
+
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../../../core/dependencies/repository_injection.dart';
 import '../../../../../../core/widgets/show_loading.dart';
 import '../../../../../../core/widgets/show_message.dart';
-import '../../../../domain/usecases/config_app_use_case.dart';
 import '../../../../domain/entities/config_app.dart';
+import '../../../../domain/usecases/config_app_use_case.dart';
 import '../config_app_edit.dart';
 import 'list_config_app_edit_component.dart';
 
@@ -15,7 +17,6 @@ class AppBarConfigAppEditComponent implements IComponent<ConfigAppEditState, Pre
 
   late final String _modulo;
   late final ListConfigAppEditComponent _listConfigAppEditComponent;
-  late final ConfigAppUseCase _configAppUseCase;
   
   String _title = "";
 
@@ -70,7 +71,6 @@ class AppBarConfigAppEditComponent implements IComponent<ConfigAppEditState, Pre
   void init() {
     _modulo = _screen.widget.modulo!;
     _listConfigAppEditComponent = _screen.getComponent(ListConfigAppEditComponent) as ListConfigAppEditComponent;
-    _configAppUseCase = _injector.getDependencie();
   }
   
   Widget _iconLeading() {
@@ -84,6 +84,7 @@ class AppBarConfigAppEditComponent implements IComponent<ConfigAppEditState, Pre
     return TextButton(
       onPressed: () async {
         bool houveErro = false;
+        final configAppUseCase = ConfigAppUseCase(repository: RepositoryInjection.of(_screen.context)!.configAppRepository);
 
         showLoading(_screen.context);
 
@@ -95,7 +96,7 @@ class AppBarConfigAppEditComponent implements IComponent<ConfigAppEditState, Pre
             valor: item.valor
           );
           
-          int? update = await _configAppUseCase.updateConfig(config: configApp);
+          int? update = await configAppUseCase.updateConfig(config: configApp);
 
           if (update == null || update == 0) {
             houveErro = true;

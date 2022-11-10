@@ -6,17 +6,16 @@ import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../../../core/dependencies/repository_injection.dart';
 import '../../../../../config_user/domain/usecases/config_user_use_case.dart';
 import '../home_list.dart';
 import '../components/header_component.dart';
 
 class AlterPhotoProfileComponent implements IComponent<HomeListState, AlertDialog, Future<bool>> {
 
-  final CompManagerInjector _injector = CompManagerInjector();
   final  ImagePicker _imagePicker = ImagePicker();
   final HomeListState _screen;
 
-  late final ConfigUserUseCase _configUserUseCase;
   late final HeaderComponent _headerComponent;
 
   bool _removeOptionImage = true;
@@ -113,7 +112,6 @@ class AlterPhotoProfileComponent implements IComponent<HomeListState, AlertDialo
 
   @override
   void init() {
-    _configUserUseCase = _injector.getDependencie();
     _headerComponent = _screen.getComponent(HeaderComponent) as HeaderComponent;
   }
 
@@ -121,7 +119,9 @@ class AlterPhotoProfileComponent implements IComponent<HomeListState, AlertDialo
     XFile? file = await _imagePicker.pickImage(source: ImageSource.gallery);
 
     if (file != null) {
-      String? pathOtherImage = await _configUserUseCase.getImage();
+      final configUserUseCase = ConfigUserUseCase(repository: RepositoryInjection.of(_screen.context)!.configUserRepository);
+
+      String? pathOtherImage = await configUserUseCase.getImage();
       File otherPhoto = File(pathOtherImage!);
 
       if (otherPhoto.existsSync()) {
@@ -138,7 +138,7 @@ class AlterPhotoProfileComponent implements IComponent<HomeListState, AlertDialo
 
       file.saveTo("${dirPerfil.path}/${DateTime.now().toIso8601String()}.jpg");
 
-      _configUserUseCase.updateImage(pathImage: file.path);
+      configUserUseCase.updateImage(pathImage: file.path);
 
       _headerComponent.imagePath = file.path;
     }
@@ -148,7 +148,9 @@ class AlterPhotoProfileComponent implements IComponent<HomeListState, AlertDialo
     XFile? file = await _imagePicker.pickImage(source: ImageSource.camera);
 
     if (file != null) {
-      String? pathOtherImage = await _configUserUseCase.getImage();
+      final configUserUseCase = ConfigUserUseCase(repository: RepositoryInjection.of(_screen.context)!.configUserRepository);
+
+      String? pathOtherImage = await configUserUseCase.getImage();
       File otherPhoto = File(pathOtherImage!);
 
       if (otherPhoto.existsSync()) {
@@ -165,21 +167,23 @@ class AlterPhotoProfileComponent implements IComponent<HomeListState, AlertDialo
 
       file.saveTo("${dirPerfil.path}/${DateTime.now().toIso8601String()}.jpg");
 
-      _configUserUseCase.updateImage(pathImage: file.path);
+      configUserUseCase.updateImage(pathImage: file.path);
 
       _headerComponent.imagePath = file.path;
     }
   }
 
   void _removeFoto() async {
-    String? pathPhoto = await _configUserUseCase.getImage();
+    final configUserUseCase = ConfigUserUseCase(repository: RepositoryInjection.of(_screen.context)!.configUserRepository);
+
+    String? pathPhoto = await configUserUseCase.getImage();
     File photo = File(pathPhoto!);
 
     if (photo.existsSync()) {
       photo.delete(); 
     }
 
-    _configUserUseCase.updateImage(pathImage: "");
+    configUserUseCase.updateImage(pathImage: "");
 
     _headerComponent.imagePath = "";
   }

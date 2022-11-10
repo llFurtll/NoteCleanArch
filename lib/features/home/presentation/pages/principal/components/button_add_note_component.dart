@@ -1,4 +1,5 @@
 
+
 import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';

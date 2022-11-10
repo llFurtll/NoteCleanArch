@@ -7,6 +7,7 @@ import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 
 import '../../../../../../core/notifiers/change_notifier_global.dart';
+import '../../../../../../core/dependencies/repository_injection.dart';
 import '../../../../../config_app/presentation/pages/principal/config_app_list.dart';
 import '../../../../../config_user/domain/usecases/config_user_use_case.dart';
 import '../../info/info.dart';
@@ -24,7 +25,6 @@ class HeaderComponent implements IComponent<HomeListState, SliverAppBar, void> {
   final ChangeNotifierGlobal<String?> _userNameNotifier = ChangeNotifierGlobal("Digite seu nome aqui :)");
   final ChangeNotifierGlobal<bool> _showMenu = ChangeNotifierGlobal(true);
   
-  late final ConfigUserUseCase _configUserUseCase;
   late final AlterNameComponent _alterNameComponent;
   late final ListComponent _listComponent;
   late final AlterPhotoProfileComponent _alterPhotoProfileComponent;
@@ -119,9 +119,6 @@ class HeaderComponent implements IComponent<HomeListState, SliverAppBar, void> {
   @override
   void init() async {
     _screen.addComponent(this);
-    _configUserUseCase = injector.getDependencie();
-    _imagePath.value = await _configUserUseCase.getImage();
-    _loadName();
     _alterNameComponent = AlterNameComponent(_screen);
     _alterPhotoProfileComponent = AlterPhotoProfileComponent(_screen);
     _listComponent = _screen.getComponent(ListComponent) as ListComponent;
@@ -152,8 +149,10 @@ class HeaderComponent implements IComponent<HomeListState, SliverAppBar, void> {
     _imagePath.value = path;
   }
 
-  void _loadName() async {
-    String? nomeUser = await _configUserUseCase.getName();
+  void loadName() async {
+    final configUserUseCase = ConfigUserUseCase(repository: RepositoryInjection.of(_screen.context)!.configUserRepository);
+    
+    String? nomeUser = await configUserUseCase.getName();
 
     if (nomeUser!.isNotEmpty) {
       _userNameNotifier.value = nomeUser;
