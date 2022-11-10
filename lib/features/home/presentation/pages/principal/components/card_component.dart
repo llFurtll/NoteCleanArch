@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:animations/animations.dart';
 
 import 'package:compmanager/domain/interfaces/icomponent.dart';
-import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/core/conversable.dart';
 
 import '../../../../../../../../core/notifiers/change_notifier_global.dart';
@@ -19,7 +18,6 @@ import 'header_component.dart';
 
 class CardComponent extends IComponent<HomeListState, ValueListenableBuilder, void> {
 
-  final CompManagerInjector _injector = CompManagerInjector();
   final Conversable _conversable = Conversable();
   final HomeListState _screen;
   final HomeAnotacao _anotacao;
