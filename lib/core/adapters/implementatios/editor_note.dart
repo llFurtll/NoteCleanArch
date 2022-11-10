@@ -2,28 +2,41 @@
 
 import 'dart:convert';
 
+import 'package:file_picker/file_picker.dart';
+import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:flex_color_picker/flex_color_picker.dart';
 
+import '../../../features/config_app/domain/usecases/config_app_use_case.dart';
 import '../../../features/note/presentation/pages/principal/create.dart';
+import '../../dependencies/repository_injection.dart';
 import '../../widgets/show_message.dart';
 import '../interfaces/ieditor.dart';
 
 class HtmlEditorNote implements IEditor<CreateNoteState> {
   final CreateNoteState _screen;
   final HtmlEditorController _controllerEditor = HtmlEditorController();
-  final Map<String?, int?> configs;
+  
+  late final Map<String?, int?> configs;
 
   Color _foreColorSelected = Colors.black;
   Color _backgroundColorSelected = Colors.yellow;
   bool _showButtonOpenKeyboardOptions = false;
 
-  HtmlEditorNote(this._screen, this.configs);
+  HtmlEditorNote(this._screen) {
+    init();
+  }
+
+  void init() {
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+      final configAppUseCase = ConfigAppUseCase(repository: RepositoryInjection.of(_screen.context)!.configAppRepository);
+      configs = await configAppUseCase.getAllConfigs(modulo: "NOTE");
+      _screen.carregandoConfigs.value = false;
+    });
+  }
 
   @override
   Widget constructor() {
@@ -330,30 +343,32 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
             isSelected: isSelectedButtonsMedia,
             renderBorder: false,
             onPressed: (int index) async {
-              ButtonType type;
-              switch (index) {
-                case 1:
+              Widget widget = iconsButtosnMedia[index];
+              if (widget.runtimeType == Icon) {
+                ButtonType? type;
+                Icon icon = widget as Icon;
+
+                if(icon.icon == Icons.link) {
+                  type = ButtonType.link;
+                } else if(icon.icon == Icons.image_outlined) {
                   type = ButtonType.picture;
-                  break;
-                case 2:
+                } else if(icon.icon == Icons.audiotrack_outlined) {
                   type = ButtonType.audio;
-                  break;
-                case 3:
+                } else if(icon.icon == Icons.videocam_outlined) {
                   type = ButtonType.video;
-                  break;
-                case 4:
+                } else if(icon.icon == Icons.table_chart_outlined) {
                   type = ButtonType.table;
-                  break;
-                case 5:
+                } else if(icon.icon == Icons.horizontal_rule) {
                   type = ButtonType.hr;
                   _controllerEditor.insertHtml("<hr />");
-                  break;
-                default:
-                  type = ButtonType.link;
-                  break;
+                } else {
+                  type = null;
+                }
+
+                if (type != null) {
+                  await _buttonPressed(type);
+                }
               }
-              
-              await _buttonPressed(type);
             },
             children: iconsButtosnMedia,
           ) : SizedBox.shrink(),

@@ -1,40 +1,17 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
-import 'utils_test.dart';
-
-Future<void> initDatabase(bool test) async {
-  if (test) {
-    sqfliteFfiInit();
-    await databaseFactoryFfi.openDatabase(inMemoryDatabasePath, options: OpenDatabaseOptions(
-      onCreate: _onCreate,
-      onUpgrade: _onUpgrade,
-      version: 2
-    ));
-  } else {
-    await openDatabase(
-      join(await getDatabasesPath(), "note.db"),
-      version: 2,
-      onCreate: _onCreate,
-      onUpgrade: _onUpgrade
-    );
-  }
+Future<void> initDatabase() async {
+  await openDatabase(
+    join(await getDatabasesPath(), "note.db"),
+    version: 2,
+    onCreate: _onCreate,
+    onUpgrade: _onUpgrade
+  );
 }
 
-Future<Database> getDatabase(bool test) async {
-  Database _db;
-  if (test) {
-    sqfliteFfiInit();
-    _db = await databaseFactoryFfi.openDatabase(inMemoryDatabasePath);
-    await _db.insert("NOTE", inserirAnotacao());
-    await _db.insert("NOTE", inserirAnotacao());
-    await _db.update("CONFIGUSER", updateConfigUser());
-  } else {
-    _db = await openDatabase(join(await getDatabasesPath(), "note.db"));
-  }
-
-  return _db;
+Future<Database> getDatabase() async {
+  return await openDatabase(join(await getDatabasesPath(), "note.db"));
 }
 
 void _onCreate(Database db, int version) async {

@@ -39,12 +39,6 @@ class HomeListState extends State<HomeList> implements IScreen  {
     _listComponent = ListComponent(this);
     _headerComponent = HeaderComponent(this);
     _buttonAddNoteComponent = ButtonAddNoteComponent(this);
-
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _listComponent.getNotes("");
-      _headerComponent.loadName();
-    });
-
     _conversable.addScren("home", this);
   }
 

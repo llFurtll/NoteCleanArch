@@ -11,14 +11,9 @@ abstract class ConfigUserDataSource {
 
 class ConfigUserDataSourceImpl implements ConfigUserDataSource {
   late Database _db;
-  final bool test;
-
-  ConfigUserDataSourceImpl({
-    required this.test
-  });
 
   Future<void> getConnection() async {
-    _db = await getDatabase(test);
+    _db = await getDatabase();
   }
 
   Future<void> closeConnection() async {

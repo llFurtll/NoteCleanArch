@@ -12,14 +12,9 @@ abstract class IConfigAppDataSource {
 
 class ConfigAppDataSourceImpl implements IConfigAppDataSource {
   late Database _db;
-  final bool test;
-
-  ConfigAppDataSourceImpl({
-    required this.test
-  });
 
   Future<void> getConnection() async {
-    _db = await getDatabase(test);
+    _db = await getDatabase();
   }
 
   Future<void> closeConnection() async {

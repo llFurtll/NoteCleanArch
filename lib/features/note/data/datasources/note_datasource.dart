@@ -15,14 +15,9 @@ abstract class NoteDataSource {
 class NoteDataSourceImpl implements NoteDataSource {
   
   late Database _db;
-  final bool test;
-
-  NoteDataSourceImpl({
-    required this.test
-  });
 
   Future<void> getConnection() async {
-    _db = await getDatabase(test);
+    _db = await getDatabase();
   }
 
   Future<void> closeConnection() async {

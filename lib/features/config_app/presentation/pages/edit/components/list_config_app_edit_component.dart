@@ -80,6 +80,7 @@ class ListConfigAppEditComponent implements IComponent<ConfigAppEditState, Value
   }
 }
 
+// ignore: must_be_immutable
 class ItemConfigAppEdit extends StatelessWidget {
   String identificador;
   int valor;

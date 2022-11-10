@@ -1,5 +1,4 @@
 
-import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +12,6 @@ import 'list_config_app_edit_component.dart';
 
 class AppBarConfigAppEditComponent implements IComponent<ConfigAppEditState, PreferredSize, void> {
   final ConfigAppEditState _screen;
-  final CompManagerInjector _injector = new CompManagerInjector();
 
   late final String _modulo;
   late final ListConfigAppEditComponent _listConfigAppEditComponent;

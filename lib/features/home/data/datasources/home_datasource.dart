@@ -12,14 +12,9 @@ abstract class HomeDataSource {
 class HomeDataSourceImpl implements HomeDataSource {
 
   late Database _db;
-  final bool test;
-
-  HomeDataSourceImpl({
-    required this.test
-  });
 
   Future<void> getConnection() async {
-    _db = await getDatabase(test);
+    _db = await getDatabase();
   }
 
   Future<void> closeConnection() async {

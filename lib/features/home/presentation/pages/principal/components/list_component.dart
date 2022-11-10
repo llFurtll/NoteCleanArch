@@ -88,6 +88,9 @@ class ListComponent implements IComponent<HomeListState, Widget, void> {
   @override
   void init() async {
     _screen.addComponent(this);
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      getNotes("");
+    });
   }
 
   @override

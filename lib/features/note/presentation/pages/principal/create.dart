@@ -9,7 +9,6 @@ import 'package:compmanager/domain/interfaces/iscreen.dart';
 import '../../../../../../core/adapters/implementatios/editor_note.dart';
 import '../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../../core/dependencies/repository_injection.dart';
-import '../../../../config_app/domain/usecases/config_app_use_case.dart';
 import '../../../domain/entities/note.dart';
 import '../../../domain/usecases/note_usecase.dart';
 import 'components/app_bar_create_component.dart';
@@ -49,6 +48,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
 
     _appBarCreateComponent = AppBarCreateComponent(this);
     _buttonSaveNoteComponent = ButtonSaveNoteComponent(this);
+    _editor = HtmlEditorNote(this);
 
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (widget.id != null) {
@@ -62,12 +62,6 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
         }
         _appBarCreateComponent.showShare = true;
       }
-
-
-      final configAppUseCase = ConfigAppUseCase(repository: RepositoryInjection.of(context)!.configAppRepository);
-      Map<String?, int?> configs = await configAppUseCase.getAllConfigs(modulo: "NOTE");
-      _editor = HtmlEditorNote(this, configs);
-      _carregandoConfigs.value = false;
     });
 
     WidgetsBinding.instance?.addObserver(this);
@@ -258,5 +252,9 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
 
   TextEditingController get title {
     return _title;
+  }
+
+  ChangeNotifierGlobal<bool> get carregandoConfigs {
+    return _carregandoConfigs;
   }
 }

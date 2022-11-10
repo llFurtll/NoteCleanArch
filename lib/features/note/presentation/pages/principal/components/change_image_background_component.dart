@@ -7,10 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
-import 'package:compmanager/core/compmanager_notifier_list.dart';
-
 import '../../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../../../core/dependencies/repository_injection.dart';
 import '../../../../domain/usecases/note_usecase.dart';
@@ -21,9 +18,8 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
 
   final CreateNoteState _screen;
   final _imageSelected = ChangeNotifierGlobal<int>(-1);
-  final CompManagerInjector injector = CompManagerInjector();
   final ImagePicker _imagePicker = ImagePicker();
-  final CompManagerNotifierList<Widget> _assetsImages = CompManagerNotifierList([]);
+  final ChangeNotifierGlobal<List<Widget>> _assetsImages = ChangeNotifierGlobal([]);
 
   late final AppBarCreateComponent _appBarCreateComponent;
 
@@ -97,6 +93,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
   Future<void> _loadImages() async {
     _assetsImages.value.clear();
     _assetsImages.value.addAll(_returnCardsImage(await _listAllAssetsImage()));
+    _assetsImages.emitChange();
   }
 
   Future<List<String>> _listAllAssetsImage() async {

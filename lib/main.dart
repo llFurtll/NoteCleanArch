@@ -15,7 +15,7 @@ import 'routes.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initDatabase(false);
+  await initDatabase();
   
   runApp(
     RepositoryInjection(
@@ -40,10 +40,10 @@ void main() async {
         ),
         routes: routes(),
       ),
-      configAppRepository: ConfigAppRepositoryImpl(dataSource: ConfigAppDataSourceImpl(test: false)),
-      configUserRepository: ConfigUserRepositoryImpl(dataSource: ConfigUserDataSourceImpl(test: false)),
-      homeRepository: HomeRepositoryImpl(dataSource: HomeDataSourceImpl(test: false)),
-      noteRepository: NoteRepositoryImpl(datasourceBase: NoteDataSourceImpl(test: false)),
+      configAppRepository: ConfigAppRepositoryImpl(dataSource: ConfigAppDataSourceImpl()),
+      configUserRepository: ConfigUserRepositoryImpl(dataSource: ConfigUserDataSourceImpl()),
+      homeRepository: HomeRepositoryImpl(dataSource: HomeDataSourceImpl()),
+      noteRepository: NoteRepositoryImpl(datasourceBase: NoteDataSourceImpl()),
     )
   );
 }
