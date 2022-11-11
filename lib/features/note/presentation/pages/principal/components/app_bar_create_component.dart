@@ -7,6 +7,7 @@ import '../create.dart';
 import 'change_image_background_component.dart';
 import 'speak_mic_component.dart';
 import 'share_component.dart';
+import 'auto_save_note_component.dart';
 
 class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize, void> {
 
@@ -19,6 +20,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
   late final ChangeImageBackgroundComponent _changeImageBackgroundComponent;
   late final SpeakMicComponent _speakMicComponent;
   late final ShareComponent _shareComponent;
+  late final AutoSaveNoteComponent _autoSaveNoteComponent;
 
   AppBarCreateComponent(this._screen) {
     init();
@@ -40,6 +42,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
       preferredSize: Size.fromHeight(60.0),
       child: AppBar(
         backgroundColor: Colors.transparent,
+        title: _autoSaveNoteComponent.constructor(),
         elevation: 0,
         actions: _actions(),
         leading: _iconLeading(),
@@ -58,6 +61,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
     _changeImageBackgroundComponent = ChangeImageBackgroundComponent(_screen);
     _speakMicComponent = SpeakMicComponent(_screen);
     _shareComponent = ShareComponent(_screen);
+    _autoSaveNoteComponent = AutoSaveNoteComponent(_screen);
   }
 
   @override
@@ -216,5 +220,9 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
 
   set showShare(bool show) {
     _showShare.value = show;
+  }
+
+  void emitComponentAutoSave() {
+    _autoSaveNoteComponent.event();
   }
 }

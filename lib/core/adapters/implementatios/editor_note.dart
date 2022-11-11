@@ -81,6 +81,9 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
             _screen.focusTitle.unfocus();
           }
         },
+        onChangeContent: (String? value) {
+          _screen.emitComponentAutoSave();
+        },
         onNavigationRequestMobile: (String url) async {
           Uri urlTo = Uri.parse(url);
           if (await canLaunchUrl(urlTo)) {

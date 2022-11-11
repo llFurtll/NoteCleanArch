@@ -10,6 +10,7 @@ import 'package:compmanager/core/conversable.dart';
 import '../../../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../../../core/dependencies/repository_injection.dart';
 import '../../../../../../../core/widgets/show_message.dart';
+import '../../../../../../core/utils/format_date.dart';
 import '../../../../../note/presentation/pages/principal/create.dart';
 import '../../../../domain/entities/home_anotacao.dart';
 import '../../../../domain/usecases/home_use_case.dart';
@@ -30,27 +31,6 @@ class CardComponent extends IComponent<HomeListState, ValueListenableBuilder, vo
 
   CardComponent(this._screen, this._anotacao) {
     init();
-  }
-
-  final Map _months = {
-    1: "janeiro",
-    2: "fevereiro",
-    3: "março",
-    4: "abril",
-    5: "maio",
-    6: "junho",
-    7: "julho",
-    8: "agosto",
-    9: "setembro",
-    10: "outubro",
-    11: "novembro",
-    12: "dezembro"
-  };
-  
-  String _formatDate(String data) {
-    DateTime date = DateTime.parse(data);
-
-    return "${date.day.toString().padLeft(2,'0')} de ${_months[date.month]} de ${date.year}";
   }
 
   @override
@@ -221,7 +201,7 @@ class CardComponent extends IComponent<HomeListState, ValueListenableBuilder, vo
                               height: 35.0,
                               color: Colors.grey[400],
                               child: Text(
-                                _formatDate(_anotacao.data!),
+                                formatDate(_anotacao.data!, true, false),
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 18.0,

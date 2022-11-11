@@ -37,10 +37,11 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   final FocusNode _focusTitle = FocusNode();
   final TextEditingController _title = TextEditingController();
 
+  late final AppBarCreateComponent _appBarCreateComponent;
+  late final ButtonSaveNoteComponent _buttonSaveNoteComponent;
+  late final HtmlEditorNote _editor;
+
   late Note _note;
-  late AppBarCreateComponent _appBarCreateComponent;
-  late ButtonSaveNoteComponent _buttonSaveNoteComponent;
-  late HtmlEditorNote _editor;
 
   @override
   void initState() {
@@ -101,6 +102,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
 
   TextFormField _titulo() {
     return TextFormField(
+      onChanged: (String? value) => _appBarCreateComponent.emitComponentAutoSave(),
       controller: _title,
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -256,5 +258,9 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
 
   ChangeNotifierGlobal<bool> get carregandoConfigs {
     return _carregandoConfigs;
+  }
+
+  void emitComponentAutoSave() {
+    _appBarCreateComponent.emitComponentAutoSave();
   }
 }

@@ -141,11 +141,11 @@ class ItemConfigAppEdit extends StatelessWidget {
       case "MOSTRASUBLINHADO":
         return "Exibir botão de sublinhado?";
       case "MOSTRARISCADO":
-        return "Exibir botão de sublinhado e riscado?";
+        return "Exibir botão de riscado?";
       case "MOSTRAALINHAMENTOESQUERDA":
         return "Exibir botão alinhar à esquerda?";
       case "MOSTRAALINHAMENTOCENTRO":
-        return "Exibir botão centralizar horizontalmente?";
+        return "Exibir botão centralizar?";
       case "MOSTRAALINHAMENTODIREITA":
         return "Exibir botão alinhar à direita?";
       case "MOSTRAJUSTIFICADO":
