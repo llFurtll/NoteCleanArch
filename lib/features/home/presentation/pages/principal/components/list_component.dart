@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_svg/svg.dart';
 
-import 'package:compmanager/core/compmanager_notifier_list.dart';
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 
@@ -18,7 +17,7 @@ class ListComponent implements IComponent<HomeListState, Widget, void> {
 
   final CompManagerInjector injector = CompManagerInjector();
   final ChangeNotifierGlobal<bool> _carregandoNotifier = ChangeNotifierGlobal(true);
-  final CompManagerNotifierList<Widget> _listaCardNoteNotifier = CompManagerNotifierList([]);
+  final ChangeNotifierGlobal<List<Widget>> _listaCardNoteNotifier = ChangeNotifierGlobal([]);
   final HomeListState _screen;
 
   ListComponent(this._screen) {
@@ -90,7 +89,8 @@ class ListComponent implements IComponent<HomeListState, Widget, void> {
     _screen.addComponent(this);
   }
 
-  void loadBindings() async {
+  @override
+  void bindings() {
     getNotes("");
   }
 
@@ -124,6 +124,8 @@ class ListComponent implements IComponent<HomeListState, Widget, void> {
         ))
       );
     });
+
+    _listaCardNoteNotifier.emitChange();
 
     _carregandoNotifier.value = false;
   }

@@ -19,6 +19,9 @@ class AlterNameComponent implements IComponent<HomeListState, Padding, void> {
   }
 
   @override
+  void bindings() {}
+
+  @override
   void afterEvent() {
     return;
   }

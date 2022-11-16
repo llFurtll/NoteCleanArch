@@ -40,6 +40,9 @@ class AppBarConfigAppListComponent implements IComponent<ConfigAppListState, Pre
   }
 
   @override
+  void bindings() {}
+
+  @override
   Future<bool> event() async {
     return true;
   }

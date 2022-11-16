@@ -124,7 +124,8 @@ class HeaderComponent implements IComponent<HomeListState, SliverAppBar, void> {
     _listComponent = _screen.getComponent(ListComponent) as ListComponent;
   }
 
-  void loadBindings() {
+  @override
+  void bindings() {
     loadName();
   }
 

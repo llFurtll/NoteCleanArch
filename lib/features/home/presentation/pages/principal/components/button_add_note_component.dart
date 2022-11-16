@@ -27,6 +27,9 @@ class ButtonAddNoteComponent implements IComponent<HomeListState, OpenContainer,
   }
 
   @override
+  void bindings() {}
+
+  @override
   OpenContainer constructor() {
     return OpenContainer(
       openColor: Theme.of(_screen.context).floatingActionButtonTheme.backgroundColor!,

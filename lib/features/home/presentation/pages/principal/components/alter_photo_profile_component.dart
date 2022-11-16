@@ -37,6 +37,9 @@ class AlterPhotoProfileComponent implements IComponent<HomeListState, AlertDialo
   }
 
   @override
+  void bindings() {}
+
+  @override
   AlertDialog constructor() {
     return AlertDialog(
       title: Text("Escolha uma das opções"),

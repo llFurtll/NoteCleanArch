@@ -31,6 +31,9 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
   }
 
   @override
+  void bindings() {}
+
+  @override
   ValueListenableBuilder constructor() {
     return ValueListenableBuilder<bool>(
       valueListenable: _screen.keyboardVisible,

@@ -32,6 +32,9 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
   }
 
   @override
+  void bindings() {}
+
+  @override
   void beforeEvent() {
     return;
   }

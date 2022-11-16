@@ -33,6 +33,9 @@ class AppBarConfigAppEditComponent implements IComponent<ConfigAppEditState, Pre
   }
 
   @override
+  void bindings() {}
+
+  @override
   PreferredSize constructor() {
     switch (_modulo) {
       case "NOTE":

@@ -44,6 +44,9 @@ class CardComponent extends IComponent<HomeListState, ValueListenableBuilder, vo
   }
 
   @override
+  void bindings() {}
+
+  @override
   ValueListenableBuilder<double> constructor() {
     return ValueListenableBuilder(
       valueListenable: _offset,

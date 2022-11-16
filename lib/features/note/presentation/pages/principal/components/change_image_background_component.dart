@@ -28,6 +28,9 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
   }
 
   @override
+  void bindings() {}
+
+  @override
   Future<bool> afterEvent() async {
     Navigator.of(_screen.context).pop();
 

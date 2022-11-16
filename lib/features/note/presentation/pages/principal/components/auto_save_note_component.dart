@@ -40,6 +40,9 @@ class AutoSaveNoteComponent implements IComponent<CreateNoteState, ValueListenab
   }
 
   @override
+  void bindings() {}
+
+  @override
   ValueListenableBuilder constructor() {
     final style = TextStyle(
       color: Colors.grey,

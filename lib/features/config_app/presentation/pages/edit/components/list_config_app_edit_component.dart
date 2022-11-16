@@ -27,6 +27,9 @@ class ListConfigAppEditComponent implements IComponent<ConfigAppEditState, Value
   }
 
   @override
+  void bindings() {}
+
+  @override
   ValueListenableBuilder constructor() {
     return ValueListenableBuilder<List<ItemConfigAppEdit>>(
       valueListenable: _listaConfigsWidgets,
