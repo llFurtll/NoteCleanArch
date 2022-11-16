@@ -24,7 +24,6 @@ class AutoSaveNoteComponent implements IComponent<CreateNoteState, ValueListenab
 
   bool _estaSalvando = false;
   Timer? _debounce;
-  bool isStart = true;
 
   AutoSaveNoteComponent(this._screen) {
     init();
@@ -93,16 +92,16 @@ class AutoSaveNoteComponent implements IComponent<CreateNoteState, ValueListenab
     _appBarCreateComponent = _screen.getComponent(AppBarCreateComponent) as AppBarCreateComponent;
   }
 
+  void loadBindings() async {
+    if (_screen.id != null) {
+      tmpTitle = _screen.note.titulo!.trim();
+      tmpContent = _screen.note.observacao!.trim();
+    }
+  }
+
   void _actionSave() async {
     String title = _screen.title.text.trim();
     String content = await _screen.editor.getText();
-
-    if (isStart) {
-      tmpTitle = title;
-      tmpContent = content;
-      isStart = false;
-      return;
-    }
 
     if (title.isEmpty) {
       return;
@@ -146,7 +145,8 @@ class AutoSaveNoteComponent implements IComponent<CreateNoteState, ValueListenab
     _estaSalvando = false;
 
     if (insert != null && insert > 0) {
-      _info.value = "Criado em:";
+       String now = DateTime.now().toIso8601String();
+      _info.value = "Salvo em: ${formatDate(now, false, true)}";
       _screen.id = insert;
       _appBarCreateComponent.showShare = true;
       _appBarCreateComponent.changeMenuItens();

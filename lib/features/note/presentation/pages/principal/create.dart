@@ -12,7 +12,6 @@ import '../../../../../core/dependencies/repository_injection.dart';
 import '../../../domain/entities/note.dart';
 import '../../../domain/usecases/note_usecase.dart';
 import 'components/app_bar_create_component.dart';
-import 'components/button_save_note_component.dart';
 
 // ignore: must_be_immutable
 class CreateNote extends StatefulWidget {
@@ -38,7 +37,6 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   final TextEditingController _title = TextEditingController();
 
   late final AppBarCreateComponent _appBarCreateComponent;
-  late final ButtonSaveNoteComponent _buttonSaveNoteComponent;
   late final HtmlEditorNote _editor;
 
   late Note _note;
@@ -48,7 +46,6 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
     super.initState();
 
     _appBarCreateComponent = AppBarCreateComponent(this);
-    _buttonSaveNoteComponent = ButtonSaveNoteComponent(this);
     _editor = HtmlEditorNote(this);
 
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
@@ -63,6 +60,9 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
         }
         _appBarCreateComponent.showShare = true;
       }
+
+      _appBarCreateComponent.loadBindings();
+      _editor.loadBindings();
     });
 
     WidgetsBinding.instance?.addObserver(this);
@@ -95,8 +95,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
             return _body();
           }
         },
-      ),
-      floatingActionButton: _buttonSaveNoteComponent.constructor(),
+      )
     );
   }
 

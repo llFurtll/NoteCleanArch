@@ -55,9 +55,10 @@ class ListConfigAppEditComponent implements IComponent<ConfigAppEditState, Value
   @override
   void init() async {
     _screen.addComponent(this);
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
-      await _carregarConfigs();
-    });
+  }
+
+  void loadBindings() async {
+    await _carregarConfigs();
   }
 
   Future<void> _carregarConfigs() async {

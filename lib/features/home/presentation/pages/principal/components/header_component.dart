@@ -119,12 +119,13 @@ class HeaderComponent implements IComponent<HomeListState, SliverAppBar, void> {
   @override
   void init() async {
     _screen.addComponent(this);
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      loadName();
-    });
     _alterNameComponent = AlterNameComponent(_screen);
     _alterPhotoProfileComponent = AlterPhotoProfileComponent(_screen);
     _listComponent = _screen.getComponent(ListComponent) as ListComponent;
+  }
+
+  void loadBindings() {
+    loadName();
   }
 
   @override

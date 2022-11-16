@@ -28,6 +28,10 @@ class ConfigAppEditState extends State<ConfigAppEdit> implements IScreen {
     super.initState();
     _listConfigAppEditComponent = ListConfigAppEditComponent(this);
     _appBarConfigAppEditComponent = AppBarConfigAppEditComponent(this);
+
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      _listConfigAppEditComponent.loadBindings();
+    });
   }
  
   @override

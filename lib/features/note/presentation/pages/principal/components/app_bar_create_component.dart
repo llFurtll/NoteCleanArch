@@ -64,6 +64,10 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
     _autoSaveNoteComponent = AutoSaveNoteComponent(_screen);
   }
 
+  void loadBindings() {
+    _autoSaveNoteComponent.loadBindings();
+  }
+
   @override
   void dispose() {
     _speakMicComponent.dispose();

@@ -1,5 +1,3 @@
-
-
 import 'dart:convert';
 
 import 'package:file_picker/file_picker.dart';
@@ -26,16 +24,16 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
   Color _backgroundColorSelected = Colors.yellow;
   bool _showButtonOpenKeyboardOptions = false;
 
-  HtmlEditorNote(this._screen) {
-    init();
-  }
+  HtmlEditorNote(this._screen);
 
   void init() {
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
-      final configAppUseCase = ConfigAppUseCase(repository: RepositoryInjection.of(_screen.context)!.configAppRepository);
-      configs = await configAppUseCase.getAllConfigs(modulo: "NOTE");
-      _screen.carregandoConfigs.value = false;
-    });
+    return;
+  }
+
+  void loadBindings() async {
+    final configAppUseCase = ConfigAppUseCase(repository: RepositoryInjection.of(_screen.context)!.configAppRepository);
+    configs = await configAppUseCase.getAllConfigs(modulo: "NOTE");
+    _screen.carregandoConfigs.value = false;
   }
 
   @override
