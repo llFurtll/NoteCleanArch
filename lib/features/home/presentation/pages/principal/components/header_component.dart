@@ -181,7 +181,7 @@ class HeaderComponent implements IComponent<HomeListState, SliverAppBar, void> {
     return PopupMenuButton<int>(
       shape: ContinuousRectangleBorder(
         borderRadius: BorderRadius.all(
-              Radius.circular(20.0),
+          Radius.circular(20.0),
         ),
       ),
       tooltip: "Menu",
