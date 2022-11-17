@@ -61,8 +61,8 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
         _appBarCreateComponent.showShare = true;
       }
 
-      _appBarCreateComponent.loadBindings();
-      _editor.loadBindings();
+      _appBarCreateComponent.bindings();
+      _editor.bindinds();
     });
 
     WidgetsBinding.instance?.addObserver(this);

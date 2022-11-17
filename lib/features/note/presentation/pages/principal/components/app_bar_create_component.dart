@@ -32,7 +32,9 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
   }
 
   @override
-  void bindings() {}
+  void bindings() {
+    _autoSaveNoteComponent.bindings();
+  }
 
   @override
   void beforeEvent() {
@@ -65,10 +67,6 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
     _speakMicComponent = SpeakMicComponent(_screen);
     _shareComponent = ShareComponent(_screen);
     _autoSaveNoteComponent = AutoSaveNoteComponent(_screen);
-  }
-
-  void loadBindings() {
-    _autoSaveNoteComponent.loadBindings();
   }
 
   @override

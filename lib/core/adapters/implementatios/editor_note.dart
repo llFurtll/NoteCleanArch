@@ -30,7 +30,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
     return;
   }
 
-  void loadBindings() async {
+  void bindinds() async {
     final configAppUseCase = ConfigAppUseCase(repository: RepositoryInjection.of(_screen.context)!.configAppRepository);
     configs = await configAppUseCase.getAllConfigs(modulo: "NOTE");
     _screen.carregandoConfigs.value = false;

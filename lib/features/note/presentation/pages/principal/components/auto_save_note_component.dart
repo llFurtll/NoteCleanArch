@@ -40,7 +40,12 @@ class AutoSaveNoteComponent implements IComponent<CreateNoteState, ValueListenab
   }
 
   @override
-  void bindings() {}
+  void bindings() {
+    if (_screen.id != null) {
+      tmpTitle = _screen.note.titulo!.trim();
+      tmpContent = _screen.note.observacao!.trim();
+    }
+  }
 
   @override
   ValueListenableBuilder constructor() {
@@ -93,13 +98,6 @@ class AutoSaveNoteComponent implements IComponent<CreateNoteState, ValueListenab
   void init() async {
     _screen.addComponent(this);
     _appBarCreateComponent = _screen.getComponent(AppBarCreateComponent) as AppBarCreateComponent;
-  }
-
-  void loadBindings() async {
-    if (_screen.id != null) {
-      tmpTitle = _screen.note.titulo!.trim();
-      tmpContent = _screen.note.observacao!.trim();
-    }
   }
 
   void _actionSave() async {
