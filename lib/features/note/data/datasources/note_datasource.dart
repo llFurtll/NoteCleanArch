@@ -49,10 +49,10 @@ class NoteDataSourceImpl implements NoteDataSource {
     int? insert;
 
     insert = await _db.rawInsert(
-      """INSERT INTO NOTE(titulo, data, situacao, imagem_fundo, observacao)
-          VALUES(?, ?, ?, ?, ?)
+      """INSERT INTO NOTE(titulo, data, situacao, imagem_fundo, observacao, ultima_atualizacao)
+          VALUES(?, ?, ?, ?, ?, ?)
       """,
-      [note.titulo, note.data, note.situacao, note.imagemFundo, note.observacao]
+      [note.titulo, note.data, note.situacao, note.imagemFundo, note.observacao, note.ultimaAtualizacao]
     );
 
     await closeConnection();
@@ -68,11 +68,11 @@ class NoteDataSourceImpl implements NoteDataSource {
 
     update = await _db.rawUpdate(
       """
-      UPDATE NOTE SET TITULO = ?, DATA = ?, SITUACAO = ?, IMAGEM_FUNDO = ?, OBSERVACAO = ? WHERE ID = ?
+      UPDATE NOTE SET TITULO = ?, DATA = ?, SITUACAO = ?, IMAGEM_FUNDO = ?, OBSERVACAO = ?, ULTIMA_ATUALIZACAO = ? WHERE ID = ?
       """,
       [
         note.titulo, note.data, note.situacao,
-        note.imagemFundo, note.observacao, note.id
+        note.imagemFundo, note.observacao, note.ultimaAtualizacao, note.id
       ]
     );
 

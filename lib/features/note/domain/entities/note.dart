@@ -7,6 +7,7 @@ class Note {
   String? observacao;
   @deprecated
   String? cor;
+  String? ultimaAtualizacao;
   
   Note(
     {
@@ -15,7 +16,8 @@ class Note {
       this.data,
       this.situacao,
       this.imagemFundo,
-      this.observacao
+      this.observacao,
+      this.ultimaAtualizacao
     }
   );
 }

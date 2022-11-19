@@ -37,6 +37,10 @@ class ConfigAppListState extends State<ConfigAppList> implements IScreen {
             _buildInfo(),
             _buildDivider(),
             _buildSecao([
+              _itemSecao("Configurações do aplicativo", Icon(Icons.app_settings_alt), () {
+                Navigator.of(context).pushNamed(ConfigAppEdit.routeConfigAppEdit, arguments: "APP");
+              }),
+              _buildDivider(),
               _itemSecao("Configurações de anotações", Icon(Icons.note), () {
                 Navigator.of(context).pushNamed(ConfigAppEdit.routeConfigAppEdit, arguments: "NOTE");
               }),

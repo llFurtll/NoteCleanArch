@@ -23,7 +23,8 @@ void _onCreate(Database db, int version) async {
         data DATETIME NOT NULL,
         situacao INTEGER NOT NULL,
         imagem_fundo TEXT,
-        observacao TEXT
+        observacao TEXT,
+        ultima_atualizacao DATETIME NOT NULL
       )
     """
   );
@@ -60,6 +61,7 @@ void _onCreate(Database db, int version) async {
 }
 
 void _onUpgrade(Database db, int version, int newVersion) async {
+  bool existeColunaUltimaAtualizacao = false;
   List<Map> columns = await db.rawQuery("PRAGMA TABLE_INFO('NOTE')");
   for (Map item in columns) {
     if (item["name"] == "cor") {
@@ -84,8 +86,15 @@ void _onUpgrade(Database db, int version, int newVersion) async {
 
       await db.execute("DROP TABLE IF EXISTS NOTE");
       await db.execute("ALTER TABLE NEW_NOTE RENAME TO NOTE");
-      break;
     }
+
+    if (item["name"] == "ultima_atualizacao") {
+      existeColunaUltimaAtualizacao = true;
+    }
+  }
+
+  if (!existeColunaUltimaAtualizacao) {
+    await db.execute("ALTER TABLE NOTE ADD ultima_atualizacao DATETIME NOT NULL");
   }
 }
 
@@ -117,13 +126,17 @@ Future<void> _createConfigByModulo(Database db) async {
     "MOSTRASEPARADOR"
   ];
 
+  configs["APP"] = [
+    "AUTOSAVE"
+  ];
+
   for (String modulo in configs.keys) {
     List<String>? items = configs[modulo];
     for (String item in items!) {
       await db.execute(
         """
           INSERT INTO CONFIGAPP (modulo, identificador, valor)
-          SELECT '$modulo', '$item', 1 WHERE NOT EXISTS (
+          SELECT '$modulo', '$item', ${item == 'AUTOSAVE' ? '0' : '1'} WHERE NOT EXISTS (
             SELECT ID FROM CONFIGAPP WHERE modulo = '$modulo' AND identificador = '$item'
           )
         """

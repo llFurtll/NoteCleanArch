@@ -41,6 +41,9 @@ class AppBarConfigAppEditComponent implements IComponent<ConfigAppEditState, Pre
       case "NOTE":
         _title = "Configurações de anotação";
         break;
+      case "APP":
+        _title = "Configurações do aplicativo";
+        break;
       default:
         _title = "Configuração não encontrada";
     }
@@ -48,7 +51,7 @@ class AppBarConfigAppEditComponent implements IComponent<ConfigAppEditState, Pre
     return PreferredSize(
       child: AppBar(
         backgroundColor: Theme.of(_screen.context).primaryColor,
-        title: Text(_title),
+        title: Text(_title, style: TextStyle(fontSize: 16.0)),
         leading: _iconLeading(),
         actions: [
           _actionSave(),

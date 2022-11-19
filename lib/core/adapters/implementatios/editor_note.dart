@@ -19,6 +19,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
   final HtmlEditorController _controllerEditor = HtmlEditorController();
   
   late final Map<String?, int?> configs;
+  late final Map<String?, int?> configsApp;
 
   Color _foreColorSelected = Colors.black;
   Color _backgroundColorSelected = Colors.yellow;
@@ -30,10 +31,10 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
     return;
   }
 
-  void bindinds() async {
+  Future<void> bindinds() async {
     final configAppUseCase = ConfigAppUseCase(repository: RepositoryInjection.of(_screen.context)!.configAppRepository);
     configs = await configAppUseCase.getAllConfigs(modulo: "NOTE");
-    _screen.carregandoConfigs.value = false;
+    configsApp = await configAppUseCase.getAllConfigs(modulo: "APP");
   }
 
   @override
@@ -79,9 +80,9 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
             _screen.focusTitle.unfocus();
           }
         },
-        onChangeContent: (String? value) {
+        onChangeContent: configsApp["AUTOSAVE"] == 1 ? (String? value) {
           _screen.emitComponentAutoSave();
-        },
+        } : null,
         onNavigationRequestMobile: (String url) async {
           Uri urlTo = Uri.parse(url);
           if (await canLaunchUrl(urlTo)) {

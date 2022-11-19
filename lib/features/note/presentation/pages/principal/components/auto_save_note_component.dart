@@ -1,14 +1,15 @@
 import 'dart:async';
 
 import 'package:compmanager/core/conversable.dart';
-import 'package:flutter/material.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
+import 'package:flutter/material.dart';
 
-import '../../../../../../core/notifiers/change_notifier_global.dart';
+import '../../../../../../../core/widgets/show_message.dart';
 import '../../../../../../core/dependencies/repository_injection.dart';
+import '../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../../../core/utils/format_date.dart';
-import '../../../../domain/usecases/note_usecase.dart';
 import '../../../../domain/entities/note.dart';
+import '../../../../domain/usecases/note_usecase.dart';
 import '../create.dart';
 import 'app_bar_create_component.dart';
 
@@ -124,6 +125,7 @@ class AutoSaveNoteComponent implements IComponent<CreateNoteState, ValueListenab
       _screen.note.observacao = content;
       _screen.note.imagemFundo = _screen.pathImage;
       _screen.note.titulo = title;
+      _screen.note.ultimaAtualizacao = DateTime.now().toIso8601String();
       _updateNote(_screen.note);
     }
 
@@ -139,6 +141,7 @@ class AutoSaveNoteComponent implements IComponent<CreateNoteState, ValueListenab
       data: DateTime.now().toIso8601String(),
       imagemFundo: _screen.pathImage,
       situacao: 1,
+      ultimaAtualizacao: DateTime.now().toIso8601String()
     );
 
     int? insert = await noteUseCase.insertUseCase(note: note);
@@ -153,7 +156,9 @@ class AutoSaveNoteComponent implements IComponent<CreateNoteState, ValueListenab
       _appBarCreateComponent.changeMenuItens();
       _screen.anotacao = await noteUseCase.getByIdUseCase(id: _screen.id!);
     } else {
-      _info.value = "Falha ao criar em:";
+      showMessage(_screen.context, "Erro ao cadastrar a anotação, tente novamente!");
+      _estaSalvando = false;
+      _info.value = "";
     }
   }
 
@@ -167,7 +172,17 @@ class AutoSaveNoteComponent implements IComponent<CreateNoteState, ValueListenab
       String now = DateTime.now().toIso8601String();
       _info.value = "Salvo em: ${formatDate(now, false, true)}";
     } else {
-      _info.value = "Falha ao salvar:";
+      showMessage(_screen.context, "Erro ao atualizar a anotação, tente novamente!");
+      _estaSalvando = false;
+      _info.value = "";
     }
+  }
+
+  set changeTitle(String text) {
+    _info.value = text;
+  }
+  
+  set changeEstaSalvando(bool estaSalvando) {
+    _estaSalvando = estaSalvando;
   }
 }

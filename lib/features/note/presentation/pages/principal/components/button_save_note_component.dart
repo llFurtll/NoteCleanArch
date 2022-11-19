@@ -5,6 +5,7 @@ import 'package:compmanager/core/conversable.dart';
 
 import '../../../../../../../core/widgets/show_message.dart';
 import '../../../../../../core/dependencies/repository_injection.dart';
+import '../../../../../../core/utils/format_date.dart';
 import '../../../../domain/entities/note.dart';
 import '../../../../domain/usecases/note_usecase.dart';
 import '../create.dart';
@@ -56,12 +57,15 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
     String title = _screen.title.text.trim();
     String content = await _screen.editor.getText();
     if (title.isNotEmpty) {
+      _appBarCreateComponent.changeEstaSalvando(true);
+      _appBarCreateComponent.changeTitle("Salvando...");
       if (_screen.id == null) {
         _insertNote(title, content);
       } else {
         _screen.note.observacao = content;
         _screen.note.imagemFundo = _screen.pathImage;
         _screen.note.titulo = title;
+        _screen.note.ultimaAtualizacao = DateTime.now().toIso8601String();
         _updateNote(_screen.note);
       }
 
@@ -89,9 +93,12 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
       data: DateTime.now().toIso8601String(),
       imagemFundo: _screen.pathImage,
       situacao: 1,
+      ultimaAtualizacao: DateTime.now().toIso8601String()
     );
 
     int? insert = await noteUseCase.insertUseCase(note: note);
+
+    _appBarCreateComponent.changeEstaSalvando(false);
 
     if (insert != 0) {
       showMessage(_screen.context, "Anotacão cadastrada com sucesso!");
@@ -100,10 +107,12 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
 
       _appBarCreateComponent.showShare = true;
       _appBarCreateComponent.changeMenuItens();
-
+      _appBarCreateComponent.changeTitle("Salvo em: ${formatDate(note.ultimaAtualizacao!, false, true)}");
       _screen.anotacao = await noteUseCase.getByIdUseCase(id: _screen.id!);
     } else {
       showMessage(_screen.context, "Erro ao cadastrar a anotação, tente novamente!");
+      _appBarCreateComponent.changeEstaSalvando(false);
+      _appBarCreateComponent.changeTitle("");
     }
   }
 
@@ -112,10 +121,15 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
 
     int? updated = await noteUseCase.updateUseCase(note: note);
 
+    _appBarCreateComponent.changeEstaSalvando(false);
+
     if (updated != 0) {
       showMessage(_screen.context,"Anotacão atualizada com sucesso!");
+      _appBarCreateComponent.changeTitle("Salvo em: ${formatDate(note.ultimaAtualizacao!, false, true)}");
     } else {
       showMessage(_screen.context, "Erro ao atualizar a anotação, tente novamente!");
+      _appBarCreateComponent.changeEstaSalvando(false);
+      _appBarCreateComponent.changeTitle("");
     }
   }
 }

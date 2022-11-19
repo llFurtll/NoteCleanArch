@@ -1,17 +1,18 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
-
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:compmanager/domain/interfaces/iscreen.dart';
-
+import 'package:flutter/material.dart';
 
 import '../../../../../../core/adapters/implementatios/editor_note.dart';
 import '../../../../../../core/notifiers/change_notifier_global.dart';
+import '../../../../../../core/utils/format_date.dart';
 import '../../../../../core/dependencies/repository_injection.dart';
+import '../../../../config_app/domain/usecases/config_app_use_case.dart';
 import '../../../domain/entities/note.dart';
 import '../../../domain/usecases/note_usecase.dart';
 import 'components/app_bar_create_component.dart';
+import 'components/button_save_note_component.dart';
 
 // ignore: must_be_immutable
 class CreateNote extends StatefulWidget {
@@ -33,11 +34,15 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   final ChangeNotifierGlobal<String> _pathImageNotifier = ChangeNotifierGlobal("");
   final ChangeNotifierGlobal<bool> _keyboardVisible = ChangeNotifierGlobal(false);
   final ChangeNotifierGlobal<bool> _carregandoConfigs = ChangeNotifierGlobal(true);
+  final ChangeNotifierGlobal<bool> _showButtonSave = ChangeNotifierGlobal(true);
   final FocusNode _focusTitle = FocusNode();
   final TextEditingController _title = TextEditingController();
 
   late final AppBarCreateComponent _appBarCreateComponent;
   late final HtmlEditorNote _editor;
+  late final ButtonSaveNoteComponent _buttonSaveNoteComponent;
+  late final ConfigAppUseCase _configAppUseCase;
+  late final Map<String?, int?> _configsApp;
 
   late Note _note;
 
@@ -47,6 +52,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
 
     _appBarCreateComponent = AppBarCreateComponent(this);
     _editor = HtmlEditorNote(this);
+    _buttonSaveNoteComponent = ButtonSaveNoteComponent(this);
 
     WidgetsBinding.instance!.addPostFrameCallback((_) async {
       if (widget.id != null) {
@@ -59,10 +65,15 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
           _appBarCreateComponent.removeBackground = true;
         }
         _appBarCreateComponent.showShare = true;
+        _appBarCreateComponent.changeTitle("Salvo em: ${formatDate(note.ultimaAtualizacao!, false, true)}");
       }
 
       _appBarCreateComponent.bindings();
-      _editor.bindinds();
+      await _editor.bindinds();
+      _configAppUseCase = ConfigAppUseCase(repository: RepositoryInjection.of(context)!.configAppRepository);
+      _configsApp = await _configAppUseCase.getAllConfigs(modulo: "APP");
+      _showButtonSave.value = _configsApp["AUTOSAVE"] == 0;
+      carregandoConfigs.value = false;
     });
 
     WidgetsBinding.instance?.addObserver(this);
@@ -95,13 +106,23 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
             return _body();
           }
         },
-      )
+      ),
+      floatingActionButton: ValueListenableBuilder(
+        valueListenable: _showButtonSave,
+        builder: (BuildContext context, bool value, Widget? widget) {
+          if (value) {
+            return _buttonSaveNoteComponent.constructor();
+          } else {
+            return SizedBox.shrink();
+          }
+        },
+      ),
     );
   }
 
   TextFormField _titulo() {
     return TextFormField(
-      onChanged: (String? value) => _appBarCreateComponent.emitComponentAutoSave(),
+      onChanged: _configsApp["AUTOSAVE"] == 1 ? (String? value) => _appBarCreateComponent.emitComponentAutoSave() : null,
       controller: _title,
       validator: (value) {
         if (value == null || value.isEmpty) {

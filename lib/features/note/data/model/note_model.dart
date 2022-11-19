@@ -7,8 +7,17 @@ class NoteModel extends Note {
     String? data,
     String? imagemFundo,
     String? observacao,
-    int? situacao
-  }) : super(id: id, data: data, imagemFundo: imagemFundo, observacao: observacao, situacao: situacao, titulo: titulo);
+    int? situacao,
+    String? ultimaAtaulizacao
+  }) : super(
+    id: id,
+    data: data,
+    imagemFundo: imagemFundo,
+    observacao: observacao,
+    situacao: situacao,
+    titulo: titulo,
+    ultimaAtualizacao: ultimaAtaulizacao
+  );
 
   factory NoteModel.fromJson(Map json) {
     return NoteModel(
@@ -17,7 +26,8 @@ class NoteModel extends Note {
       data: json["data"],
       imagemFundo: json["imagem_fundo"],
       observacao: json["observacao"],
-      situacao: json["situacao"]
+      situacao: json["situacao"],
+      ultimaAtaulizacao: json["ultima_atualizacao"]
     );
   }
 
@@ -28,7 +38,8 @@ class NoteModel extends Note {
       data: noteModel.data,
       imagemFundo: noteModel.imagemFundo,
       observacao: noteModel.observacao,
-      situacao: noteModel.situacao
+      situacao: noteModel.situacao,
+      ultimaAtualizacao: noteModel.ultimaAtualizacao
     );
   }
 
@@ -39,7 +50,8 @@ class NoteModel extends Note {
       data: note.data,
       imagemFundo: note.imagemFundo,
       observacao: note.observacao,
-      situacao: note.situacao
+      situacao: note.situacao,
+      ultimaAtaulizacao: note.ultimaAtualizacao
     );
   }
 }

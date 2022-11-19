@@ -180,6 +180,8 @@ class ItemConfigAppEdit extends StatelessWidget {
         return "Exibir botão de tabela?";
       case "MOSTRASEPARADOR":
         return "Exibir botão de separador?";
+      case "AUTOSAVE":
+        return "Salvar a anotação de forma automática?";
     }
 
     return "";
@@ -231,6 +233,8 @@ class ItemConfigAppEdit extends StatelessWidget {
         return [Icons.table_chart_outlined];
       case "MOSTRASEPARADOR":
         return [Icons.horizontal_rule];
+      case "AUTOSAVE":
+        return [Icons.save];
     }
 
     return [SizedBox.shrink()];

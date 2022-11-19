@@ -230,4 +230,12 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
   void emitComponentAutoSave() {
     _autoSaveNoteComponent.event();
   }
+
+  void changeTitle(String text) {
+    _autoSaveNoteComponent.changeTitle = text;
+  }
+
+  void changeEstaSalvando(bool estaSalvando) {
+    _autoSaveNoteComponent.changeEstaSalvando = estaSalvando;
+  }
 }
