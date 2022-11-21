@@ -20,6 +20,8 @@ class ListComponent implements IComponent<HomeListState, Widget, void> {
   final ChangeNotifierGlobal<List<Widget>> _listaCardNoteNotifier = ChangeNotifierGlobal([]);
   final HomeListState _screen;
 
+  late final HomeUseCase _homeUseCase;
+
   ListComponent(this._screen) {
     init();
   }
@@ -91,7 +93,7 @@ class ListComponent implements IComponent<HomeListState, Widget, void> {
 
   @override
   void bindings() {
-    getNotes("");
+    _homeUseCase = HomeUseCase(repository: RepositoryInjection.of(_screen.context)!.homeRepository);
   }
 
   @override
@@ -99,28 +101,30 @@ class ListComponent implements IComponent<HomeListState, Widget, void> {
     return;
   }
 
-  Future<void> getNotes(String desc) async {
-    final homeUseCase = HomeUseCase(repository: RepositoryInjection.of(_screen.context)!.homeRepository);
+  @override
+  Future<void> loadDependencies() async {
+    await getNotes("");
+  }
 
+  Future<void> getNotes(String desc) async {
     _carregandoNotifier.value = true;
 
     List<HomeAnotacao> _listaAnotacao = [];
     if (desc.isNotEmpty) {
-      _listaAnotacao = await homeUseCase.findWithDesc(desc: desc);
+      _listaAnotacao = await _homeUseCase.findWithDesc(desc: desc);
     } else {
-      _listaAnotacao = await homeUseCase.findAll();
+      _listaAnotacao = await _homeUseCase.findAll();
     }
 
     _listaCardNoteNotifier.value.clear();
 
     _listaAnotacao.asMap().forEach((index, anotacao) {
+      final CardComponent cardComponent = CardComponent(_screen, anotacao);
+      cardComponent.bindings();
       _listaCardNoteNotifier.value.add(
         Align(child: AnimatedListItem(
           index,
-          CardComponent(
-            _screen,
-            anotacao
-          ).constructor(),
+          cardComponent.constructor(),
         ))
       );
     });

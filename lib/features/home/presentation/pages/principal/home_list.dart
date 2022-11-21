@@ -41,9 +41,10 @@ class HomeListState extends State<HomeList> implements IScreen  {
     _buttonAddNoteComponent = ButtonAddNoteComponent(this);
     _conversable.addScren("home", this);
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
       _listComponent.bindings();
       _headerComponent.bindings();
+      await dependencies();
     });
   }
 
@@ -97,6 +98,12 @@ class HomeListState extends State<HomeList> implements IScreen  {
   @override
   IComponent getComponent(Type type) {
     return listComponents.firstWhere((element) => element.runtimeType == type);
+  }
+
+  @override
+  Future<void> dependencies() async {
+    await _headerComponent.loadDependencies();
+    await _listComponent.loadDependencies();
   }
 
   ChangeNotifierGlobal<bool> get title {

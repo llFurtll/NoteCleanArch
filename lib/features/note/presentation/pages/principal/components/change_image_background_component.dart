@@ -1,15 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
-import 'package:path_provider/path_provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 
-import 'package:compmanager/domain/interfaces/icomponent.dart';
 import '../../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../../../core/dependencies/repository_injection.dart';
+import '../../../../../../core/utils/format_date.dart';
+import '../../../../../config_app/domain/usecases/config_app_use_case.dart';
 import '../../../../domain/usecases/note_usecase.dart';
 import '../create.dart';
 import 'app_bar_create_component.dart';
@@ -22,13 +23,19 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
   final ChangeNotifierGlobal<List<Widget>> _assetsImages = ChangeNotifierGlobal([]);
 
   late final AppBarCreateComponent _appBarCreateComponent;
+  late final NoteUseCase _noteUseCase;
+  late final ConfigAppUseCase _configAppUseCase;
+  late final Map<String?, int?> _configsApp;
 
   ChangeImageBackgroundComponent(this._screen) {
     init();
   }
 
   @override
-  void bindings() {}
+  void bindings() {
+    _noteUseCase = NoteUseCase(repository: RepositoryInjection.of(_screen.context)!.noteRepository);
+    _configAppUseCase = ConfigAppUseCase(repository: RepositoryInjection.of(_screen.context)!.configAppRepository);
+  }
 
   @override
   Future<bool> afterEvent() async {
@@ -87,6 +94,11 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
   @override
   void dispose() {
     return;
+  }
+
+  @override
+  Future<void> loadDependencies() async {
+    _configsApp = await _configAppUseCase.getAllConfigs(modulo: "APP");
   }
 
   set imageSelected(int selected) {
@@ -158,6 +170,13 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
           _imageSelected.value = index;
           _appBarCreateComponent.removeBackground = true;
           _appBarCreateComponent.changeMenuItens();
+
+          print(_configsApp);
+
+          if (_configsApp["AUTOSAVE"] == 1) {
+            _appBarCreateComponent.emitComponentAutoSave();
+          }
+
         }
       },
       onLongPress: () {
@@ -262,6 +281,7 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text("Deletar imagem?", style: TextStyle(color: Colors.black)),
+          content: Text("Ao deletar a imagem, automaticamente a foto será removido do aplicativo e será atualizado a anotação!"),
           actions: [
             TextButton(
               onPressed: () {
@@ -277,14 +297,20 @@ class ChangeImageBackgroundComponent implements IComponent<CreateNoteState, Cont
             ),
             TextButton(
               onPressed: () async {
-                final noteUseCase = NoteUseCase(repository: RepositoryInjection.of(_screen.context)!.noteRepository);
-
                 File(pathImage).delete();
 
-                int? update = await noteUseCase.removeBackgroundNote(image: pathImage);
+                _appBarCreateComponent.changeEstaSalvando(true);
+                _appBarCreateComponent.changeTitle("Salvando...");
+
+                int? update = await _noteUseCase.removeBackgroundNote(image: pathImage);
+                
                 await _loadImages();
+
                 _appBarCreateComponent.removeBackground = false;
                 _appBarCreateComponent.changeMenuItens();
+
+                _appBarCreateComponent.changeEstaSalvando(false);
+                _appBarCreateComponent.changeTitle("Salvo em: ${formatDate(_screen.note.ultimaAtualizacao!, false, true)}");
                 
                 if (update != 0) {
                   _screen.pathImage = "";

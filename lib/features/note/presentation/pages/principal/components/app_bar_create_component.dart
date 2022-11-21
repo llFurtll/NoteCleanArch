@@ -1,13 +1,14 @@
+import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:flutter/material.dart';
 
-import 'package:compmanager/domain/interfaces/icomponent.dart';
-
 import '../../../../../../../core/notifiers/change_notifier_global.dart';
+import '../../../../../../core/dependencies/repository_injection.dart';
+import '../../../../../config_app/domain/usecases/config_app_use_case.dart';
 import '../create.dart';
-import 'change_image_background_component.dart';
-import 'speak_mic_component.dart';
-import 'share_component.dart';
 import 'auto_save_note_component.dart';
+import 'change_image_background_component.dart';
+import 'share_component.dart';
+import 'speak_mic_component.dart';
 
 class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize, void> {
 
@@ -21,6 +22,8 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
   late final SpeakMicComponent _speakMicComponent;
   late final ShareComponent _shareComponent;
   late final AutoSaveNoteComponent _autoSaveNoteComponent;
+  late final Map<String?, int?> _configsApp;
+  late final ConfigAppUseCase _configAppUseCase;
 
   AppBarCreateComponent(this._screen) {
     init();
@@ -33,7 +36,9 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
 
   @override
   void bindings() {
+     _configAppUseCase = ConfigAppUseCase(repository: RepositoryInjection.of(_screen.context)!.configAppRepository);
     _autoSaveNoteComponent.bindings();
+    _changeImageBackgroundComponent.bindings();
   }
 
   @override
@@ -72,6 +77,12 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
   @override
   void dispose() {
     _speakMicComponent.dispose();
+  }
+  
+  @override
+  Future<void> loadDependencies() async {
+    _configsApp = await _configAppUseCase.getAllConfigs(modulo: "APP");
+    await _changeImageBackgroundComponent.loadDependencies();
   }
 
   List<Widget> _actions() {
@@ -166,6 +177,9 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
                 _removeBackgroundNotifier.value = false;
                 _changeImageBackgroundComponent.imageSelected = -1;
                 changeMenuItens();
+                if (_configsApp["AUTOSAVE"] == 1) {
+                  emitComponentAutoSave();
+                }
               } else {
                 _screen.emitScreen(_changeImageBackgroundComponent);
               }

@@ -19,9 +19,11 @@ class AutoSaveNoteComponent implements IComponent<CreateNoteState, ValueListenab
   final Conversable _conversable = Conversable();
 
   late final AppBarCreateComponent _appBarCreateComponent;
+  late final NoteUseCase _noteUseCase;
 
   String tmpTitle = "";
   String tmpContent = "";
+  String tmpPathImage = "";
 
   bool _estaSalvando = false;
   Timer? _debounce;
@@ -42,16 +44,22 @@ class AutoSaveNoteComponent implements IComponent<CreateNoteState, ValueListenab
 
   @override
   void bindings() {
+    _noteUseCase = NoteUseCase(repository: RepositoryInjection.of(_screen.context)!.noteRepository);
+  }
+
+  @override
+  Future<void> loadDependencies() async {
     if (_screen.id != null) {
       tmpTitle = _screen.note.titulo!.trim();
       tmpContent = _screen.note.observacao!.trim();
+      tmpPathImage = _screen.note.imagemFundo!.trim();
     }
   }
 
   @override
   ValueListenableBuilder constructor() {
     final style = TextStyle(
-      color: Colors.grey,
+      color: Colors.black54,
       fontSize: 12.0,
       fontWeight: FontWeight.bold
     );
@@ -104,16 +112,18 @@ class AutoSaveNoteComponent implements IComponent<CreateNoteState, ValueListenab
   void _actionSave() async {
     String title = _screen.title.text.trim();
     String content = await _screen.editor.getText();
+    String pathImage = _screen.pathImage;
 
     if (title.isEmpty) {
       return;
     }
 
-    if (tmpTitle == title && tmpContent == content) {
+    if (tmpTitle == title && tmpContent == content && tmpPathImage == pathImage) {
       return;
     } else {
       tmpTitle = title;
       tmpContent = content;
+      tmpPathImage = pathImage;
     }
 
     _estaSalvando = true;
@@ -133,8 +143,6 @@ class AutoSaveNoteComponent implements IComponent<CreateNoteState, ValueListenab
   }
 
   void _insertNote(String title, String content) async {
-    final noteUseCase = NoteUseCase(repository: RepositoryInjection.of(_screen.context)!.noteRepository);
-    
     Note note = Note(
       observacao: content,
       titulo: title,
@@ -144,7 +152,7 @@ class AutoSaveNoteComponent implements IComponent<CreateNoteState, ValueListenab
       ultimaAtualizacao: DateTime.now().toIso8601String()
     );
 
-    int? insert = await noteUseCase.insertUseCase(note: note);
+    int? insert = await _noteUseCase.insertUseCase(note: note);
 
     _estaSalvando = false;
 
@@ -154,7 +162,7 @@ class AutoSaveNoteComponent implements IComponent<CreateNoteState, ValueListenab
       _screen.id = insert;
       _appBarCreateComponent.showShare = true;
       _appBarCreateComponent.changeMenuItens();
-      _screen.anotacao = await noteUseCase.getByIdUseCase(id: _screen.id!);
+      _screen.anotacao = await _noteUseCase.getByIdUseCase(id: _screen.id!);
     } else {
       showMessage(_screen.context, "Erro ao cadastrar a anotação, tente novamente!");
       _estaSalvando = false;
@@ -163,8 +171,7 @@ class AutoSaveNoteComponent implements IComponent<CreateNoteState, ValueListenab
   }
 
   void _updateNote(Note note) async {
-    final noteUseCase = NoteUseCase(repository: RepositoryInjection.of(_screen.context)!.noteRepository);
-    int? updated = await noteUseCase.updateUseCase(note: note);
+    int? updated = await _noteUseCase.updateUseCase(note: note);
 
     _estaSalvando = false;
 

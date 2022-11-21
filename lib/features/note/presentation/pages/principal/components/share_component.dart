@@ -26,6 +26,9 @@ class ShareComponent implements IComponent<CreateNoteState, Container, void> {
   void bindings() {}
 
   @override
+  Future<void> loadDependencies() async {}
+
+  @override
   Container constructor() {
     return Container(
       decoration: BoxDecoration(

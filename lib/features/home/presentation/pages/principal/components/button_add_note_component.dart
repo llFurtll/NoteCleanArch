@@ -70,4 +70,7 @@ class ButtonAddNoteComponent implements IComponent<HomeListState, OpenContainer,
   void dispose() {
     return;
   }
+
+  @override
+  Future<void> loadDependencies() async {}
 }

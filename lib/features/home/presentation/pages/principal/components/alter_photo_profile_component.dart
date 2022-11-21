@@ -117,6 +117,9 @@ class AlterPhotoProfileComponent implements IComponent<HomeListState, AlertDialo
     _headerComponent = _screen.getComponent(HeaderComponent) as HeaderComponent;
   }
 
+  @override
+  Future<void> loadDependencies() async {}
+
   void _getFromGallery() async {
     XFile? file = await _imagePicker.pickImage(source: ImageSource.gallery);
 

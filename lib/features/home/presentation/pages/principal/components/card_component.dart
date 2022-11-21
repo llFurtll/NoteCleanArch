@@ -25,6 +25,7 @@ class CardComponent extends IComponent<HomeListState, ValueListenableBuilder, vo
   final ChangeNotifierGlobal<double> _offset = ChangeNotifierGlobal(0.0);
 
   late final HeaderComponent _headerComponent;
+  late final HomeUseCase _homeUseCase;
 
   bool _visibilityButtons = false;
   double _opacity = 0.0;
@@ -44,7 +45,9 @@ class CardComponent extends IComponent<HomeListState, ValueListenableBuilder, vo
   }
 
   @override
-  void bindings() {}
+  void bindings() {
+    _homeUseCase = HomeUseCase(repository: RepositoryInjection.of(_screen.context)!.homeRepository);
+  }
 
   @override
   ValueListenableBuilder<double> constructor() {
@@ -75,6 +78,9 @@ class CardComponent extends IComponent<HomeListState, ValueListenableBuilder, vo
   void dispose() {
     return;
   }
+
+  @override
+  Future<void> loadDependencies() async {}
 
   Positioned _buttonsActions() {
     return Positioned(
@@ -227,9 +233,7 @@ class CardComponent extends IComponent<HomeListState, ValueListenableBuilder, vo
   }
 
   void _removeNote() async {
-    final homeUseCase = HomeUseCase(repository: RepositoryInjection.of(_screen.context)!.homeRepository);
-
-    int? delete = await homeUseCase.deleteById(id: _anotacao.id!);
+    int? delete = await _homeUseCase.deleteById(id: _anotacao.id!);
     
     if (delete == 1) {
       showMessage(_screen.context, "Anotacão deletada com sucesso!");

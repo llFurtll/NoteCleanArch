@@ -71,6 +71,9 @@ class ConfigAppListState extends State<ConfigAppList> implements IScreen {
     return;
   }
 
+  @override
+  Future<void> dependencies() async {}
+
   Widget _buildInfo() {
     return Text(
       "Aqui nas configurações é possível realizar algumas customizações no Note.",

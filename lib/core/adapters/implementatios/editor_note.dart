@@ -20,6 +20,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
   
   late final Map<String?, int?> configs;
   late final Map<String?, int?> configsApp;
+  late final ConfigAppUseCase _configAppUseCase;
 
   Color _foreColorSelected = Colors.black;
   Color _backgroundColorSelected = Colors.yellow;
@@ -31,10 +32,13 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
     return;
   }
 
-  Future<void> bindinds() async {
-    final configAppUseCase = ConfigAppUseCase(repository: RepositoryInjection.of(_screen.context)!.configAppRepository);
-    configs = await configAppUseCase.getAllConfigs(modulo: "NOTE");
-    configsApp = await configAppUseCase.getAllConfigs(modulo: "APP");
+  void bindinds() {
+    _configAppUseCase = ConfigAppUseCase(repository: RepositoryInjection.of(_screen.context)!.configAppRepository);
+  }
+
+  Future<void> loadDependencies() async {
+    configs = await _configAppUseCase.getAllConfigs(modulo: "NOTE");
+    configsApp = await _configAppUseCase.getAllConfigs(modulo: "APP");
   }
 
   @override

@@ -174,7 +174,7 @@ packages:
     description:
       path: "."
       ref: main
-      resolved-ref: "212a6b5d2cccd65e647ba27cf968ee726c7968fb"
+      resolved-ref: ec4119d134eca8b4770c872f7ce7640da70e7295
       url: "https://github.com/llFurtll/compmanager.git"
     source: git
     version: "1.0.0"

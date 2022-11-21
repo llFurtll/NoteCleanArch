@@ -137,4 +137,7 @@ class AlterNameComponent implements IComponent<HomeListState, Padding, void> {
   void dispose() {
     return;
   }
+
+  @override
+  Future<void> loadDependencies() async {}
 }

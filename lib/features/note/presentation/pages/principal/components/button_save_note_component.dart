@@ -16,6 +16,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
   final Conversable _conversable = Conversable();
 
   late final AppBarCreateComponent _appBarCreateComponent;
+  late final NoteUseCase _noteUseCase;
 
   ButtonSaveNoteComponent(this._screen) {
     init();
@@ -32,7 +33,9 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
   }
 
   @override
-  void bindings() {}
+  void bindings() {
+    _noteUseCase = NoteUseCase(repository: RepositoryInjection.of(_screen.context)!.noteRepository);
+  }
 
   @override
   ValueListenableBuilder constructor() {
@@ -80,13 +83,15 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
     _appBarCreateComponent = _screen.getComponent(AppBarCreateComponent) as AppBarCreateComponent;
   }
 
+  @override
   void dispose() {
     return;
   }
 
+  @override
+  Future<void> loadDependencies() async {}
+
   void _insertNote(String title, String content) async {
-    final noteUseCase = NoteUseCase(repository: RepositoryInjection.of(_screen.context)!.noteRepository);
-    
     Note note = Note(
       observacao: content,
       titulo: title,
@@ -96,7 +101,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
       ultimaAtualizacao: DateTime.now().toIso8601String()
     );
 
-    int? insert = await noteUseCase.insertUseCase(note: note);
+    int? insert = await _noteUseCase.insertUseCase(note: note);
 
     _appBarCreateComponent.changeEstaSalvando(false);
 
@@ -108,7 +113,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
       _appBarCreateComponent.showShare = true;
       _appBarCreateComponent.changeMenuItens();
       _appBarCreateComponent.changeTitle("Salvo em: ${formatDate(note.ultimaAtualizacao!, false, true)}");
-      _screen.anotacao = await noteUseCase.getByIdUseCase(id: _screen.id!);
+      _screen.anotacao = await _noteUseCase.getByIdUseCase(id: _screen.id!);
     } else {
       showMessage(_screen.context, "Erro ao cadastrar a anotação, tente novamente!");
       _appBarCreateComponent.changeEstaSalvando(false);
@@ -117,9 +122,7 @@ class ButtonSaveNoteComponent implements IComponent<CreateNoteState, ValueListen
   }
 
   void _updateNote(Note note) async {
-    final noteUseCase = NoteUseCase(repository: RepositoryInjection.of(_screen.context)!.noteRepository);
-
-    int? updated = await noteUseCase.updateUseCase(note: note);
+    int? updated = await _noteUseCase.updateUseCase(note: note);
 
     _appBarCreateComponent.changeEstaSalvando(false);
 

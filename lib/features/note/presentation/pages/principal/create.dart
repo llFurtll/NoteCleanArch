@@ -33,7 +33,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
 
   final ChangeNotifierGlobal<String> _pathImageNotifier = ChangeNotifierGlobal("");
   final ChangeNotifierGlobal<bool> _keyboardVisible = ChangeNotifierGlobal(false);
-  final ChangeNotifierGlobal<bool> _carregandoConfigs = ChangeNotifierGlobal(true);
+  final ChangeNotifierGlobal<bool> _carregandoDependencias = ChangeNotifierGlobal(true);
   final ChangeNotifierGlobal<bool> _showButtonSave = ChangeNotifierGlobal(true);
   final FocusNode _focusTitle = FocusNode();
   final TextEditingController _title = TextEditingController();
@@ -69,11 +69,10 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
       }
 
       _appBarCreateComponent.bindings();
-      await _editor.bindinds();
+      _editor.bindinds();
+      _buttonSaveNoteComponent.bindings();
       _configAppUseCase = ConfigAppUseCase(repository: RepositoryInjection.of(context)!.configAppRepository);
-      _configsApp = await _configAppUseCase.getAllConfigs(modulo: "APP");
-      _showButtonSave.value = _configsApp["AUTOSAVE"] == 0;
-      carregandoConfigs.value = false;
+      await dependencies();
     });
 
     WidgetsBinding.instance?.addObserver(this);
@@ -98,7 +97,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
       backgroundColor: Colors.white,
       appBar: _appBarCreateComponent.constructor(),
       body: ValueListenableBuilder(
-        valueListenable: _carregandoConfigs,
+        valueListenable: _carregandoDependencias,
         builder: (BuildContext context, bool value, Widget? widget) {
           if (value) {
             return Center(child: CircularProgressIndicator());
@@ -230,6 +229,16 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
     return;
   }
 
+  @override
+  Future<void> dependencies() async {
+    _configsApp = await _configAppUseCase.getAllConfigs(modulo: "APP");
+    _showButtonSave.value = _configsApp["AUTOSAVE"] == 0;
+    await _editor.loadDependencies();
+    await _appBarCreateComponent.loadDependencies();
+
+    _carregandoDependencias.value = false;
+  }
+
   Future<bool> get _verifyKeyboard async {
     final check = () => (WidgetsBinding.instance?.window.viewInsets.bottom ?? 0) > 0 && !_focusTitle.hasFocus;
     if (!check()) return false;
@@ -274,10 +283,6 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
 
   TextEditingController get title {
     return _title;
-  }
-
-  ChangeNotifierGlobal<bool> get carregandoConfigs {
-    return _carregandoConfigs;
   }
 
   void emitComponentAutoSave() {

@@ -28,6 +28,7 @@ class HeaderComponent implements IComponent<HomeListState, SliverAppBar, void> {
   late final AlterNameComponent _alterNameComponent;
   late final ListComponent _listComponent;
   late final AlterPhotoProfileComponent _alterPhotoProfileComponent;
+  late final ConfigUserUseCase _configUserUseCase;
 
   ChangeNotifierGlobal<String?> _imagePath = ChangeNotifierGlobal("");
   Timer? _debounce;
@@ -126,12 +127,17 @@ class HeaderComponent implements IComponent<HomeListState, SliverAppBar, void> {
 
   @override
   void bindings() {
-    loadName();
+    _configUserUseCase = ConfigUserUseCase(repository: RepositoryInjection.of(_screen.context)!.configUserRepository);
   }
 
   @override
   void dispose() {
     _focusNode.dispose();
+  }
+
+  @override
+  Future<void> loadDependencies() async {
+    await loadName();
   }
 
   String? get userName {
@@ -154,10 +160,8 @@ class HeaderComponent implements IComponent<HomeListState, SliverAppBar, void> {
     _imagePath.value = path;
   }
 
-  void loadName() async {
-    final configUserUseCase = ConfigUserUseCase(repository: RepositoryInjection.of(_screen.context)!.configUserRepository);
-    
-    String? nomeUser = await configUserUseCase.getName();
+  Future<void> loadName() async {
+    String? nomeUser = await _configUserUseCase.getName();
 
     if (nomeUser!.isNotEmpty) {
       _userNameNotifier.value = nomeUser;

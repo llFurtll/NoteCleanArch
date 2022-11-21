@@ -6,11 +6,12 @@ import '../../../../../../core/dependencies/repository_injection.dart';
 import '../../../../domain/usecases/config_app_use_case.dart';
 import '../config_app_edit.dart';
 
-class ListConfigAppEditComponent implements IComponent<ConfigAppEditState, ValueListenableBuilder, void> {
+class ListConfigAppEditComponent implements IComponent<ConfigAppEditState, ListView, void> {
   final ConfigAppEditState _screen;
   final ChangeNotifierGlobal<List<ItemConfigAppEdit>> _listaConfigsWidgets = ChangeNotifierGlobal([]);
 
-  late final String modulo;
+  late final ConfigAppUseCase _configAppUseCase;
+  late final String _modulo;
 
   ListConfigAppEditComponent(this._screen) {
     init();
@@ -27,21 +28,20 @@ class ListConfigAppEditComponent implements IComponent<ConfigAppEditState, Value
   }
 
   @override
-  void bindings() {}
+  void bindings() {
+    _configAppUseCase = ConfigAppUseCase(repository: RepositoryInjection.of(_screen.context)!.configAppRepository);
+    _modulo = _screen.widget.modulo!;
+  }
 
   @override
-  ValueListenableBuilder constructor() {
-    return ValueListenableBuilder<List<ItemConfigAppEdit>>(
-      valueListenable: _listaConfigsWidgets,
-      builder: (BuildContext context, List<ItemConfigAppEdit> value, Widget? widget) {
-        if (value.isEmpty) {
-          return Center(child: CircularProgressIndicator());
-        }
+  Future<void> loadDependencies() async {
+    await _carregarConfigs();
+  }
 
-        return ListView(
-          children: value,
-        );
-      }
+  @override
+  ListView constructor() {
+    return ListView(
+      children: _listaConfigsWidgets.value,
     );
   }
 
@@ -60,15 +60,8 @@ class ListConfigAppEditComponent implements IComponent<ConfigAppEditState, Value
     _screen.addComponent(this);
   }
 
-  void loadBindings() async {
-    await _carregarConfigs();
-  }
-
   Future<void> _carregarConfigs() async {
-    modulo = _screen.widget.modulo!;
-    final configAppUseCase = ConfigAppUseCase(repository: RepositoryInjection.of(_screen.context)!.configAppRepository);
-
-    Map<String?, int?> configs = await configAppUseCase.getAllConfigs(modulo: modulo);
+    Map<String?, int?> configs = await _configAppUseCase.getAllConfigs(modulo: _modulo);
     int count = 1;
     int max = configs.keys.length;
     for (var identificador in configs.keys) {

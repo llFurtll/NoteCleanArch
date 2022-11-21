@@ -52,6 +52,9 @@ class AppBarConfigAppListComponent implements IComponent<ConfigAppListState, Pre
     return;
   }
 
+  @override
+  Future<void> loadDependencies() async {}
+
   Widget _iconLeading() {
     return IconButton(
       tooltip: "Voltar",

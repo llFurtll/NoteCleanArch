@@ -40,6 +40,9 @@ class SpeakMicComponent implements IComponent<CreateNoteState, ValueListenableBu
   void bindings() {}
 
   @override
+  Future<void> loadDependencies() async {}
+
+  @override
   ValueListenableBuilder constructor() {
     return ValueListenableBuilder(
       valueListenable: _isListen,
