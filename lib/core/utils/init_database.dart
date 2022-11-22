@@ -15,29 +15,21 @@ Future<Database> getDatabase() async {
 }
 
 void _onCreate(Database db, int version) async {
-  await db.execute(
-    """
-      CREATE TABLE IF NOT EXISTS NOTE(
-        id INTEGER PRIMARY KEY,
-        titulo TEXT NOT NULL,
-        data DATETIME NOT NULL,
-        situacao INTEGER NOT NULL,
-        imagem_fundo TEXT,
-        observacao TEXT,
-        ultima_atualizacao DATETIME NOT NULL
-      )
-    """
-  );
+  await _createTable(db, "NOTE", {
+    "id": "INTEGER PRIMARY KEY,",
+    "titulo": "TEXT NOT NULL,",
+    "data": "DATETIME NOT NULL,",
+    "situacao": "INTEGER NOT NULL,",
+    "imagem_fundo": "TEXT,",
+    "observacao": "TEXT,",
+    "ultima_atualizacao": "DATETIME NOT NULL)",
+  });
 
-  await db.execute(
-    """
-      CREATE TABLE IF NOT EXISTS CONFIGUSER(
-        id INTEGER PRIMARY KEY,
-        path_foto TEXT DEFAULT NULL,
-        nome TEXT DEFAULT NULL
-      )
-    """
-  );
+  await _createTable(db, "CONFIGUSER", {
+    "id": "INTEGER PRIMARY KEY,",
+    "path_foto": "TEXT DEFAULT NULL,",
+    "nome": "TEXT DEFAULT NULL)"
+  });
 
   await db.rawInsert("""
     INSERT INTO CONFIGUSER (path_foto, nome)
@@ -46,21 +38,24 @@ void _onCreate(Database db, int version) async {
     )
   """);
 
-  await db.execute(
-    """
-      CREATE TABLE IF NOT EXISTS CONFIGAPP(
-        id INTEGER PRIMARY KEY,
-        identificador TEXT NOT NULL,
-        valor INT NOT NULL,
-        modulo TEXT NOT NULL
-      )
-    """
-  );
+  await _createTable(db, "CONFIGAPP", {
+    "id": "INTEGER PRIMARY KEY,",
+    "identificador": "TEXT NOT NULL,",
+    "valor": "INT NOT NULL,",
+    "modulo": "TEXT NOT NULL)",
+  });
+
+  await _createTable(db, "ATUALIZACOES", {
+    "id": "INTEGER PRIMARY KEY,",
+    "id_user": "INTEGER NOT NULL,",
+    "visualizou": "INT NOT NULL)",
+  });
 
   await _createConfigByModulo(db);
 }
 
 void _onUpgrade(Database db, int version, int newVersion) async {
+  print("TESTE");
   bool existeColunaUltimaAtualizacao = false;
   List<Map> columns = await db.rawQuery("PRAGMA TABLE_INFO('NOTE')");
   for (Map item in columns) {
@@ -96,6 +91,19 @@ void _onUpgrade(Database db, int version, int newVersion) async {
   if (!existeColunaUltimaAtualizacao) {
     await db.execute("ALTER TABLE NOTE ADD ultima_atualizacao DATETIME NOT NULL");
   }
+  
+
+  await db.execute(
+    """
+      CREATE TABLE IF NOT EXISTS ATUALIZACOES(
+        id INTEGER PRIMARY KEY,
+        id_user INTEGER NOT NULL,
+        visualizou INT NOT NULL
+      )
+    """
+  );
+
+  await _createConfigByModulo(db);
 }
 
 Future<void> _createConfigByModulo(Database db) async {
@@ -143,4 +151,12 @@ Future<void> _createConfigByModulo(Database db) async {
       );
     }
   }
+}
+
+Future<void> _createTable(Database db, String table, Map<String, String> columns) async {
+  String sql = "CREATE TABLE IF NOT EXISTS $table (\n";
+  columns.keys.forEach((key) {
+    sql += "$key ${columns[key]}";
+  });
+  await db.execute(sql);
 }
