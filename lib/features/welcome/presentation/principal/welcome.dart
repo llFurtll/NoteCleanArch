@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/dependencies/repository_injection.dart';
+import '../../../../core/widgets/show_loading.dart';
+import '../../../../core/widgets/show_message.dart';
+import '../../../home/presentation/pages/principal/home_list.dart';
 import '../../domain/entities/atualizacao.dart';
+import '../../domain/usecases/atualizacao_usecase.dart';
 
 class Welcome extends StatefulWidget {
   static final routeWelcome = "/welcome";
@@ -14,10 +19,21 @@ class Welcome extends StatefulWidget {
 }
 
 class WelcomeState extends State<Welcome> {
-  double currentPage = 0.0;
   final _pageViewController = new PageController();
+
+  late final AtualizacaoUsecase atualizacaoUsecase;
   
   List<Widget> slides = [];
+  bool ultimaPagina = false;
+  double currentPage = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      atualizacaoUsecase = AtualizacaoUsecase(RepositoryInjection.of(context)!.atualizacaoRepository);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,21 +52,48 @@ class WelcomeState extends State<Welcome> {
               _pageViewController.addListener(() {
                 setState(() {
                   currentPage = _pageViewController.page!;
+                  ultimaPagina = currentPage == slides.length - 1;
                 });
               });
               return slides[index];
             }
           ),
-          Align(
+          Container(
             alignment: Alignment.bottomCenter,
-            child: Container(
-              margin: EdgeInsets.only(top: 70.0),
-              padding: EdgeInsets.symmetric(vertical: 40.0),
-              child: Wrap(
-                alignment: WrapAlignment.center,
-                spacing: 5.0,
-                children: _indicator(),
-              ),
+            margin: EdgeInsets.only(top: 70.0),
+            padding: EdgeInsets.symmetric(vertical: 40.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Visibility(
+                  visible: ultimaPagina,
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      showLoading(context);
+                      double versao = widget.items[0].versao!;
+                      int visualizacao = await atualizacaoUsecase.insertAtualizcao(versao);
+                      if (visualizacao > 0) {
+                        Navigator.of(context).pop();
+                        Navigator.pushNamedAndRemoveUntil(context, HomeList.routeHome, ModalRoute.withName("/"));
+                      } else {
+                        Navigator.of(context).pop();
+                        showMessage(context, "Ocorreu um problema no processo, tente novamente");
+                      }
+                    },
+                    child: Text("Continuar"),
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(Colors.grey),
+                    ),
+                  )
+                ),
+                SizedBox(height: 10.0),
+                Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 5.0,
+                  children: _indicator(),
+                ),
+              ],
             )
           )
         ],

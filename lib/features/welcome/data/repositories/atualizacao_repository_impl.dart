@@ -12,4 +12,9 @@ class AtualizacaoRepositoryImpl implements IAtualizacaoRepository {
     final response = await dataSource.findAllByVersao(versao);
     return response;
   }
+
+  @override
+  Future<int> insertVisualizacao(double versao) async {
+    return await dataSource.insertVisualizacao(versao);
+  }
 }

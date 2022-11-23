@@ -9,4 +9,8 @@ class AtualizacaoUsecase {
   Future<List<Atualizacao>> findAllByVersao(double versao) async {
     return repository.findAllByVersao(versao);
   }
+
+  Future<int> insertAtualizcao(double versao) async {
+    return await repository.insertVisualizacao(versao);
+  }
 }

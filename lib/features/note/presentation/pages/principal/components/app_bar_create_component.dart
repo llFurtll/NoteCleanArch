@@ -1,5 +1,6 @@
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../../../core/dependencies/repository_injection.dart';
@@ -201,6 +202,9 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
         color: Colors.black
       ),
       onPressed: () {
+        if (_screen.keyboardVisible.value) {
+          SystemChannels.textInput.invokeMethod('TextInput.hide');
+        }
         Navigator.pop(_screen.context);
       },
     );

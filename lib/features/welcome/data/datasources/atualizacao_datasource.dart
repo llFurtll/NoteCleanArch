@@ -5,6 +5,7 @@ import '../models/atualizacao_model.dart';
 
 abstract class AtualizacaoDataSource {
   Future<List<AtualizacaoModel>> findAllByVersao(double versao);
+  Future<int> insertVisualizacao(double versao);
 }
 
 class AtualizacaoDataSourceImpl implements AtualizacaoDataSource {
@@ -45,5 +46,21 @@ class AtualizacaoDataSourceImpl implements AtualizacaoDataSource {
     await closeConnection();
 
     return response;
+  }
+
+  @override
+  Future<int> insertVisualizacao(double versao) async {
+    await getConnection();
+
+    String sql = """
+      INSERT INTO VISUALIZACAO (ID_USUARIO, ID_VERSAO)
+      VALUES (1, ?)
+    """;
+
+    int insert = await _db.rawInsert(sql, [ versao ]);
+
+    await closeConnection();
+
+    return insert;
   }
 }
