@@ -1,9 +1,9 @@
 import 'package:compmanager/domain/interfaces/icomponent.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../../../core/dependencies/repository_injection.dart';
+import '../../../../../../core/utils/hide_keyboard.dart';
 import '../../../../../config_app/domain/usecases/config_app_use_case.dart';
 import '../create.dart';
 import 'auto_save_note_component.dart';
@@ -84,6 +84,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
   Future<void> loadDependencies() async {
     _configsApp = await _configAppUseCase.getAllConfigs(modulo: "APP");
     await _changeImageBackgroundComponent.loadDependencies();
+    await _autoSaveNoteComponent.loadDependencies();
   }
 
   List<Widget> _actions() {
@@ -142,7 +143,13 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
             visible: _showShare.value,
             child: IconButton(
               tooltip: "Compartilhar",
-              onPressed: () => _screen.emitScreen(_shareComponent),
+              onPressed: () {
+                if (_screen.keyboardVisible.value) {
+                  hideKeyboard();
+                }
+
+                _screen.emitScreen(_shareComponent);
+              },
               icon: Icon(
                 Icons.ios_share_outlined,
               ),
@@ -182,6 +189,9 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
                   emitComponentAutoSave();
                 }
               } else {
+                if (_screen.keyboardVisible.value) {
+                  hideKeyboard();
+                }
                 _screen.emitScreen(_changeImageBackgroundComponent);
               }
             },
@@ -203,7 +213,7 @@ class AppBarCreateComponent implements IComponent<CreateNoteState, PreferredSize
       ),
       onPressed: () {
         if (_screen.keyboardVisible.value) {
-          SystemChannels.textInput.invokeMethod('TextInput.hide');
+          hideKeyboard();
         }
         Navigator.pop(_screen.context);
       },
