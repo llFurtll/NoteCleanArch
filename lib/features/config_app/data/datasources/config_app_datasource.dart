@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 
-import '../../../../core/utils/init_database.dart';
+import '../../../../core/databases/init_database.dart';
 import '../models/config_app_model.dart';
 import '../../domain/entities/config_app.dart';
 

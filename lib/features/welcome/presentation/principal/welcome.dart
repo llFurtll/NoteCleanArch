@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 
-import './data/itens.dart';
+import '../../domain/entities/atualizacao.dart';
 
 class Welcome extends StatefulWidget {
+  static final routeWelcome = "/welcome";
+
+  final List<Atualizacao> items;
+
+  const Welcome(this.items);
+
   @override
   WelcomeState createState() => WelcomeState();
 }
@@ -10,9 +16,15 @@ class Welcome extends StatefulWidget {
 class WelcomeState extends State<Welcome> {
   double currentPage = 0.0;
   final _pageViewController = new PageController();
+  
+  List<Widget> slides = [];
 
   @override
   Widget build(BuildContext context) {
+    if (slides.isEmpty) {
+      slides.addAll(getSlides());
+    }
+
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       body: Stack(
@@ -46,53 +58,55 @@ class WelcomeState extends State<Welcome> {
     );
   }
 
-  List<Widget> slides = items.map((item) => Container(
-    padding: EdgeInsets.symmetric(horizontal: 18.0),
-    child: Column(
-      children: <Widget> [
-        Flexible(
-          flex: 1,
-          fit: FlexFit.tight,
-          child: Image.asset(
-            "lib/images/logo.png",
-            fit: BoxFit.fitWidth,
-            width: 220.0,
-            alignment: Alignment.bottomCenter,
-          )
-        ),
-        Flexible(
-          flex: 1,
-          fit: FlexFit.tight,
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 30.0),
-            child: Column(
-              children: <Widget> [
-                Text(
-                  item['header'],
-                  style: TextStyle(
-                    fontSize: 30.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                    height: 2.0
-                  )
-                ),
-                Text(
-                  item['description'],
-                  style: TextStyle(
-                    color: Colors.white,
-                    letterSpacing: 1.2,
-                    fontSize: 16.0,
-                    height: 1.3
+  List<Widget> getSlides() {
+    return widget.items.map((item) => Container(
+      padding: EdgeInsets.symmetric(horizontal: 18.0),
+      child: Column(
+        children: <Widget> [
+          Flexible(
+            flex: 1,
+            fit: FlexFit.tight,
+            child: Image.asset(
+              "lib/images/logo.png",
+              fit: BoxFit.fitWidth,
+              width: 220.0,
+              alignment: Alignment.bottomCenter,
+            )
+          ),
+          Flexible(
+            flex: 1,
+            fit: FlexFit.tight,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 30.0),
+              child: Column(
+                children: <Widget> [
+                  Text(
+                    item.cabecalho!,
+                    style: TextStyle(
+                      fontSize: 30.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      height: 2.0
+                    )
                   ),
-                  textAlign: TextAlign.center,
-                )
-              ],
+                  Text(
+                    item.descricao!,
+                    style: TextStyle(
+                      color: Colors.white,
+                      letterSpacing: 1.2,
+                      fontSize: 16.0,
+                      height: 1.3
+                    ),
+                    textAlign: TextAlign.center,
+                  )
+                ],
+              ),
             ),
           ),
-        ),
-      ],
-    ),
-  )).toList();
+        ],
+      ),
+    )).toList();
+  }
 
   List<Widget> _indicator() {
     return List<Widget>.generate(

@@ -1,6 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 
-import '../../../../core/utils/init_database.dart';
+import '../../../../core/databases/init_database.dart';
 
 abstract class ConfigUserDataSource {
   Future<String?> getImage();

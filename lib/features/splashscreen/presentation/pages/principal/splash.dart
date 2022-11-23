@@ -1,8 +1,10 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
+import '../../../../../core/dependencies/repository_injection.dart';
 import '../../../../home/presentation/pages/principal/home_list.dart';
+import '../../../../welcome/domain/entities/atualizacao.dart';
+import '../../../../welcome/domain/usecases/atualizacao_usecase.dart';
+import '../../../../welcome/presentation/principal/welcome.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -10,12 +12,25 @@ class SplashScreen extends StatefulWidget {
 }
 
 class SplashScreenState extends State<SplashScreen> {
+  List<Atualizacao> atualizacoes = [];
+
+  late final AtualizacaoUsecase atualizacaoUsecase;
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 3), () async {
-      Navigator.pushNamed(context, HomeList.routeHome);
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+      atualizacaoUsecase = AtualizacaoUsecase(RepositoryInjection.of(context)!.atualizacaoRepository);
+
+      atualizacoes = await atualizacaoUsecase.findAllByVersao(3.0);
+
+      Future.delayed(Duration(seconds: 3), () {
+        if (atualizacoes.isNotEmpty) {
+          Navigator.pushNamed(context, Welcome.routeWelcome, arguments: atualizacoes);
+        } else {
+          Navigator.pushNamed(context, HomeList.routeHome);
+        }
+      });
     });
   }
 
