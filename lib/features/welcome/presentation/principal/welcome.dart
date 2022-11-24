@@ -109,12 +109,15 @@ class WelcomeState extends State<Welcome> {
           Flexible(
             flex: 1,
             fit: FlexFit.tight,
-            child: Image.asset(
-              "lib/images/logo.png",
-              fit: BoxFit.fitWidth,
-              width: 220.0,
-              alignment: Alignment.bottomCenter,
-            )
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8.0),
+              child: Image.asset(
+                item.imagem!,
+                fit: BoxFit.fitWidth,
+                width: 220.0,
+                alignment: Alignment.bottomCenter,
+              ),
+            ),
           ),
           Flexible(
             flex: 1,

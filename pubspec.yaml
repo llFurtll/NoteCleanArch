@@ -75,6 +75,7 @@ flutter:
     - lib/images/7.jpg
     - lib/images/sem-anotacao.svg
     - lib/images/coffee.svg
+    - lib/images/configuracoes.gif
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
