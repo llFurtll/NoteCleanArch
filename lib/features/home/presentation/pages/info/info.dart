@@ -101,11 +101,11 @@ class Info extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(10.0),
           child: Text(
-            "Olá, obrigado por usar o Note! \n\n" +
+            "Olá, obrigado por usar o EasyNote! \n\n" +
             "Caso precise de algo, pode entrar em contato comigo por uma das " +
             "redes sociais acima, espero que goste, aceitos sugestões.\n\n" +
             "Logo abaixo também têm um botão para doações, sempre que possível estarei trazendo " +
-            "atualizações para o Note, visando melhorar sua utilização, se quiser realizar uma doação " +
+            "atualizações para o EasyNote, visando melhorar sua utilização, se quiser realizar uma doação " +
             "independente do valor, ficarei grato.",
             style: TextStyle(
               fontSize: 18.0,
