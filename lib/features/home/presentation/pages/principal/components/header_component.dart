@@ -199,12 +199,19 @@ class HeaderComponent implements IComponent<HomeListState, SliverAppBar, void> {
         PopupMenuItem(
           value: 2,
           child: Text("Sobre o desenvolvedor")
+        ),
+        PopupMenuDivider(),
+        PopupMenuItem(
+          value: 3,
+          child: Text("O que há de novo?")
         )
       ],
       onSelected: (int index) {
         switch (index) {
           case 1:
             Navigator.of(_screen.context).pushNamed(ConfigAppList.routeConfigAppList);
+            break;
+          case 3:
             break;
           default:
             Navigator.of(_screen.context).pushNamed(Info.routeInfo);
