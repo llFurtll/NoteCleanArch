@@ -4,7 +4,7 @@ List<Map<String, Object>> versoes = [
     "id": 1,
     "versao": 3.0,
     "cabecalho": "EasyNote",
-    "descricao": "Bem vindo ao EasyNote, um aplicativo fácil e rápido para gerenciar suas anotações!",
+    "descricao": "Bem vindo ao EasyNote, um aplicativo fácil e rápido para gerenciar suas anotações! Vamos verificar as últimas modificações disponíveis!",
     "imagem": "lib/images/logo.png"
   },
   {
@@ -12,7 +12,7 @@ List<Map<String, Object>> versoes = [
     "versao": 3.0,
     "cabecalho": "Funcionalidades",
     "descricao": "Você pode criar suas anotações com várias customizações!",
-    "imagem": "lib/images/logo.png"
+    "imagem": "lib/images/anotacoes.gif"
   },
   {
     "id": 3,
@@ -29,6 +29,6 @@ List<Map<String, Object>> versoes = [
     "cabecalho": "Informações",
     "descricao": "Em suas anotações você tem a opção de ver qual foi a última vez que a mesma foi alterada, tendo um controle melhor em que momento foi realizado " +
     "a última modificação na sua anotação!",
-    "imagem": "lib/images/logo.png"
+    "imagem": "lib/images/ultima-atualizacao.png"
   },
 ];

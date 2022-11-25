@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../../../core/dependencies/repository_injection.dart';
-import '../../../../../../core/utils/hide_keyboard.dart';
+import '../../../../../../core/utils/keyboard.dart';
 import '../../../../../config_app/domain/usecases/config_app_use_case.dart';
 import '../create.dart';
 import 'auto_save_note_component.dart';

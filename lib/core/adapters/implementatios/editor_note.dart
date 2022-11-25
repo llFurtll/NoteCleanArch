@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../features/config_app/domain/usecases/config_app_use_case.dart';
 import '../../../features/note/presentation/pages/principal/create.dart';
 import '../../dependencies/repository_injection.dart';
+import '../../utils/keyboard.dart';
 import '../../widgets/show_message.dart';
 import '../interfaces/ieditor.dart';
 
@@ -82,6 +83,9 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
         onFocus: () {
           if (_screen.focusTitle.hasFocus) {
             _screen.focusTitle.unfocus();
+            Future.delayed(const Duration(milliseconds: 500), () {
+              showKeyboard();
+            });
           }
         },
         onChangeContent: configsApp["AUTOSAVE"] == 1 ? (String? value) {

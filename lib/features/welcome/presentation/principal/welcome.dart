@@ -23,7 +23,7 @@ class WelcomeState extends State<Welcome> {
 
   late final AtualizacaoUsecase atualizacaoUsecase;
   
-  List<Widget> slides = [];
+  late List<Widget> slides;
   bool ultimaPagina = false;
   double currentPage = 0.0;
 
@@ -37,9 +37,7 @@ class WelcomeState extends State<Welcome> {
 
   @override
   Widget build(BuildContext context) {
-    if (slides.isEmpty) {
-      slides.addAll(getSlides());
-    }
+    slides = getSlides();
 
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
@@ -61,7 +59,7 @@ class WelcomeState extends State<Welcome> {
           Container(
             alignment: Alignment.bottomCenter,
             margin: EdgeInsets.only(top: 70.0),
-            padding: EdgeInsets.symmetric(vertical: 40.0),
+            padding: EdgeInsets.only(bottom: 40.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -103,52 +101,47 @@ class WelcomeState extends State<Welcome> {
 
   List<Widget> getSlides() {
     return widget.items.map((item) => Container(
-      padding: EdgeInsets.symmetric(horizontal: 18.0),
+      padding: EdgeInsets.all(20.0),
       child: Column(
-        children: <Widget> [
-          Flexible(
-            flex: 1,
-            fit: FlexFit.tight,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.3),
+                  spreadRadius: 5,
+                  blurRadius: 8.0,
+                )
+              ]
+            ),
+            padding: EdgeInsets.all(10.0),
+            width: MediaQuery.of(context).size.width * 0.6,
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(8.0),
-              child: Image.asset(
-                item.imagem!,
-                fit: BoxFit.fitWidth,
-                width: 220.0,
-                alignment: Alignment.bottomCenter,
-              ),
+              borderRadius: BorderRadius.all(Radius.circular(8.0)),
+              child: Image.asset(item.imagem!),
             ),
           ),
-          Flexible(
-            flex: 1,
-            fit: FlexFit.tight,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 30.0),
-              child: Column(
-                children: <Widget> [
-                  Text(
-                    item.cabecalho!,
-                    style: TextStyle(
-                      fontSize: 30.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      height: 2.0
-                    )
-                  ),
-                  Text(
-                    item.descricao!,
-                    style: TextStyle(
-                      color: Colors.white,
-                      letterSpacing: 1.2,
-                      fontSize: 16.0,
-                      height: 1.3
-                    ),
-                    textAlign: TextAlign.center,
-                  )
-                ],
-              ),
-            ),
+          Text(
+            item.cabecalho!,
+            style: TextStyle(
+              fontSize: 30.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+              height: 2.0
+            )
           ),
+          Text(
+            item.descricao!,
+            style: TextStyle(
+              color: Colors.white,
+              letterSpacing: 1.2,
+              fontSize: 16.0,
+              height: 1.3
+            ),
+            textAlign: TextAlign.center,
+          )
         ],
       ),
     )).toList();
