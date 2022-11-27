@@ -6,6 +6,8 @@ import '../models/atualizacao_model.dart';
 abstract class AtualizacaoDataSource {
   Future<List<AtualizacaoModel>> findAllByVersao(double versao);
   Future<int> insertVisualizacao(double versao);
+  Future<double> getLastVersion();
+  Future<List<double>> getAllVersions();
 }
 
 class AtualizacaoDataSourceImpl implements AtualizacaoDataSource {
@@ -62,5 +64,40 @@ class AtualizacaoDataSourceImpl implements AtualizacaoDataSource {
     await closeConnection();
 
     return insert;
+  }
+
+  @override
+  Future<double> getLastVersion() async {
+    await getConnection();
+
+    String sql = """
+      SELECT MAX(VERSAO) AS VERSAO FROM ATUALIZACAO
+      GROUP BY VERSAO;
+    """;
+
+    List<Map<String, Object?>> result = await _db.rawQuery(sql);
+
+    return result[0]["VERSAO"] as double;
+  }
+
+  @override
+  Future<List<double>> getAllVersions() async {
+    await getConnection();
+
+    String sql = """
+      SELECT VERSAO FROM ATUALIZACAO
+      GROUP BY VERSAO;
+    """;
+
+    List<Map<String, Object?>> result = await _db.rawQuery(sql);
+    List<double> response = [];
+
+    result.forEach((item) {
+      response.add(item["VERSAO"] as double);
+    });
+    
+    await closeConnection();
+
+    return response;
   }
 }

@@ -17,4 +17,14 @@ class AtualizacaoRepositoryImpl implements IAtualizacaoRepository {
   Future<int> insertVisualizacao(double versao) async {
     return await dataSource.insertVisualizacao(versao);
   }
+
+  @override
+  Future<double> getLastVersion() async {
+    return await dataSource.getLastVersion();
+  }
+
+  @override
+  Future<List<double>> getAllVersions() async {
+    return await dataSource.getAllVersions();
+  }
 }

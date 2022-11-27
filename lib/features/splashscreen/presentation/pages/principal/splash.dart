@@ -22,7 +22,8 @@ class SplashScreenState extends State<SplashScreen> {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
       atualizacaoUsecase = AtualizacaoUsecase(RepositoryInjection.of(context)!.atualizacaoRepository);
 
-      atualizacoes = await atualizacaoUsecase.findAllByVersao(3.0);
+      double versao = await atualizacaoUsecase.getLastVersion();
+      atualizacoes = await atualizacaoUsecase.findAllByVersao(versao);
 
       Future.delayed(Duration(seconds: 3), () {
         if (atualizacoes.isNotEmpty) {

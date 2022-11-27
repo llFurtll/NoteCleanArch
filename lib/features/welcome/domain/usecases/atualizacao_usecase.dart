@@ -13,4 +13,12 @@ class AtualizacaoUsecase {
   Future<int> insertAtualizcao(double versao) async {
     return await repository.insertVisualizacao(versao);
   }
+
+  Future<double> getLastVersion() async {
+    return await repository.getLastVersion();
+  }
+
+  Future<List<double>> getAllVersions() async {
+    return await repository.getAllVersions();
+  }
 }

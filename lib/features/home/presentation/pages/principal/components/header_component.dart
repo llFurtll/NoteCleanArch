@@ -1,20 +1,20 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:flutter/material.dart';
-
 import 'package:compmanager/core/compmanager_injector.dart';
 import 'package:compmanager/domain/interfaces/icomponent.dart';
+import 'package:flutter/material.dart';
 
-import '../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../../../core/dependencies/repository_injection.dart';
+import '../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../../config_app/presentation/pages/principal/config_app_list.dart';
 import '../../../../../config_user/domain/usecases/config_user_use_case.dart';
 import '../../info/info.dart';
+import '../../versao/versao.dart';
 import '../home_list.dart';
 import 'alter_name_component.dart';
-import 'list_component.dart';
 import 'alter_photo_profile_component.dart';
+import 'list_component.dart';
 
 class HeaderComponent implements IComponent<HomeListState, SliverAppBar, void> {
 
@@ -212,6 +212,7 @@ class HeaderComponent implements IComponent<HomeListState, SliverAppBar, void> {
             Navigator.of(_screen.context).pushNamed(ConfigAppList.routeConfigAppList);
             break;
           case 3:
+            Navigator.of(_screen.context).pushNamed(Versao.routeVersao);
             break;
           default:
             Navigator.of(_screen.context).pushNamed(Info.routeInfo);
