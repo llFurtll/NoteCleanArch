@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:note/features/welcome/domain/repositories/iatualizacao_repository.dart';
 
 import '../../features/config_app/domain/repositories/iconfig_app_repository.dart';
 import '../../features/config_user/domain/repositories/iconfig_user_repository.dart';
 import '../../features/home/domain/repositories/ihome_repository.dart';
 import '../../features/note/domain/repositories/inote_repository.dart';
+import '../../features/atualizacao/domain/repositories/iatualizacao_repository.dart';
+import '../../features/versao/domain/repositories/iversao_repository.dart';
 
 class RepositoryInjection extends InheritedWidget {
   final IConfigAppRepository configAppRepository;
@@ -12,6 +13,7 @@ class RepositoryInjection extends InheritedWidget {
   final IHomeRepository homeRepository;
   final INoteRepository noteRepository;
   final IAtualizacaoRepository atualizacaoRepository;
+  final IVersaoRepository versaoRepository;
   final Widget child;
 
   const RepositoryInjection({
@@ -21,6 +23,7 @@ class RepositoryInjection extends InheritedWidget {
     required this.homeRepository,
     required this.noteRepository,
     required this.atualizacaoRepository,
+    required this.versaoRepository,
     required this.child
   }) : super(key: key, child: child);
 

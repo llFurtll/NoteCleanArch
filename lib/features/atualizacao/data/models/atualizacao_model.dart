@@ -1,15 +1,15 @@
-import 'package:note/features/welcome/domain/entities/atualizacao.dart';
+import '../../domain/entities/atualizacao.dart';
 
 class AtualizacaoModel extends Atualizacao {
   const AtualizacaoModel({
     required int? id,
-    required double? versao,
+    required int? idVersao,
     required String? cabecalho,
     required String? descricao,
     required String? imagem
   }) : super(
     id: id,
-    versao: versao,
+    idVersao: idVersao,
     cabecalho: cabecalho,
     descricao: descricao,
     imagem: imagem
@@ -18,7 +18,7 @@ class AtualizacaoModel extends Atualizacao {
   factory AtualizacaoModel.fromJson(Map json) {
     return AtualizacaoModel(
       id: json["id"],
-      versao: json["id_versao"],
+      idVersao: json["id_versao"],
       cabecalho: json["cabecalho"],
       descricao: json["descricao"],
       imagem: json["imagem"]

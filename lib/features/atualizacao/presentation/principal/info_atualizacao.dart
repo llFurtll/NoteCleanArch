@@ -6,19 +6,20 @@ import '../../../../core/widgets/show_message.dart';
 import '../../../home/presentation/pages/principal/home_list.dart';
 import '../../domain/entities/atualizacao.dart';
 import '../../domain/usecases/atualizacao_usecase.dart';
+import '../arguments/arguments_info_atualizacao.dart';
 
-class Welcome extends StatefulWidget {
-  static final routeWelcome = "/welcome";
+class InfoAtualizacao extends StatefulWidget {
+  static final routeInfoAtualizacao = "/info/atualizacao";
 
-  final List<Atualizacao> items;
+  final ArgumentsInfoAtualizacao arguments;
 
-  const Welcome(this.items);
+  const InfoAtualizacao(this.arguments);
 
   @override
-  WelcomeState createState() => WelcomeState();
+  InfoAtualizacaoState createState() => InfoAtualizacaoState();
 }
 
-class WelcomeState extends State<Welcome> {
+class InfoAtualizacaoState extends State<InfoAtualizacao> {
   final _pageViewController = new PageController();
 
   late final AtualizacaoUsecase atualizacaoUsecase;
@@ -38,6 +39,7 @@ class WelcomeState extends State<Welcome> {
   @override
   Widget build(BuildContext context) {
     slides = getSlides();
+    final isStart = widget.arguments.start;
 
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
@@ -68,18 +70,23 @@ class WelcomeState extends State<Welcome> {
                   visible: ultimaPagina,
                   child: ElevatedButton(
                     onPressed: () async {
-                      showLoading(context);
-                      double versao = widget.items[0].versao!;
-                      int visualizacao = await atualizacaoUsecase.insertAtualizcao(versao);
-                      if (visualizacao > 0) {
-                        Navigator.of(context).pop();
-                        Navigator.pushNamedAndRemoveUntil(context, HomeList.routeHome, ModalRoute.withName("/"));
+                      if (isStart) {
+                        showLoading(context);
+
+                        int versao = widget.arguments.list[0].idVersao!;
+                        int visualizacao = await atualizacaoUsecase.insertAtualizcao(versao);
+                        if (visualizacao > 0) {
+                          Navigator.of(context).pop();
+                          Navigator.pushNamedAndRemoveUntil(context, HomeList.routeHome, ModalRoute.withName("/"));
+                        } else {
+                          Navigator.of(context).pop();
+                          showMessage(context, "Ocorreu um problema no processo, tente novamente!");
+                        }
                       } else {
                         Navigator.of(context).pop();
-                        showMessage(context, "Ocorreu um problema no processo, tente novamente");
                       }
                     },
-                    child: Text("Continuar"),
+                    child: Text(isStart ? "Continuar" : "Voltar"),
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.grey),
                     ),
@@ -100,7 +107,7 @@ class WelcomeState extends State<Welcome> {
   }
 
   List<Widget> getSlides() {
-    return widget.items.map((item) => Container(
+    return widget.arguments.list.map((item) => Container(
       padding: EdgeInsets.all(20.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,

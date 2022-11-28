@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/dependencies/repository_injection.dart';
+import '../../../../atualizacao/domain/entities/atualizacao.dart';
+import '../../../../atualizacao/domain/usecases/atualizacao_usecase.dart';
+import '../../../../atualizacao/presentation/arguments/arguments_info_atualizacao.dart';
+import '../../../../atualizacao/presentation/principal/info_atualizacao.dart';
 import '../../../../home/presentation/pages/principal/home_list.dart';
-import '../../../../welcome/domain/entities/atualizacao.dart';
-import '../../../../welcome/domain/usecases/atualizacao_usecase.dart';
-import '../../../../welcome/presentation/principal/welcome.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -22,12 +23,13 @@ class SplashScreenState extends State<SplashScreen> {
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
       atualizacaoUsecase = AtualizacaoUsecase(RepositoryInjection.of(context)!.atualizacaoRepository);
 
-      double versao = await atualizacaoUsecase.getLastVersion();
-      atualizacoes = await atualizacaoUsecase.findAllByVersao(versao);
+      int versao = await atualizacaoUsecase.getLastVersion();
+      atualizacoes = await atualizacaoUsecase.findAllByVersaoWithoutVisualizacao(versao);
+      ArgumentsInfoAtualizacao arguments = ArgumentsInfoAtualizacao(start: true, list: atualizacoes);
 
       Future.delayed(Duration(seconds: 3), () {
         if (atualizacoes.isNotEmpty) {
-          Navigator.pushNamed(context, Welcome.routeWelcome, arguments: atualizacoes);
+          Navigator.pushNamed(context, InfoAtualizacao.routeInfoAtualizacao, arguments: arguments);
         } else {
           Navigator.pushNamed(context, HomeList.routeHome);
         }

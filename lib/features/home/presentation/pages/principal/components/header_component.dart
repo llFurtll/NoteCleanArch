@@ -10,7 +10,7 @@ import '../../../../../../core/notifiers/change_notifier_global.dart';
 import '../../../../../config_app/presentation/pages/principal/config_app_list.dart';
 import '../../../../../config_user/domain/usecases/config_user_use_case.dart';
 import '../../info/info.dart';
-import '../../versao/versao.dart';
+import '../../versao/list_versao.dart';
 import '../home_list.dart';
 import 'alter_name_component.dart';
 import 'alter_photo_profile_component.dart';
@@ -213,7 +213,7 @@ class HeaderComponent implements IComponent<HomeListState, SliverAppBar, void> {
             Navigator.of(_screen.context).pushNamed(ConfigAppList.routeConfigAppList);
             break;
           case 3:
-            Navigator.of(_screen.context).pushNamed(Versao.routeVersao);
+            Navigator.of(_screen.context).pushNamed(ListaVersao.routeListaVersao);
             break;
           default:
             Navigator.of(_screen.context).pushNamed(Info.routeInfo);
