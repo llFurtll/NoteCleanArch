@@ -81,6 +81,11 @@ Future<void> createAllTables(Database db) async {
     "modulo": "TEXT NOT NULL)",
   });
 
+  await _createTable(db, "VERSAO", {
+    "id": "INTEGER PRIMARY KEY,",
+    "versao": "REAL NOT NULL)"
+  });
+
   await _createTable(db, "VISUALIZACAO", {
     "id": "INTEGER PRIMARY KEY,",
     "id_usuario": "INTEGER NOT NULL,",
@@ -89,7 +94,7 @@ Future<void> createAllTables(Database db) async {
 
   await _createTable(db, "ATUALIZACAO", {
     "id": "INTEGER PRIMARY KEY,",
-    "versao": "REAL NOT NULL,",
+    "id_versao": "INTEGER NOT NULL,",
     "cabecalho": "TEXT NOT NULL,",
     "descricao": "TEXT NOT NULL,",
     "imagem": "TEXT NOT NULL)"
@@ -106,13 +111,27 @@ Future<void> insertRegistros(Database db) async {
 
   await Future.value()
     .then((_) {
-      versoes.forEach((item) async {
+      versoes.forEach((versao) async {
         await db.rawInsert(
           """
-            INSERT INTO ATUALIZACAO (id, versao, cabecalho, descricao, imagem)
+            INSERT INTO VERSAO (id, versao)
+            SELECT ${versao['id']}, ${versao['versao']} WHERE NOT EXISTS (
+              SELECT ID FROM VERSAO WHERE ID = ${versao['id']}
+            )
+          """
+        );
+      });
+    });
+
+  await Future.value()
+    .then((_) {
+      itens.forEach((item) async {
+        await db.rawInsert(
+          """
+            INSERT INTO ATUALIZACAO (id, id_versao, cabecalho, descricao, imagem)
             SELECT
               ${item['id']},
-              ${item['versao']},
+              ${item['id_versao']},
               '${item['cabecalho']}',
               '${item['descricao']}',
               '${item['imagem']}'

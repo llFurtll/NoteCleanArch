@@ -23,7 +23,6 @@ class HeaderComponent implements IComponent<HomeListState, SliverAppBar, void> {
   final TextEditingController _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   final ChangeNotifierGlobal<String?> _userNameNotifier = ChangeNotifierGlobal("Digite seu nome aqui :)");
-  final ChangeNotifierGlobal<bool> _showMenu = ChangeNotifierGlobal(true);
   
   late final AlterNameComponent _alterNameComponent;
   late final ListComponent _listComponent;
@@ -70,7 +69,17 @@ class HeaderComponent implements IComponent<HomeListState, SliverAppBar, void> {
       elevation: 5.0,
       flexibleSpace: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
-          _verifySize(constraints);
+          bool result = _verifySize(constraints);
+
+          if (result) {
+            if (_showName != result) {
+              _showName = true;
+            }
+          } else {
+            if (_showName != result) {
+              _showName = false;
+            }
+          }
 
           return FlexibleSpaceBar(
             collapseMode: CollapseMode.parallax,
@@ -170,15 +179,7 @@ class HeaderComponent implements IComponent<HomeListState, SliverAppBar, void> {
 
   List<Widget> _actions() {
     return [
-      ValueListenableBuilder(
-        valueListenable: _showMenu,
-        builder: (BuildContext context, bool value, Widget? widget)  {
-          return Visibility(
-            visible: _showMenu.value,
-            child: _buildPopup()
-          );
-        },
-      ),
+      _buildPopup()
     ];
   }
 
@@ -222,15 +223,13 @@ class HeaderComponent implements IComponent<HomeListState, SliverAppBar, void> {
     );
   }
 
-  void _verifySize(BoxConstraints constraints) {
+  bool _verifySize(BoxConstraints constraints) {
     var _height = MediaQuery.of(_screen.context).padding.top;
     var _top = constraints.biggest.height;
     if (_top == _height + 50) {
-      _showName = true;
-      Future.delayed(Duration(milliseconds: 50), () => _showMenu.value = false);
+      return true;
     } else {
-      _showName = false;
-      Future.delayed(Duration(milliseconds: 50), () => _showMenu.value = true);
+      return false;
     }
   }
 

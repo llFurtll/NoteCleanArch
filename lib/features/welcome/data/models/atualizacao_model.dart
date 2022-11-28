@@ -18,7 +18,7 @@ class AtualizacaoModel extends Atualizacao {
   factory AtualizacaoModel.fromJson(Map json) {
     return AtualizacaoModel(
       id: json["id"],
-      versao: json["versao"],
+      versao: json["id_versao"],
       cabecalho: json["cabecalho"],
       descricao: json["descricao"],
       imagem: json["imagem"]

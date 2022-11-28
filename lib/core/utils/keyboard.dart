@@ -5,6 +5,5 @@ void hideKeyboard() {
 }
 
 void showKeyboard() {
-  print("CJAMPU");
   SystemChannels.textInput.invokeMethod("TextInput.show");
 }

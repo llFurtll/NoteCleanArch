@@ -28,12 +28,12 @@ class AtualizacaoDataSourceImpl implements AtualizacaoDataSource {
     String sql = """
       SELECT
         ID,
-        VERSAO,
+        ID_VERSAO,
         CABECALHO,
         DESCRICAO,
         IMAGEM
       FROM ATUALIZACAO
-      WHERE VERSAO = ? AND VERSAO NOT IN (
+      WHERE ID_VERSAO = ? AND ID_VERSAO NOT IN (
         SELECT ID_VERSAO FROM VISUALIZACAO
       )
     """;
@@ -71,8 +71,7 @@ class AtualizacaoDataSourceImpl implements AtualizacaoDataSource {
     await getConnection();
 
     String sql = """
-      SELECT MAX(VERSAO) AS VERSAO FROM ATUALIZACAO
-      GROUP BY VERSAO;
+      SELECT MAX(VERSAO) AS VERSAO FROM VERSAO
     """;
 
     List<Map<String, Object?>> result = await _db.rawQuery(sql);
@@ -85,8 +84,7 @@ class AtualizacaoDataSourceImpl implements AtualizacaoDataSource {
     await getConnection();
 
     String sql = """
-      SELECT VERSAO FROM ATUALIZACAO
-      GROUP BY VERSAO;
+      SELECT VERSAO FROM VERSAO
     """;
 
     List<Map<String, Object?>> result = await _db.rawQuery(sql);
