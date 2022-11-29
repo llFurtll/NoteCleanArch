@@ -722,7 +722,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                         _controllerEditor.insertNetworkImage(url.text);
                       } else {
                         _controllerEditor.insertHtml(
-                          "<video controls src='${url.text}'></video>"
+                          "<video controls controlsList='nodownload' src='${url.text}'></video>"
                         );
                       }
                       Navigator.of(context).pop();
@@ -739,7 +739,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                             );
                         } else {
                           _controllerEditor.insertHtml(
-                            "<video controls src='data:video/${result!.files.single.extension};base64,$base64Data' data-filename='${result!.files.single.name}'></video>"
+                            "<video controls controlsList='nodownload' src='data:video/${result!.files.single.extension};base64,$base64Data' data-filename='${result!.files.single.name}'></video>"
                           );
                         }
                         Navigator.of(context).pop();
