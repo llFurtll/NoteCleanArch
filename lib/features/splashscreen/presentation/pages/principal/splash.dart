@@ -43,7 +43,7 @@ class SplashScreenState extends State<SplashScreen> {
       color: Theme.of(context).primaryColor,
       child: Center(
         child: Image.asset(
-          "lib/images/logo.png",
+          "lib/images/easy-note-logo.png",
           fit: BoxFit.fill,
           width: 250.0,
           height: 250.0,

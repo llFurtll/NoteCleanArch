@@ -12,7 +12,7 @@ List<Map<String, Object>> itens = [
     "id_versao": 1,
     "cabecalho": "EasyNote",
     "descricao": "Bem vindo ao EasyNote, um aplicativo fácil e rápido para gerenciar suas anotações! Vamos verificar as últimas modificações disponíveis!",
-    "imagem": "lib/images/logo.png"
+    "imagem": "lib/images/easy-note-logo.png"
   },
   {
     "id": 2,
