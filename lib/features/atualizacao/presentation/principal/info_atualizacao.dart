@@ -4,7 +4,6 @@ import '../../../../core/dependencies/repository_injection.dart';
 import '../../../../core/widgets/show_loading.dart';
 import '../../../../core/widgets/show_message.dart';
 import '../../../home/presentation/pages/principal/home_list.dart';
-import '../../domain/entities/atualizacao.dart';
 import '../../domain/usecases/atualizacao_usecase.dart';
 import '../arguments/arguments_info_atualizacao.dart';
 
