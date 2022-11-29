@@ -320,7 +320,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
 
     return SingleChildScrollView(
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           iconsLista.length > 0 ?
           ToggleButtons(
