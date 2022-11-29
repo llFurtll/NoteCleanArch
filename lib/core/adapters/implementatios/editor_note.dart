@@ -713,6 +713,19 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                           validateFailed = "Insira um arquivo de audio ou uma URL de audio, não ambos!";
                         }
                       });
+                    } else if (url.text.isNotEmpty) {
+                      if (type == ButtonType.audio) {
+                        _controllerEditor.insertHtml(
+                          "<audio controls src='${url.text}'></audio>"
+                        );
+                      } else if (type == ButtonType.picture) {
+                        _controllerEditor.insertNetworkImage(url.text);
+                      } else {
+                        _controllerEditor.insertHtml(
+                          "<video controls src='${url.text}'></video>"
+                        );
+                      }
+                      Navigator.of(context).pop();
                     } else if (filename.text.isNotEmpty && result?.files.single.bytes != null) {
                         var base64Data = base64
                           .encode(result!.files.single.bytes!);
@@ -731,7 +744,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                         }
                         Navigator.of(context).pop();
                     } else {
-                        _controllerEditor.insertNetworkImage(url.text);
+                        
                         Navigator.of(context).pop();
                     }
                   },
