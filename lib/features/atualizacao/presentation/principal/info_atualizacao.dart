@@ -112,7 +112,7 @@ class InfoAtualizacaoState extends State<InfoAtualizacao> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            decoration: BoxDecoration(
+            decoration: item.imagem!.endsWith("gif") ? BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(8.0)),
               boxShadow: [
                 BoxShadow(
@@ -121,7 +121,7 @@ class InfoAtualizacaoState extends State<InfoAtualizacao> {
                   blurRadius: 8.0,
                 )
               ]
-            ),
+            ) : null,
             padding: EdgeInsets.all(10.0),
             width: MediaQuery.of(context).size.width * 0.6,
             child: ClipRRect(

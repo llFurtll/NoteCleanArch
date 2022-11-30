@@ -6,7 +6,7 @@
    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
    <application
-        android:label="Note"
+        android:label="EasyNote"
         android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_rounded">
         <activity
