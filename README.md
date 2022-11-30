@@ -33,7 +33,7 @@
 - [x] Annotation sharing. (PDF and Image)
 - [x] Update version Flutter 2.10.5
 - [x] New features in note creation. (Bold, Italics, etc)
-- [ ] Create Note customization settings
+- [x] Create Note customization settings
 - [ ] Create notification mechanism for annotations
 - [ ] Encryption backup service
 - [ ] Application internationalization
