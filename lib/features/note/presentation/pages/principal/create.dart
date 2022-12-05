@@ -65,7 +65,9 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
           _appBarCreateComponent.removeBackground = true;
         }
         _appBarCreateComponent.showShare = true;
-        _appBarCreateComponent.changeTitle("Salvo em: ${formatDate(note.ultimaAtualizacao!, false, true)}");
+        if (note.ultimaAtualizacao != null) {
+          _appBarCreateComponent.changeTitle("Salvo em: ${formatDate(note.ultimaAtualizacao!, false, true)}"); 
+        }
       }
 
       _appBarCreateComponent.bindings();

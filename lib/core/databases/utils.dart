@@ -177,6 +177,6 @@ Future<void> updateTables(Database db) async {
   }
 
   if (!existeColunaUltimaAtualizacao) {
-    await db.execute("ALTER TABLE NOTE ADD ultima_atualizacao DATETIME NOT NULL");
+    await db.execute("ALTER TABLE NOTE ADD ultima_atualizacao DATETIME");
   }
 }
