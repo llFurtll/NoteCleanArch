@@ -54,7 +54,7 @@ class ShareComponent implements IComponent<CreateNoteState, Container, void> {
             child: Text("Compartilhar anotação como PDF", style: TextStyle(fontSize: 16.0)),
             style: TextButton.styleFrom(
               padding: EdgeInsets.all(15),
-              primary: Colors.black,
+              backgroundColor: Colors.black,
             ),
           ),
           TextButton(
@@ -70,7 +70,7 @@ class ShareComponent implements IComponent<CreateNoteState, Container, void> {
             child: Text("Compartilhar anotação como imagem", style: TextStyle(fontSize: 16.0)),
             style: TextButton.styleFrom(
               padding: EdgeInsets.all(15),
-              primary: Colors.black,
+              backgroundColor: Colors.black,
             ),
           ),
           Container(
@@ -83,7 +83,7 @@ class ShareComponent implements IComponent<CreateNoteState, Container, void> {
             padding: EdgeInsets.only(left: 10.0, right: 10.0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                primary: Theme.of(_screen.context).primaryColor,
+                backgroundColor: Theme.of(_screen.context).primaryColor,
               ),
               onPressed: () => Navigator.of(_screen.context).pop(),
               child: Text("Cancelar")
@@ -144,7 +144,7 @@ class ShareComponent implements IComponent<CreateNoteState, Container, void> {
               child: Text("Não", style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.normal)),
               onPressed: () => Navigator.of(context).pop(false),
               style: TextButton.styleFrom(
-                primary: Colors.black,
+                backgroundColor: Colors.black,
                 minimumSize: Size(double.infinity, 45.0),
                 side: BorderSide(color: Colors.grey.shade300, width: 0.5),
                 padding: EdgeInsets.zero,

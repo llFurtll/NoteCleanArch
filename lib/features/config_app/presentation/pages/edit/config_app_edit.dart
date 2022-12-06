@@ -32,7 +32,7 @@ class ConfigAppEditState extends State<ConfigAppEdit> implements IScreen {
     _listConfigAppEditComponent = ListConfigAppEditComponent(this);
     _appBarConfigAppEditComponent = AppBarConfigAppEditComponent(this);
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) async {
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
       _listConfigAppEditComponent.bindings();
       await dependencies();
     });

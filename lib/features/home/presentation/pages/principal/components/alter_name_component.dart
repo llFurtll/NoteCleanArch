@@ -90,7 +90,7 @@ class AlterNameComponent implements IComponent<HomeListState, Padding, void> {
               padding: EdgeInsets.only(left: 10.0, right: 10.0),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Theme.of(_screen.context).primaryColor,
+                  backgroundColor: Theme.of(_screen.context).primaryColor,
                 ),
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {

@@ -25,7 +25,7 @@ class ListaVersaoState extends State<ListaVersao> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _loadVersions();
       isLoading.value = false;
     });

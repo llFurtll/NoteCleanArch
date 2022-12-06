@@ -54,7 +54,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
     _editor = HtmlEditorNote(this);
     _buttonSaveNoteComponent = ButtonSaveNoteComponent(this);
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (widget.id != null) {
         final noteUseCase = NoteUseCase(repository: RepositoryInjection.of(context)!.noteRepository);
         _note = await noteUseCase.getByIdUseCase(id: widget.id!);
@@ -77,13 +77,13 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
       await dependencies();
     });
 
-    WidgetsBinding.instance?.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
     _appBarCreateComponent.dispose();
-    WidgetsBinding.instance?.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
@@ -242,7 +242,7 @@ class CreateNoteState extends State<CreateNote> with WidgetsBindingObserver impl
   }
 
   Future<bool> get _verifyKeyboard async {
-    final check = () => (WidgetsBinding.instance?.window.viewInsets.bottom ?? 0) > 0 && !_focusTitle.hasFocus;
+    final check = () => WidgetsBinding.instance.window.viewInsets.bottom > 0 && !_focusTitle.hasFocus;
     if (!check()) return false;
     return await Future.delayed(Duration(milliseconds: 100), () => check());
   }

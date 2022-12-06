@@ -602,7 +602,7 @@ class HtmlEditorNote implements IEditor<CreateNoteState> {
                   decoration: InputDecoration(
                     prefixIcon: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        primary: Theme.of(context).dialogBackgroundColor,
+                        backgroundColor: Theme.of(context).dialogBackgroundColor,
                         padding: EdgeInsets.only(left: 0, right: 0),
                         elevation: 0.0
                       ),

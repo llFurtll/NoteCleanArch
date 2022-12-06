@@ -121,7 +121,7 @@ class AppBarConfigAppEditComponent implements IComponent<ConfigAppEditState, Pre
       },
       child: Text("Salvar"),
       style: TextButton.styleFrom(
-        primary: Colors.white
+        backgroundColor: Colors.white
       ),
     );
   }
