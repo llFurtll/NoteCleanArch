@@ -2,7 +2,7 @@
 
 <a href="https://www.buymeacoffee.com/danielmelonari" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
-#### Esse projeto foi migrado para um novo
+#### Esse projeto foi migrado para um novo, que é o EasyNote, foi feito uma refatoração total utilizando conceitos de injeções de dependências e também a separação de regras de negócio da UI, foi feito uma refatoração no antigo plugin que se chamava compmanager para screen_manager. Esse projeto ficará como base da mudança que aconteceu de um para o outro.
 
 ### :man:  Dev
 <a href="https://www.linkedin.com/in/daniel-melonari-5413a7197/" target="_blank">
