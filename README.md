@@ -2,42 +2,7 @@
 
 <a href="https://www.buymeacoffee.com/danielmelonari" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="41" width="174"></a>
 
-#### EasyNote is a simple and efficient application to manage notes.<br> The idea of this application started as an incentive for a study project, but during its development, I realized that it could be something useful in people's daily lives.
-
-<h1 align="">
-    <a href="https://flutter.dev/">🔗 Flutter</a>
-<img src="https://img.shields.io/badge/Flutter-Version2.10.5-blue"/>
-</h1>
-
-### :camera:  Screenshots
-<table>
-  <tr>
-    <td><img align="left" src="https://github.com/llFurtll/NoteCleanArch/blob/master/imagens/splash.png" height="500px" width="250px"></td>
-    <td><img align="left" src="https://github.com/llFurtll/NoteCleanArch/blob/master/imagens/home.png" height="500px" width="250px"></td>
-    <td><img align="left" src="https://github.com/llFurtll/NoteCleanArch/blob/master/imagens/home_anotacao.png" height="500px" width="250px"></td>
-  </tr>
-  <tr>
-    <td><img align="left" src="https://github.com/llFurtll/NoteCleanArch/blob/master/imagens/home_deletar.png" height="500px" width="250px"></td>
-    <td><img align="left" src="https://github.com/llFurtll/NoteCleanArch/blob/master/imagens/home_nome.png" height="500px" width="250px"></td>
-    <td><img align="left" src="https://github.com/llFurtll/NoteCleanArch/blob/master/imagens/cadastro.png" height="500px" width="250px"></td>
-  </tr>
-  <tr>
-    <td><img align="left" src="https://github.com/llFurtll/NoteCleanArch/blob/master/imagens/cadastro_fundo.png" height="500px" width="250px"></td>
-    <td><img align="left" src="https://github.com/llFurtll/NoteCleanArch/blob/master/imagens/cadastro_cor.png" height="500px" width="250px"></td>
-  </tr>
-</table>
-
-## :warning:  Issues
-- [x] Refactor code
-- [x] Register annotation using device microphone
-- [x] Annotation sharing. (PDF and Image)
-- [x] Update version Flutter 2.10.5
-- [x] New features in note creation. (Bold, Italics, etc)
-- [x] Create Note customization settings
-- [ ] Create notification mechanism for annotations
-- [ ] Encryption backup service
-- [ ] Application internationalization
-- [ ] Update version Flutter to 3
+#### Esse projeto foi migrado para um novo
 
 ### :man:  Dev
 <a href="https://www.linkedin.com/in/daniel-melonari-5413a7197/" target="_blank">
